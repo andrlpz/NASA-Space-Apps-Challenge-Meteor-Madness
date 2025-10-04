@@ -53,7 +53,7 @@ const Wexio = () => {
       const API_KEY = import.meta.env.VITE_NASA_API_KEY;
       const START_DATE = '2025-06-01';
       const END_DATE = '2025-06-08';
-      const API_URL = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${START_DATE}&end_date=${END_DATE}&api_key=${API_KEY}`;
+      const API_URL = `https://api.pafodev.com/nasaapi/neo2`;
 
       try {
         const response = await fetch(API_URL);

@@ -35,7 +35,7 @@ const Asteroids = () => {
       try {
 
         const res = await fetch(
-          'https://api.nasa.gov/neo/rest/v1/neo/browse?api_key='+import.meta.env.VITE_NASA_API_KEY
+          'https://api.pafodev.com/nasaapi/neo1'
         )
         const data = await res.json()
         const asteroidsList = data.near_earth_objects
