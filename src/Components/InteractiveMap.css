@@ -1,0 +1,26 @@
+.map-toggle-btn {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Styles for light button on dark map */
+.map-toggle-btn.dark {
+  background-color: #fff;
+  color: #000;
+}
+
+/* Styles for dark button on light/satellite map */
+.map-toggle-btn.satellite {
+  background-color: #000;
+  color: #fff;
+}
