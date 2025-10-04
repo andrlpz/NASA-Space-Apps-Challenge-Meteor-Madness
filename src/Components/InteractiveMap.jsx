@@ -3,6 +3,9 @@ import { MapContainer, TileLayer, Circle, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import './InteractiveMap.css'; // for button styling
 
+import cookies from 'js-cookie';
+import { useTranslation } from 'react-i18next';
+
 function MapEventsHandler({ onMapClick }) {
   useMapEvents({
     click(e) {
@@ -14,15 +17,24 @@ function MapEventsHandler({ onMapClick }) {
 
 export default function InteractiveMap({ impact, onMapClick }) {
   const [layer, setLayer] = useState('dark'); // default layer
+  const { t } = useTranslation(); // ✅ moved inside component
+
+  const languages = [
+    { code: 'fr', name: 'Français', country_code: 'fr' },
+    { code: 'en', name: 'English', country_code: 'gb' },
+    { code: 'es', name: 'Español', country_code: 'es' },
+  ];
+
+  const currentLanguageCode = cookies.get('i18next') || 'en';
+  const currentLanguage = languages.find((l) => l.code === currentLanguageCode);
 
   const toggleLayer = () => {
     setLayer((prev) => (prev === 'dark' ? 'satellite' : 'dark'));
   };
 
-  // URLs for different map styles
   const layerUrls = {
     dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-    satellite: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', // you can change to a satellite provider
+    satellite: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
   };
 
   const attributions = {
@@ -33,13 +45,9 @@ export default function InteractiveMap({ impact, onMapClick }) {
   return (
     <div style={{ height: '100%', width: '100%', position: 'relative' }}>
       {/* Toggle Button */}
-      <button
-        className={`map-toggle-btn ${layer}`}
-        onClick={toggleLayer}
-      >
-        {layer === 'dark' ? 'Satellite View' : 'Dark Mode'}
+      <button className={`map-toggle-btn ${layer}`} onClick={toggleLayer}>
+        {layer === 'dark' ? t('satellitemode') : t('darkmode')}
       </button>
-
 
       <MapContainer
         center={[20, 0]}
@@ -47,10 +55,7 @@ export default function InteractiveMap({ impact, onMapClick }) {
         scrollWheelZoom={true}
         style={{ height: '100%', width: '100%' }}
       >
-        <TileLayer
-          attribution={attributions[layer]}
-          url={layerUrls[layer]}
-        />
+        <TileLayer attribution={attributions[layer]} url={layerUrls[layer]} />
 
         <MapEventsHandler onMapClick={onMapClick} />
 

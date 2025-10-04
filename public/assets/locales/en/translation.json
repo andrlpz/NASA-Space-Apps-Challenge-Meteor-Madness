@@ -36,5 +36,7 @@
     }
   },
   "recommended-action": "Recommended Action",
-  "reset-simulation": "Reset Simulation"
+  "reset-simulation": "Reset Simulation",
+  "darkmode": "Dark Mode",
+  "satellitemode": "Satellite View"
 }

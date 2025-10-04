@@ -36,5 +36,7 @@
     }
   },
   "recommended-action": "Accion Recomendada",
-  "reset-simulation": "Reiniciar Simulación"
+  "reset-simulation": "Reiniciar Simulación",
+  "darkmode": "Modo Oscuro",
+  "satellitemode": "Vista Satelital"
 }
