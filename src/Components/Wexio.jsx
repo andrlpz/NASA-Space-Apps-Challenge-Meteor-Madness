@@ -6,6 +6,9 @@ import AsteroidList from './AsteroidList';
 
 import { Link } from 'react-router-dom';
 
+import cookies from 'js-cookie'
+import { useTranslation } from 'react-i18next'
+import i18next from 'i18next'
 
 
 const languages = [

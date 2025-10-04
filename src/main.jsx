@@ -10,10 +10,6 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import App from './App';
 import './index.css';
 
-import { useTranslation } from 'react-i18next'
-import i18next from 'i18next'
-import cookies from 'js-cookie'
-
 i18next
   .use(HttpApi)
   .use(LanguageDetector)
