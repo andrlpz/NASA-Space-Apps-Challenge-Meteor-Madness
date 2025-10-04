@@ -32,7 +32,8 @@
   "mitigation": {
     "threatlevel": {
       "MONITORING REQUIRED": "MONITORING REQUIRED",
-      "LOW": "LOW"
+      "LOW": "LOW",
+      "HIGH": "HIGH"
     }
   },
   "recommended-action": "Recommended Action",

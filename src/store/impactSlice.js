@@ -5,7 +5,7 @@ const initialState = {
   showSliders: false,
   showAsteroidList: true,
   diameter: 550,
-  velocity: 550,
+  velocity: 42,
   selectedAsteroid: null,
 }
 

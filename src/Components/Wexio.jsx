@@ -114,117 +114,130 @@ const Wexio = () => {
   }, [currentLanguage, t])
 
   const handleMapClick = (latlng) => {
-    if (showSlidersState) {
-      // Simular impacto usando valores de los sliders
-      const diameterMeters = diameter;
-      const velocityKms = velocity;
-      
-      const radius = diameterMeters / 2;
-      const volume = (4 / 3) * Math.PI * Math.pow(radius, 3);
-      const mass = 3000 * volume;
-      const kineticEnergyJoules = 0.5 * mass * Math.pow(velocityKms * 1000, 2);
-      const energyMegatons = (kineticEnergyJoules / 4.184e15).toFixed(2);
+  const calculateImpact = (diameterMeters, velocityKms) => {
+    const radius = diameterMeters / 2;
+    const volume = (4 / 3) * Math.PI * Math.pow(radius, 3); // m³
+    const density = 3000; // kg/m³ typical rock
+    const mass = density * volume; // kg
+    const kineticEnergyJoules = 0.5 * mass * Math.pow(velocityKms * 1000, 2); // J
+    const energyMegatons = kineticEnergyJoules / 4.184e15; // MT TNT
 
-      dispatch(setImpactEvent({
-        position: latlng,
-        radius: 60000,
-        details: {
-          source: {
-            name: 'Custom Asteroid Simulation',
-            diameter: `${diameterMeters.toFixed(2)} meters`,
-            velocity: `${velocityKms.toFixed(2)} km/s`,
-            isPotentiallyHazardous: diameterMeters > 140,
-            closeApproachDate: 'Custom Simulation',
-            missDistance: 'Impact Simulation',
-            absoluteMagnitude: 'N/A',
-            jplUrl: 'N/A',
-          },
-          consequences: {
-            impactEnergy: `${energyMegatons} Megatons TNT`,
-            seismicEffect: `Magnitude ${(6 + parseFloat(energyMegatons) / 1000).toFixed(1)} Richter`,
-            airBlast: 'Significant overpressure event expected.',
-            craterDiameter: `${(diameterMeters * 20).toFixed(0)} meters`,
-            devastationRadius: `${(parseFloat(energyMegatons) * 10).toFixed(0)} km`,
-          },
-          mitigation: {
-            threatLevel: diameterMeters > 1000 ? 'EXTREME' : diameterMeters > 500 ? 'HIGH' : 'MODERATE',
-            recommendedAction: 'Custom simulation - Adjust sliders to test different scenarios.',
-            evacuationRadius: `${(parseFloat(energyMegatons) * 5).toFixed(0)} km`,
-          },
-        },
-      }));
-      
-      // OCULTAR SLIDERS después de la simulación
-      dispatch(hideSliders());
-    
-    } else if (selectedAsteroid) {
-      // Simular impacto usando asteroide seleccionado
-      const diameterMeters = selectedAsteroid.estimated_diameter.meters.estimated_diameter_max;
-      const velocityKms = parseFloat(selectedAsteroid.close_approach_data[0].relative_velocity.kilometers_per_second);
+    // Realistic seismic magnitude
+    const seismicMagnitude = Math.min((2 / 3) * Math.log10(kineticEnergyJoules) - 3.2, 10).toFixed(1);
 
-      const radius = diameterMeters / 2;
-      const volume = (4 / 3) * Math.PI * Math.pow(radius, 3);
-      const mass = 3000 * volume;
-      const kineticEnergyJoules = 0.5 * mass * Math.pow(velocityKms * 1000, 2);
-      const energyMegatons = (kineticEnergyJoules / 4.184e15).toFixed(2);
+    // Crater and devastation radius approximations
+    const craterDiameter = Math.min(diameterMeters * 20, 20000); // max 20 km
+    const devastationRadius = Math.min(energyMegatons * 10, 500); // max 500 km
+    const evacuationRadius = Math.min(energyMegatons * 5, 200); // max 200 km
 
-      dispatch(setImpactEvent({
-        position: latlng,
-        radius: 60000,
-        details: {
-          source: {
-            name: selectedAsteroid.name.replace(/[()]/g, ''),
-            diameter: `${diameterMeters.toFixed(2)} meters`,
-            velocity: `${velocityKms.toFixed(2)} km/s`,
-            isPotentiallyHazardous: selectedAsteroid.is_potentially_hazardous_asteroid,
-            closeApproachDate: selectedAsteroid.close_approach_data[0].close_approach_date_full,
-            missDistance: `${parseFloat(selectedAsteroid.close_approach_data[0].miss_distance.kilometers).toLocaleString()} km`,
-            absoluteMagnitude: selectedAsteroid.absolute_magnitude_h,
-            jplUrl: selectedAsteroid.nasa_jpl_url,
-          },
-          consequences: {
-            impactEnergy: `${energyMegatons} Megatons TNT`,
-            seismicEffect: `Magnitude ${(6 + parseFloat(energyMegatons) / 1000).toFixed(1)} Richter`,
-            airBlast: 'Significant overpressure event expected.',
-          },
-          mitigation: {
-            threatLevel: selectedAsteroid.is_potentially_hazardous_asteroid ? 'MONITORING REQUIRED' : 'LOW',
-            recommendedAction: 'Further observation to refine orbital parameters.',
-          },
-        },
-      }));
-      
-      // OCULTAR LISTA DE ASTEROIDES después de la simulación
-      dispatch(hideAsteroidList());
-    } else {
-      // Si no hay sliders activos ni asteroide seleccionado, mostrar mensaje básico
-      dispatch(setImpactEvent({
-        position: latlng,
-        radius: 30000,
-        details: {
-          source: {
-            name: 'Click simulation',
-            diameter: 'Unknown',
-            velocity: 'Unknown',
-            isPotentiallyHazardous: false,
-            closeApproachDate: 'N/A',
-            missDistance: 'N/A',
-            absoluteMagnitude: 'N/A',
-            jplUrl: 'N/A',
-          },
-          consequences: {
-            impactEnergy: 'Select an asteroid or use sliders for simulation',
-            seismicEffect: 'N/A',
-            airBlast: 'N/A',
-          },
-          mitigation: {
-            threatLevel: 'UNKNOWN',
-            recommendedAction: 'Please select an asteroid from the list or use the sliders to customize parameters.',
-          },
-        },
-      }));
-    }
+    return {
+      energyMegatons: energyMegatons.toFixed(2),
+      seismicMagnitude,
+      craterDiameter: craterDiameter.toFixed(0),
+      devastationRadius: devastationRadius.toFixed(0),
+      evacuationRadius: evacuationRadius.toFixed(0),
+    };
   };
+
+  if (showSlidersState) {
+    // Custom slider simulation
+    const { energyMegatons, seismicMagnitude, craterDiameter, devastationRadius, evacuationRadius } =
+      calculateImpact(diameter, velocity);
+
+    dispatch(setImpactEvent({
+      position: latlng,
+      radius: 60000,
+      details: {
+        source: {
+          name: 'Custom Asteroid Simulation',
+          diameter: `${diameter.toFixed(2)} meters`,
+          velocity: `${velocity.toFixed(2)} km/s`,
+          isPotentiallyHazardous: diameter > 140,
+          closeApproachDate: 'Custom Simulation',
+          missDistance: 'Impact Simulation',
+          absoluteMagnitude: 'N/A',
+          jplUrl: 'N/A',
+        },
+        consequences: {
+          impactEnergy: `${energyMegatons} Megatons TNT`,
+          seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
+          airBlast: 'Significant overpressure event expected.',
+          craterDiameter: `${craterDiameter} meters`,
+          devastationRadius: `${devastationRadius} km`,
+        },
+        mitigation: {
+          threatLevel: diameter > 1000 ? 'EXTREME' : diameter > 500 ? 'HIGH' : 'MODERATE',
+          recommendedAction: 'Custom simulation - Adjust sliders to test different scenarios.',
+          evacuationRadius: `${evacuationRadius} km`,
+        },
+      },
+    }));
+
+    dispatch(hideSliders());
+
+  } else if (selectedAsteroid) {
+    const diameterMeters = selectedAsteroid.estimated_diameter.meters.estimated_diameter_max;
+    const velocityKms = parseFloat(selectedAsteroid.close_approach_data[0].relative_velocity.kilometers_per_second);
+
+    const { energyMegatons, seismicMagnitude } = calculateImpact(diameterMeters, velocityKms);
+
+    dispatch(setImpactEvent({
+      position: latlng,
+      radius: 60000,
+      details: {
+        source: {
+          name: selectedAsteroid.name.replace(/[()]/g, ''),
+          diameter: `${diameterMeters.toFixed(2)} meters`,
+          velocity: `${velocityKms.toFixed(2)} km/s`,
+          isPotentiallyHazardous: selectedAsteroid.is_potentially_hazardous_asteroid,
+          closeApproachDate: selectedAsteroid.close_approach_data[0].close_approach_date_full,
+          missDistance: `${parseFloat(selectedAsteroid.close_approach_data[0].miss_distance.kilometers).toLocaleString()} km`,
+          absoluteMagnitude: selectedAsteroid.absolute_magnitude_h,
+          jplUrl: selectedAsteroid.nasa_jpl_url,
+        },
+        consequences: {
+          impactEnergy: `${energyMegatons} Megatons TNT`,
+          seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
+          airBlast: 'Significant overpressure event expected.',
+        },
+        mitigation: {
+          threatLevel: selectedAsteroid.is_potentially_hazardous_asteroid ? 'MONITORING REQUIRED' : 'LOW',
+          recommendedAction: 'Further observation to refine orbital parameters.',
+        },
+      },
+    }));
+
+    dispatch(hideAsteroidList());
+  } else {
+    // No sliders or asteroid selected
+    dispatch(setImpactEvent({
+      position: latlng,
+      radius: 30000,
+      details: {
+        source: {
+          name: 'Click simulation',
+          diameter: 'Unknown',
+          velocity: 'Unknown',
+          isPotentiallyHazardous: false,
+          closeApproachDate: 'N/A',
+          missDistance: 'N/A',
+          absoluteMagnitude: 'N/A',
+          jplUrl: 'N/A',
+        },
+        consequences: {
+          impactEnergy: 'Select an asteroid or use sliders for simulation',
+          seismicEffect: 'N/A',
+          airBlast: 'N/A',
+        },
+        mitigation: {
+          threatLevel: 'UNKNOWN',
+          recommendedAction: 'Please select an asteroid from the list or use the sliders to customize parameters.',
+        },
+      },
+    }));
+  }
+};
+
 
   return (
     <div className="relative flex h-screen w-full bg-gray-900 text-white font-sans">
