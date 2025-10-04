@@ -167,12 +167,12 @@ const Wexio = () => {
   };
 
   return (
-    <div className={`relative flex flex-col md:flex-row h-screen w-full font-sans overflow-hidden ${
+    <div className={`relative flex flex-col lg:flex-row h-screen w-full font-sans overflow-hidden ${
         theme === 'dark' ? 'bg-gray-900 text-white' : 
         theme === 'colorblind' ? `bg-[${getColorblindColors().background}]` : 
         'bg-gray-50 text-gray-900'
       }`}>
-      <aside className={`w-full md:w-96 p-4 sm:p-6 shadow-md flex flex-col h-[40vh] md:h-screen md:min-h-screen overflow-y-auto ${
+      <aside className={`w-full ${impactEvent ? 'lg:w-1/2' : 'lg:w-96'} p-3 md:p-4 lg:p-6 shadow-md flex flex-col ${impactEvent ? 'h-[50vh] md:h-[60vh]' : 'h-[40vh] md:h-[45vh]'} lg:h-screen lg:min-h-screen overflow-y-auto ${
         theme === 'dark' ? 'bg-gray-800' : 
         theme === 'colorblind' ? `bg-[${getColorblindColors().primary}] text-[${getColorblindColors().secondary}]` : 
         'bg-gray-100 border-r border-gray-200'
@@ -199,7 +199,7 @@ const Wexio = () => {
         {!isLoading && !error && (
           <>
             {ShowAsteroidList && (
-              <div>
+              <div className={impactEvent ? "hidden lg:block" : ""}>
                 <p className={`text-sm mb-2 ${
                   theme === 'dark' ? 'text-gray-300' :
                   theme === 'colorblind' ? `text-[${getColorblindColors().primary}]` :
@@ -214,8 +214,8 @@ const Wexio = () => {
               </div>
             )}
 
-            <Link to="/Asteroids" className="text-cyan-400 hover:text-cyan-300 text-sm flex items-center mt-3 transition-colors">
-              <p className='py-7'>click here to see mauro in tanga</p>
+            <Link to="/Asteroids" className={`text-cyan-400 hover:text-cyan-300 text-sm flex items-center mt-3 transition-colors ${impactEvent ? "hidden lg:flex" : ""}`}>
+              <p className='py-7 text-[10px] sm:text-sm'>click here to see mauro in tanga</p>
             </Link>
 
             <ImpactSidebar impact={impactEvent} resetImpact={resetImpact} theme={theme} colorblindType={colorblindType} />
@@ -224,22 +224,22 @@ const Wexio = () => {
       </aside>
 
       <main className="flex-1 h-full flex flex-col">
-        <div className={`p-2 flex justify-end items-center gap-4 ${
+        <div className={`p-2 md:p-3 flex justify-end items-center gap-2 md:gap-4 ${
             theme === 'dark' ? 'bg-gray-800 text-white' : 
             theme === 'colorblind' ? `bg-[${getColorblindColors().primary}] text-white` : 
             'bg-white text-gray-900 border-b'
           }`}>
             {showSettings && (
-            <div className="flex items-center gap-4 flex-1 px-4">
-              <div className="flex items-center gap-2">
-                <label className={`text-sm font-medium ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{t('language')}:</label>
+            <div className="flex items-center gap-2 md:gap-4 flex-1 px-2 md:px-4">
+              <div className="flex items-center gap-1 md:gap-2">
+                <label className={`text-xs md:text-sm font-medium ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{t('language')}:</label>
                 <select
                   value={currentLanguageCode}
                   onChange={e => {
                     i18next.changeLanguage(e.target.value);
                     cookies.set('i18next', e.target.value);
                   }}
-                  className={`p-1 rounded text-sm ${
+                  className={`p-1 rounded text-xs md:text-sm ${
                     theme === 'dark' ? 'bg-gray-700 text-white' : 
                     theme === 'colorblind' ? `bg-[${getColorblindColors().background}] text-white focus:bg-[${getColorblindColors().primary}] focus:ring-1 focus:ring-white` :
                     'bg-gray-100 text-gray-900'
@@ -255,12 +255,12 @@ const Wexio = () => {
                 </select>
               </div>
 
-              <div className="flex items-center gap-2">
-                <label className={`text-sm font-medium ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{t('theme')}:</label>
+              <div className="flex items-center gap-1 md:gap-2">
+                <label className={`text-xs md:text-sm font-medium ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{t('theme')}:</label>
                 <select
                   value={theme}
                   onChange={e => setTheme(e.target.value)}
-                  className={`p-1 rounded text-sm ${
+                  className={`p-1 rounded text-xs md:text-sm ${
                     theme === 'dark' ? 'bg-gray-700 text-white' : 
                     theme === 'colorblind' ? `bg-[${getColorblindColors().background}] text-white focus:bg-[${getColorblindColors().primary}] focus:ring-1 focus:ring-white` :
                     'bg-gray-100 text-gray-900'
@@ -279,12 +279,12 @@ const Wexio = () => {
               </div>
 
               {theme === 'colorblind' && (
-                <div className="flex items-center gap-2 ml-2">
-                  <label className="text-sm font-medium text-white">Type:</label>
+                <div className="flex items-center gap-1 md:gap-2 ml-1 md:ml-2">
+                  <label className="text-xs md:text-sm font-medium text-white">Type:</label>
                   <select
                     value={colorblindType}
                     onChange={e => setColorblindType(e.target.value)}
-                    className={`p-1 rounded text-sm bg-[${getColorblindColors().background}] text-white focus:bg-[${getColorblindColors().primary}] focus:ring-1 focus:ring-white`}
+                    className={`p-1 rounded text-xs md:text-sm bg-[${getColorblindColors().background}] text-white focus:bg-[${getColorblindColors().primary}] focus:ring-1 focus:ring-white`}
                   >
                     <option value="deuteranopia" className={`bg-[${getColorblindColors().primary}]`}>
                       Deuteranopia
@@ -319,6 +319,7 @@ const Wexio = () => {
             onMapClick={handleMapClick}
             theme={theme}
             colorblindType={colorblindType}
+            onReset={resetImpact}
           />
         </div>
       </main>

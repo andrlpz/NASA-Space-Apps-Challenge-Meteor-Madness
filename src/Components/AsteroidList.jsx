@@ -67,7 +67,7 @@ export default function AsteroidList({ asteroids, onSelect, theme = 'dark', colo
   const { t } = useTranslation()
 
   return (
-    <div className="flex flex-col h-[45vh] md:h-96">
+    <div className="flex flex-col h-[40vh] md:h-[35vh] lg:h-96">
       <p className={`text-sm font-semibold mb-2 ${styles.text}`}>
         {t('current')} {selectedName}
       </p>
@@ -113,7 +113,7 @@ export default function AsteroidList({ asteroids, onSelect, theme = 'dark', colo
         })}
       </div>
       {selectedName && (
-        <p className={`text-xs mt-2 ${theme === 'light' ? 'text-green-600' : 'text-green-500'}`}>
+        <p className={`text-[10px] sm:text-xs mt-1.5 sm:mt-2 ${theme === 'light' ? 'text-green-600' : 'text-green-500'}`}>
           {t('click_stimulate')}
         </p>
       )}

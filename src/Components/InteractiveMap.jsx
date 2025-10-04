@@ -1,23 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Circle, useMapEvents } from 'react-leaflet';
+import { useTranslation } from 'react-i18next';
 
 import 'leaflet/dist/leaflet.css';
 
 
 
-function MapEventsHandler({ onMapClick }) {
-  useMapEvents({
+function MapEventsHandler({ onMapClick, onZoomChange }) {
+  const map = useMapEvents({
     click(e) {
-
       onMapClick(e.latlng);
     },
+    zoomend() {
+      const currentZoom = map.getZoom();
+      onZoomChange(currentZoom);
+    }
   });
   return null;
 }
 
 
-export default function InteractiveMap({ impact, onMapClick, theme, colorblindType }) {
+export default function InteractiveMap({ impact, onMapClick, theme, colorblindType, onReset }) {
+  const { t } = useTranslation();
+  const [isGlobalView, setIsGlobalView] = useState(true); // Track if map shows all continents
+  const [mapKey, setMapKey] = useState(0); // Force re-render of TileLayer
+  
+  // Force tile layer re-render when global view changes
+  useEffect(() => {
+    setMapKey(prev => prev + 1);
+  }, [isGlobalView]);
+  
+  // Handle zoom level changes
+  const handleZoomChange = (zoomLevel) => {
+    // Zoom level 2.8 or less shows all continents globally (40% more zoom than before)
+    const globalViewThreshold = 2.8;
+    setIsGlobalView(zoomLevel <= globalViewThreshold);
+  };
+  
   const getMapStyle = () => {
+    // If in global view (zoomed out), use dark style, otherwise use theme-based style
+    if (isGlobalView) {
+      return "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+    }
+    
     switch (theme) {
       case 'dark':
         return "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
@@ -45,31 +70,52 @@ export default function InteractiveMap({ impact, onMapClick, theme, colorblindTy
   };
 
   return (
-    <MapContainer 
-      center={[20, 0]} 
-      zoom={2}
-      scrollWheelZoom={true}
-      style={{ height: '100%', width: '100%', zIndex: 1 }}
-      className="h-[45vh] md:h-screen"
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url={getMapStyle()}
-      />
-      
-      <MapEventsHandler onMapClick={onMapClick} />
-
-      {impact && (
-        <Circle
-          center={impact.position} 
-          pathOptions={getImpactColors()} 
-          radius={impact.details.source.diameter ? 
-            // Convert diameter from meters to kilometers and use it to scale the circle
-            // Multiply by 1000 to make it visible on the map (since the diameter is in meters)
-            parseFloat(impact.details.source.diameter.replace(/[^0-9.]/g, '')) * 1000 :
-            impact.radius} 
+    <div className="relative h-[50vh] md:h-[40vh] lg:h-screen">
+      <MapContainer 
+        center={[20, 0]} 
+        zoom={2}
+        scrollWheelZoom={true}
+        style={{ height: '100%', width: '100%', zIndex: 1 }}
+        className="h-full"
+      >
+        <TileLayer
+          key={mapKey}
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url={getMapStyle()}
         />
+        
+        <MapEventsHandler onMapClick={onMapClick} onZoomChange={handleZoomChange} />
+
+        {impact && (
+          <Circle
+            center={impact.position} 
+            pathOptions={getImpactColors()} 
+            radius={impact.details.source.diameter ? 
+              // Convert diameter from meters to kilometers and use it to scale the circle
+              // Multiply by 1000 to make it visible on the map (since the diameter is in meters)
+              parseFloat(impact.details.source.diameter.replace(/[^0-9.]/g, '')) * 1000 :
+              impact.radius} 
+          />
+        )}
+      </MapContainer>
+
+      {/* Reset button for mobile and tablet - only shown when there's an impact */}
+      {impact && onReset && (
+        <div className="lg:hidden absolute bottom-4 left-1/2 transform -translate-x-1/2 z-[1000]">
+          <button 
+            onClick={onReset} 
+            className={`px-3 md:px-4 py-2 rounded-lg text-sm font-medium shadow-lg transform transition duration-200 hover:-translate-y-1 hover:shadow-xl ${
+              theme === 'light' 
+                ? 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50' 
+                : theme === 'colorblind'
+                  ? 'border border-white bg-white/10 backdrop-blur-sm text-white hover:bg-white/20'
+                  : 'border border-neutral-300 bg-neutral-100 text-neutral-500 hover:bg-neutral-200'
+            }`}
+          >
+            {t('reset-simulation')}
+          </button>
+        </div>
       )}
-    </MapContainer>
+    </div>
   );
 }
