@@ -37,6 +37,10 @@
   },
   "recommended-action": "Recommended Action",
   "reset-simulation": "Reset Simulation",
+  "adjust_parameters": "Adjust Parameters of Your Customized Asteroid",
+  "diameter": "Diameter (m)",
+  "velocity_km_s": "Velocity (km/s)",
+  "slide_to_simulate": "Slide the bars to adjust the parameters, then click anywhere on the map to simulate the impact."
   "darkmode": "Dark Mode",
   "satellitemode": "Satellite View",
   "sortby": "Sort by",
