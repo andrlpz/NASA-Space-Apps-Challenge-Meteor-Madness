@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import cookies from 'js-cookie'
 import { useTranslation } from 'react-i18next'
 import i18next from 'i18next'
+import GlobePage from './GlobeComponent';
 
 
 const languages = [
@@ -41,6 +42,7 @@ const Wexio = () => {
   const currentLanguageCode = cookies.get('i18next') || 'en'
   const currentLanguage = languages.find((l) => l.code === currentLanguageCode)
   const { t } = useTranslation()
+  const [is3DMap, setIs3DMap] = useState(true);
 
   function resetImpact() {
     setImpactEvent(null);
@@ -168,8 +170,10 @@ const Wexio = () => {
       </aside>
 
       <main className="flex-1 h-full relative">
-        <InteractiveMap impact={impactEvent} onMapClick={handleMapClick} />
-
+        {is3DMap
+          ? <GlobePage impact={impactEvent} onMapClick={handleMapClick} resetImpact={resetImpact} />
+          : <InteractiveMap impact={impactEvent} onMapClick={handleMapClick} />
+        }
       </main>
       <div className="absolute top-4 right-4 z-10 bg-gray-800 p-2 rounded z-1000">
         <select

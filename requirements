@@ -6,3 +6,6 @@ js-cookie
 tailwind
 three
 leafleat
+@react-three/fiber 
+@react-three/drei 
+three
