@@ -82,13 +82,14 @@ export default function Globe3D({ impact, onMapClick }){
         <directionalLight position={[5,3,5]} intensity={1.2}/>
         <Stars radius={100} depth={50} count={5000} factor={2} fade />
         <Earth onHover={setHover} onPick={(p)=>{setPicked(p); onMapClick && onMapClick(p)}} />
+        
         {picked && <ClickMarker lat={picked.lat} lng={picked.lng} />}
         {impact && <ImpactRing lat={impact.position.lat} lng={impact.position.lng} radiusMeters={impact.radius} />}
         <OrbitControls enablePan={false} />
       </Canvas>
       <div className="absolute top-3 left-3 bg-black/60 text-white text-xs px-3 py-2 rounded">
-        <div>Hover: {hover.lat.toFixed(3)}°, {hover.lng.toFixed(3)}°</div>
-        <div>Pick: {picked ? `${picked.lat.toFixed(3)}°, ${picked.lng.toFixed(3)}°` : '—'}</div>
+        <div>Hover: {hover.lat.toFixed(3)}°, {hover.lng.toFixed(3) * -1}°</div>
+        <div>Pick: {picked ? `${picked.lat.toFixed(3)}°, ${picked.lng.toFixed(3) * -1}°` : '—'}</div>
       </div>
     </div>
   )
