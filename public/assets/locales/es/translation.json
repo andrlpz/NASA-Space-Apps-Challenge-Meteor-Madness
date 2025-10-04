@@ -1,0 +1,40 @@
+{
+  "app_title": "Caos Meteóritico",
+  "page_title": "Simulador de Impacto de Asteroides",
+  "project_name": "Projecto: Impactador-2025",
+  "fetching": "Cargando datos NEO...",
+  "select": "Selecciona un asteroide: ",
+  "current": "Asteroide actual: ",
+  "size": "Diametro",
+  "velocity": "Velocidad",
+  "hazardous": "Peligroso",
+  "click_stimulate": "Dale click en cualquier parte del mapa para simular el impacto",
+  "selected-asteroid": "Datos del Asteroide Seleccionado",
+  "name": "Nombre",
+  "est_diameter": "Diametro Estimado",
+  "relative-velocity": "Velocidad Relativa",
+  "close-approach": "Acercamiento Cercano",
+  "miss-distance": "Distancia mínima de aproximación",
+  "abs-magnitude": "Magnitud absoluta (H)",
+  "potentially-hazardous": "Potencialmente Peligroso",
+  "yes": "Si",
+  "no": "No",
+  "view-jpl-database": "Ver en la Base de Datos JPL",
+  "consequences": "Consecuencias Estimadas",
+  "impact-location": "Lugar de Impacto",
+  "lat": "Lat:",
+  "lng": "Lng:",
+  "kinetic-energy": "Energía Cinética",
+  "seismic-effect": "Efecto Sísmico",
+  "air-blast": "Onda Expansiva",
+  "mitigation-report": "Informe de Mitigación",
+  "threat-level": "Nivel de Amenaza",
+  "mitigation": {
+    "threatlevel": {
+      "MONITORING REQUIRED": "SE REQUIERE MONITOREO",
+      "LOW": "BAJO"
+    }
+  },
+  "recommended-action": "Accion Recomendada",
+  "reset-simulation": "Reiniciar Simulación"
+}

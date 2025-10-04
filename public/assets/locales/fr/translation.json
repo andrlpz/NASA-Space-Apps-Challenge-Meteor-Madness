@@ -1,0 +1,40 @@
+{
+  "app_title": "Chaos Météoritique",
+  "page_title": "Simulateur d'impact d'astéroïde",
+  "project_name": "Projet : Impactor-2025",
+  "fetching": "Chargement des données NEO...",
+  "select": "Sélectionnez un astéroïde: ",
+  "current": "Astéroïde actuel: ",
+  "size": "Diamètre",
+  "velocity": "Vitesse",
+  "hazardous": "Hasardeux",
+  "click_stimulate": "Cliquez n'importe où sur la carte pour simuler l'impact",
+  "selected-asteroid": "Données de l'astéroïde sélectionné",
+  "name": "Nom",
+  "est_diameter": "Diamètre Estimé",
+  "relative-velocity": "Vitesse Relative",
+  "close-approach": "Approche Rapprochée",
+  "miss-distance": "Distance Minimale D'approche",
+  "abs-magnitude": "Magnitude absolue (H)",
+  "potentially-hazardous": "Potentiellement dangereux",
+  "yes": "Oui",
+  "no": "Non",
+  "view-jpl-database": "Voir dans la base de données JPL",
+  "consequences": "Conséquences estimées",
+  "impact-location": "Lieu d'impact",
+  "lat": "Lat",
+  "lng": "Lng",
+  "kinetic-energy": "Énergie cinétique",
+  "seismic-effect": "Effet sismique",
+  "air-blast": "Souffle aérien",
+  "mitigation-report": "Rapport d'atténuation",
+  "threat-level": "Niveau de menace",
+  "mitigation": {
+    "threatlevel": {
+      "MONITORING REQUIRED": "SURVEILLANCE REQUISE",
+      "LOW": "FAIBLE"
+    }
+  },
+  "recommended-action": "Action recommandée",
+  "reset-simulation": "Réinitialiser la simulation"
+}

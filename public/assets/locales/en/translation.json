@@ -1,0 +1,40 @@
+{
+  "app_title": "Meteor Madness",
+  "page_title": "Asteroid Impact Simulator",
+  "project_name": "Project: Impactor-2025",
+  "fetching": "Fetching NEO data...",
+  "select": "Select an asteroid: ",
+  "current": "Current asteroid: ",
+  "size": "Diameter",
+  "velocity": "Velocity",
+  "hazardous": "Hazardous",
+  "click_stimulate": "Click anywhere on the map to simulate impact",
+  "selected-asteroid": "Selected Asteroid Data",
+  "name": "Name",
+  "est_diameter": "Est. Diameter",
+  "relative-velocity": "Relative Velocity",
+  "close-approach": "Close Approach",
+  "miss-distance": "Miss Distance",
+  "abs-magnitude": "Abs. Magnitude (H)",
+  "potentially-hazardous": "Potentially Hazardous",
+  "yes": "Yes",
+  "no": "No",
+  "view-jpl-database": "View in JPL Database",
+  "consequences": "Predicted Consequences",
+  "impact-location": "Impact Location",
+  "lat": "Lat:",
+  "lng": "Lng:",
+  "kinetic-energy": "Kinetic Energy",
+  "seismic-effect": "Seismic Effect",
+  "air-blast": "Air Blast",
+  "mitigation-report": "Mitigation Report",
+  "threat-level": "Threat Level",
+  "mitigation": {
+    "threatlevel": {
+      "MONITORING REQUIRED": "MONITORING REQUIRED",
+      "LOW": "LOW"
+    }
+  },
+  "recommended-action": "Recommended Action",
+  "reset-simulation": "Reset Simulation"
+}
