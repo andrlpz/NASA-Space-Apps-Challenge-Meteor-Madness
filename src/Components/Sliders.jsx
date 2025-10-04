@@ -15,13 +15,13 @@ const Sliders = ({ diameter, setDiameter, velocity, setVelocity }) => {
                     <p className="text-base font-semibold text-white mb-2">
                         {t('diameter')}
                     </p>
-                    <RangeSlider min={100} max={1000} step={10} value={diameter} onChange={setDiameter} />
+                    <RangeSlider min={0} max={1000} step={10} value={diameter} onChange={setDiameter} />
                 </div>
                 <div>
                     <p className="text-base font-semibold text-white mb-2">
                         {t('velocity_km_s')}
                     </p>
-                    <RangeSlider min={100} max={1000} step={10} value={velocity} onChange={setVelocity} />
+                    <RangeSlider min={12} max={72} step={0} value={velocity} onChange={setVelocity} />
                 </div>
             </div>
             <div className="mt-6 text-xs text-gray-400 text-center">
