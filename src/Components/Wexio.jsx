@@ -130,10 +130,15 @@ const Wexio = () => {
       <aside className="w-full max-w-sm p-6 bg-gray-800 shadow-2xl flex flex-col">
         <div className="flex items-center mb-6">
           <Target className="w-8 h-8 text-red-400 mr-3" />
+
           <div>
             <h1 className="text-2xl font-bold">{t('page_title')}</h1>
             <p className="text-sm text-gray-400">{t('project_name')}</p>
           </div>
+        </div>
+        <div>
+          <button>Sliders</button>
+          <button>Asteroids</button>
         </div>
         {isLoading && (
           <div className="flex-grow flex items-center justify-center">
@@ -155,10 +160,6 @@ const Wexio = () => {
                 <AsteroidList asteroids={asteroids} onSelect={setSelectedAsteroid} />
               </div>
             )}
-
-            <Link to="/Asteroids" className="text-cyan-400 hover:text-cyan-300 text-sm flex items-center mt-3 transition-colors"><p className='py-7 '>click here to see mauro in tanga</p>  </Link>
-
-
 
             <ImpactSidebar impact={impactEvent} resetImpact={resetImpact} />
 
