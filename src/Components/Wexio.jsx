@@ -3,12 +3,10 @@ import InteractiveMap from './InteractiveMap';
 import ImpactSidebar from './ImpactSidebar';
 import { Target, Loader } from 'lucide-react';
 import AsteroidList from './AsteroidList';
-
 import { Link } from 'react-router-dom';
-
-import { useTranslation } from 'react-i18next'
-import i18next from 'i18next'
-import cookies from 'js-cookie'
+import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
+import cookies from 'js-cookie';
 
 const languages = [
   {
@@ -26,20 +24,64 @@ const languages = [
     name: 'Español',
     country_code: 'es',
   },
-]
+];
 
 const Wexio = () => {
+  const getColorblindColors = () => {
+    switch (colorblindType) {
+      case 'protanopia':
+        return {
+          primary: '#4477AA',      // Dark blue
+          secondary: '#66CCEE',    // Light blue
+          accent: '#228833',       // Green
+          warning: '#CCBB44',      // Yellow
+          text: '#FFFFFF',         // White text
+          background: '#332211'    // Dark background
+        };
+      case 'deuteranopia':
+        return {
+          primary: '#332288',      // Dark blue
+          secondary: '#88CCEE',    // Light blue
+          accent: '#44AA99',       // Teal
+          warning: '#DDCC77',      // Yellow
+          text: '#FFFFFF',         // White text
+          background: '#332211'    // Dark background
+        };
+      case 'tritanopia':
+        return {
+          primary: '#004488',      // Dark blue
+          secondary: '#77CCFF',    // Light blue
+          accent: '#DDAA33',       // Orange
+          warning: '#BB5566',      // Red
+          text: '#FFFFFF',         // White text
+          background: '#332211'    // Dark background
+        };
+      default:
+        return {
+          primary: '#332288',
+          secondary: '#88CCEE',
+          accent: '#44AA99',
+          warning: '#DDCC77',
+          text: '#FFFFFF',
+          background: '#332211'
+        };
+    }
+  };
+
   const [impactEvent, setImpactEvent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [theme, setTheme] = useState('light'); // 'light', 'dark', or 'colorblind'
+  const [colorblindType, setColorblindType] = useState('deuteranopia'); // 'deuteranopia', 'protanopia', 'tritanopia'
+  const [showSettings, setShowSettings] = useState(false);
 
   const [asteroids, setAsteroids] = useState([]);
   const [selectedAsteroid, setSelectedAsteroid] = useState(null);
   const [ShowAsteroidList, setShowAsteroidList] = useState(true);
 
-  const currentLanguageCode = cookies.get('i18next') || 'en'
-  const currentLanguage = languages.find((l) => l.code === currentLanguageCode)
-  const { t } = useTranslation()
+  const currentLanguageCode = cookies.get('i18next') || 'en';
+  const currentLanguage = languages.find((l) => l.code === currentLanguageCode);
+  const { t } = useTranslation();
 
   function resetImpact() {
     setImpactEvent(null);
@@ -81,8 +123,8 @@ const Wexio = () => {
   }, []);
 
   useEffect(() => {
-    document.title = t('app_title')
-  }, [currentLanguage, t])
+    document.title = t('app_title');
+  }, [currentLanguage, t]);
 
   const handleMapClick = (latlng) => {
     if (selectedAsteroid) {
@@ -125,8 +167,16 @@ const Wexio = () => {
   };
 
   return (
-    <div className="relative flex h-screen w-full bg-gray-900 text-white font-sans">
-      <aside className="w-full max-w-sm p-6 bg-gray-800 shadow-2xl flex flex-col">
+    <div className={`relative flex h-screen w-full font-sans ${
+        theme === 'dark' ? 'bg-gray-900 text-white' : 
+        theme === 'colorblind' ? `bg-[${getColorblindColors().background}]` : 
+        'bg-gray-50 text-gray-900'
+      }`}>
+      <aside className={`w-full max-w-sm p-6 shadow-md flex flex-col ${
+        theme === 'dark' ? 'bg-gray-800' : 
+        theme === 'colorblind' ? `bg-[${getColorblindColors().primary}] text-[${getColorblindColors().secondary}]` : 
+        'bg-gray-100 border-r border-gray-200'
+      }`}>
         <div className="flex items-center mb-6">
           <Target className="w-8 h-8 text-red-400 mr-3" />
           <div>
@@ -150,41 +200,128 @@ const Wexio = () => {
           <>
             {ShowAsteroidList && (
               <div>
-                <p className="text-sm mb-2">{t('select')}</p>
-                <AsteroidList asteroids={asteroids} onSelect={setSelectedAsteroid} />
+                <p className={`text-sm mb-2 ${
+                  theme === 'dark' ? 'text-gray-300' :
+                  theme === 'colorblind' ? `text-[${getColorblindColors().primary}]` :
+                  'text-gray-600'
+                }`}>{t('select')}</p>
+                <AsteroidList 
+                  asteroids={asteroids} 
+                  onSelect={setSelectedAsteroid}
+                  theme={theme}
+                  colorblindType={colorblindType}
+                />
               </div>
             )}
 
-            <Link to="/Asteroids" className="text-cyan-400 hover:text-cyan-300 text-sm flex items-center mt-3 transition-colors"><p className='py-7 '>click here to see mauro in tanga</p>  </Link>
+            <Link to="/Asteroids" className="text-cyan-400 hover:text-cyan-300 text-sm flex items-center mt-3 transition-colors">
+              <p className='py-7'>click here to see mauro in tanga</p>
+            </Link>
 
-
-
-            <ImpactSidebar impact={impactEvent} resetImpact={resetImpact} />
-
+            <ImpactSidebar impact={impactEvent} resetImpact={resetImpact} theme={theme} colorblindType={colorblindType} />
           </>
         )}
       </aside>
 
-      <main className="flex-1 h-full relative">
-        <InteractiveMap impact={impactEvent} onMapClick={handleMapClick} />
+      <main className="flex-1 h-full flex flex-col">
+        <div className={`p-2 flex justify-end items-center gap-4 ${
+            theme === 'dark' ? 'bg-gray-800 text-white' : 
+            theme === 'colorblind' ? `bg-[${getColorblindColors().primary}] text-white` : 
+            'bg-white text-gray-900 border-b'
+          }`}>
+            {showSettings && (
+            <div className="flex items-center gap-4 flex-1 px-4">
+              <div className="flex items-center gap-2">
+                <label className={`text-sm font-medium ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{t('language')}:</label>
+                <select
+                  value={currentLanguageCode}
+                  onChange={e => {
+                    i18next.changeLanguage(e.target.value);
+                    cookies.set('i18next', e.target.value);
+                  }}
+                  className={`p-1 rounded text-sm ${
+                    theme === 'dark' ? 'bg-gray-700 text-white' : 
+                    theme === 'colorblind' ? `bg-[${getColorblindColors().background}] text-white focus:bg-[${getColorblindColors().primary}] focus:ring-1 focus:ring-white` :
+                    'bg-gray-100 text-gray-900'
+                  }`}
+                >
+                  {languages.map(lang => (
+                    <option key={lang.code} value={lang.code} className={
+                      theme === 'colorblind' ? `bg-[${getColorblindColors().primary}]` : ''
+                    }>
+                      {lang.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
+              <div className="flex items-center gap-2">
+                <label className={`text-sm font-medium ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{t('theme')}:</label>
+                <select
+                  value={theme}
+                  onChange={e => setTheme(e.target.value)}
+                  className={`p-1 rounded text-sm ${
+                    theme === 'dark' ? 'bg-gray-700 text-white' : 
+                    theme === 'colorblind' ? `bg-[${getColorblindColors().background}] text-white focus:bg-[${getColorblindColors().primary}] focus:ring-1 focus:ring-white` :
+                    'bg-gray-100 text-gray-900'
+                  }`}
+                >
+                  <option value="light" className={theme === 'colorblind' ? `bg-[${getColorblindColors().primary}]` : ''}>
+                    {t('light_mode')}
+                  </option>
+                  <option value="dark" className={theme === 'colorblind' ? `bg-[${getColorblindColors().primary}]` : ''}>
+                    {t('dark_mode')}
+                  </option>
+                  <option value="colorblind" className={theme === 'colorblind' ? `bg-[${getColorblindColors().primary}]` : ''}>
+                    {t('colorblind_mode')}
+                  </option>
+                </select>
+              </div>
+
+              {theme === 'colorblind' && (
+                <div className="flex items-center gap-2 ml-2">
+                  <label className="text-sm font-medium text-white">Type:</label>
+                  <select
+                    value={colorblindType}
+                    onChange={e => setColorblindType(e.target.value)}
+                    className={`p-1 rounded text-sm bg-[${getColorblindColors().background}] text-white focus:bg-[${getColorblindColors().primary}] focus:ring-1 focus:ring-white`}
+                  >
+                    <option value="deuteranopia" className={`bg-[${getColorblindColors().primary}]`}>
+                      Deuteranopia
+                    </option>
+                    <option value="protanopia" className={`bg-[${getColorblindColors().primary}]`}>
+                      Protanopia
+                    </option>
+                    <option value="tritanopia" className={`bg-[${getColorblindColors().primary}]`}>
+                      Tritanopia
+                    </option>
+                  </select>
+                </div>
+              )}
+            </div>
+          )}          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className={`p-2 rounded transition-colors ${
+              theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 
+              theme === 'colorblind' ? `bg-[${getColorblindColors().background}] hover:bg-[${getColorblindColors().secondary}] text-white` :
+              'bg-gray-100 hover:bg-gray-200'
+            }`}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </button>
+        </div>
+        <div className="flex-1">
+          <InteractiveMap 
+            impact={impactEvent} 
+            onMapClick={handleMapClick}
+            theme={theme}
+            colorblindType={colorblindType}
+          />
+        </div>
       </main>
-      <div className="absolute top-4 right-4 z-10 bg-gray-800 p-2 rounded z-1000">
-        <select
-          value={currentLanguageCode}
-          onChange={e => {
-            i18next.changeLanguage(e.target.value);
-            cookies.set('i18next', e.target.value);
-          }}
-          className="bg-gray-700 text-white p-1 rounded"
-        >
-          {languages.map(lang => (
-            <option key={lang.code} value={lang.code}>
-              {lang.name}
-            </option>
-          ))}
-        </select>
-      </div>
     </div>
   );
 };
