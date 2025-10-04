@@ -70,13 +70,13 @@ export default function InteractiveMap({ impact, onMapClick, theme, colorblindTy
   };
 
   return (
-    <div className="relative h-[50vh] md:h-[40vh] lg:h-screen">
+    <div className="relative h-[50vh] lg:h-screen overflow-hidden">
       <MapContainer 
         center={[20, 0]} 
         zoom={2}
         scrollWheelZoom={true}
         style={{ height: '100%', width: '100%', zIndex: 1 }}
-        className="h-full"
+        className="h-full absolute inset-0"
       >
         <TileLayer
           key={mapKey}
@@ -99,12 +99,12 @@ export default function InteractiveMap({ impact, onMapClick, theme, colorblindTy
         )}
       </MapContainer>
 
-      {/* Reset button for mobile and tablet - only shown when there's an impact */}
+      {/* Reset button for mobile - only shown when there's an impact */}
       {impact && onReset && (
-        <div className="lg:hidden absolute bottom-4 left-1/2 transform -translate-x-1/2 z-[1000]">
+        <div className="lg:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[9999] pointer-events-auto">
           <button 
             onClick={onReset} 
-            className={`px-3 md:px-4 py-2 rounded-lg text-sm font-medium shadow-lg transform transition duration-200 hover:-translate-y-1 hover:shadow-xl ${
+            className={`px-4 py-2 rounded-lg text-sm font-medium shadow-lg transition duration-200 hover:shadow-xl ${
               theme === 'light' 
                 ? 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50' 
                 : theme === 'colorblind'

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import InteractiveMap from './InteractiveMap';
 import ImpactSidebar from './ImpactSidebar';
 import { Target, Loader } from 'lucide-react';
@@ -74,6 +74,7 @@ const Wexio = () => {
   const [theme, setTheme] = useState('light'); // 'light', 'dark', or 'colorblind'
   const [colorblindType, setColorblindType] = useState('deuteranopia'); // 'deuteranopia', 'protanopia', 'tritanopia'
   const [showSettings, setShowSettings] = useState(false);
+  const settingsStateRef = useRef(false);
 
   const [asteroids, setAsteroids] = useState([]);
   const [selectedAsteroid, setSelectedAsteroid] = useState(null);
@@ -126,8 +127,19 @@ const Wexio = () => {
     document.title = t('app_title');
   }, [currentLanguage, t]);
 
+  // Sync settings state with ref
+  useEffect(() => {
+    settingsStateRef.current = showSettings;
+  }, [showSettings]);
+
   const handleMapClick = (latlng) => {
     if (selectedAsteroid) {
+      // Save current scroll position to prevent unwanted scrolling
+      const currentScrollY = window.scrollY;
+      
+      // Preserve settings visibility state during map interaction
+      settingsStateRef.current = showSettings;
+      
       setShowAsteroidList(false);
       const diameterMeters = selectedAsteroid.estimated_diameter.meters.estimated_diameter_max;
       const velocityKms = parseFloat(selectedAsteroid.close_approach_data[0].relative_velocity.kilometers_per_second);
@@ -163,6 +175,15 @@ const Wexio = () => {
           },
         },
       });
+      
+      // Restore scroll position after state update
+      setTimeout(() => {
+        window.scrollTo(0, currentScrollY);
+        // Ensure settings visibility is preserved using ref
+        if (settingsStateRef.current && !showSettings) {
+          setShowSettings(true);
+        }
+      }, 10);
     }
   };
 
@@ -172,7 +193,7 @@ const Wexio = () => {
         theme === 'colorblind' ? `bg-[${getColorblindColors().background}]` : 
         'bg-gray-50 text-gray-900'
       }`}>
-      <aside className={`w-full ${impactEvent ? 'lg:w-1/2' : 'lg:w-96'} p-3 md:p-4 lg:p-6 shadow-md flex flex-col ${impactEvent ? 'h-[50vh] md:h-[60vh]' : 'h-[40vh] md:h-[45vh]'} lg:h-screen lg:min-h-screen overflow-y-auto ${
+      <aside className={`w-full lg:w-96 p-3 lg:p-6 shadow-md flex flex-col h-[50vh] lg:h-screen lg:min-h-screen overflow-y-auto lg:sticky lg:top-0 ${
         theme === 'dark' ? 'bg-gray-800' : 
         theme === 'colorblind' ? `bg-[${getColorblindColors().primary}] text-[${getColorblindColors().secondary}]` : 
         'bg-gray-100 border-r border-gray-200'
@@ -199,7 +220,7 @@ const Wexio = () => {
         {!isLoading && !error && (
           <>
             {ShowAsteroidList && (
-              <div className={impactEvent ? "hidden lg:block" : ""}>
+              <div className={impactEvent ? "hidden lg:block" : "block"}>
                 <p className={`text-sm mb-2 ${
                   theme === 'dark' ? 'text-gray-300' :
                   theme === 'colorblind' ? `text-[${getColorblindColors().primary}]` :
@@ -214,32 +235,29 @@ const Wexio = () => {
               </div>
             )}
 
-            <Link to="/Asteroids" className={`text-cyan-400 hover:text-cyan-300 text-sm flex items-center mt-3 transition-colors ${impactEvent ? "hidden lg:flex" : ""}`}>
-              <p className='py-7 text-[10px] sm:text-sm'>click here to see mauro in tanga</p>
-            </Link>
 
             <ImpactSidebar impact={impactEvent} resetImpact={resetImpact} theme={theme} colorblindType={colorblindType} />
           </>
         )}
       </aside>
 
-      <main className="flex-1 h-full flex flex-col">
-        <div className={`p-2 md:p-3 flex justify-end items-center gap-2 md:gap-4 ${
+      <main className="flex-1 h-full flex flex-col min-h-0">
+        <div className={`p-2 lg:p-3 flex justify-end items-center gap-2 lg:gap-4 relative z-10 sticky top-0 flex-shrink-0 ${
             theme === 'dark' ? 'bg-gray-800 text-white' : 
             theme === 'colorblind' ? `bg-[${getColorblindColors().primary}] text-white` : 
             'bg-white text-gray-900 border-b'
           }`}>
             {showSettings && (
-            <div className="flex items-center gap-2 md:gap-4 flex-1 px-2 md:px-4">
-              <div className="flex items-center gap-1 md:gap-2">
-                <label className={`text-xs md:text-sm font-medium ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{t('language')}:</label>
+            <div className="flex items-center gap-2 lg:gap-4 px-2 lg:px-4 overflow-x-auto relative z-50 bg-inherit w-[50%] justify-end">
+              <div className="flex items-center gap-1 lg:gap-2 min-w-max">
+                <label className={`text-xs lg:text-sm font-medium ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{t('language')}:</label>
                 <select
                   value={currentLanguageCode}
                   onChange={e => {
                     i18next.changeLanguage(e.target.value);
                     cookies.set('i18next', e.target.value);
                   }}
-                  className={`p-1 rounded text-xs md:text-sm ${
+                  className={`p-1 rounded text-xs lg:text-sm ${
                     theme === 'dark' ? 'bg-gray-700 text-white' : 
                     theme === 'colorblind' ? `bg-[${getColorblindColors().background}] text-white focus:bg-[${getColorblindColors().primary}] focus:ring-1 focus:ring-white` :
                     'bg-gray-100 text-gray-900'
@@ -255,12 +273,12 @@ const Wexio = () => {
                 </select>
               </div>
 
-              <div className="flex items-center gap-1 md:gap-2">
-                <label className={`text-xs md:text-sm font-medium ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{t('theme')}:</label>
+              <div className="flex items-center gap-1 lg:gap-2 min-w-max">
+                <label className={`text-xs lg:text-sm font-medium ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{t('theme')}:</label>
                 <select
                   value={theme}
                   onChange={e => setTheme(e.target.value)}
-                  className={`p-1 rounded text-xs md:text-sm ${
+                  className={`p-1 rounded text-xs lg:text-sm ${
                     theme === 'dark' ? 'bg-gray-700 text-white' : 
                     theme === 'colorblind' ? `bg-[${getColorblindColors().background}] text-white focus:bg-[${getColorblindColors().primary}] focus:ring-1 focus:ring-white` :
                     'bg-gray-100 text-gray-900'
@@ -279,12 +297,12 @@ const Wexio = () => {
               </div>
 
               {theme === 'colorblind' && (
-                <div className="flex items-center gap-1 md:gap-2 ml-1 md:ml-2">
-                  <label className="text-xs md:text-sm font-medium text-white">Type:</label>
+                <div className="flex items-center gap-1 lg:gap-2 ml-1 lg:ml-2 min-w-max">
+                  <label className="text-xs lg:text-sm font-medium text-white">Type:</label>
                   <select
                     value={colorblindType}
                     onChange={e => setColorblindType(e.target.value)}
-                    className={`p-1 rounded text-xs md:text-sm bg-[${getColorblindColors().background}] text-white focus:bg-[${getColorblindColors().primary}] focus:ring-1 focus:ring-white`}
+                    className={`p-1 rounded text-xs lg:text-sm bg-[${getColorblindColors().background}] text-white focus:bg-[${getColorblindColors().primary}] focus:ring-1 focus:ring-white`}
                   >
                     <option value="deuteranopia" className={`bg-[${getColorblindColors().primary}]`}>
                       Deuteranopia
@@ -300,8 +318,11 @@ const Wexio = () => {
               )}
             </div>
           )}          <button
-            onClick={() => setShowSettings(!showSettings)}
-            className={`p-2 rounded transition-colors ${
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowSettings(!showSettings);
+            }}
+            className={`p-2 rounded transition-colors relative z-50 ${
               theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 
               theme === 'colorblind' ? `bg-[${getColorblindColors().background}] hover:bg-[${getColorblindColors().secondary}] text-white` :
               'bg-gray-100 hover:bg-gray-200'
@@ -313,7 +334,7 @@ const Wexio = () => {
             </svg>
           </button>
         </div>
-        <div className="flex-1">
+        <div className="flex-1 min-h-0 overflow-hidden">
           <InteractiveMap 
             impact={impactEvent} 
             onMapClick={handleMapClick}

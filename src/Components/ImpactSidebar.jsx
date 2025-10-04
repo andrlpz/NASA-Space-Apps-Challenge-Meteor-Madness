@@ -35,12 +35,12 @@ const InfoSection = ({ title, icon, children, theme, colorblindType = 'deuterano
   const colors = theme === 'colorblind' ? getColorblindColors() : null;
 
   return (
-    <div className={`mb-5 sm:mb-6 p-4 sm:p-5 rounded-lg ${
+    <div className={`mb-5 lg:mb-6 p-4 lg:p-5 rounded-lg ${
       theme === 'dark' ? 'bg-gray-700/30' :
       theme === 'colorblind' ? `${colors.bg} border border-white/20` :
       'bg-white shadow-sm border border-gray-200'
     }`}>
-      <h3 className={`text-lg sm:text-xl font-semibold flex items-center mb-4 sm:mb-4 ${
+      <h3 className={`text-lg lg:text-xl font-semibold flex items-center mb-4 lg:mb-4 ${
         theme === 'dark' ? 'text-gray-300' :
         theme === 'colorblind' ? (
           colorblindType === 'protanopia' ? 'text-[#66CCEE]' :
@@ -106,18 +106,18 @@ const StatItem = ({ label, value, valueColor = 'text-gray-900', icon = null, the
   const colors = theme === 'colorblind' ? getColorblindColors() : null;
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-3 text-base sm:text-sm mb-4 sm:mb-2">
-      <p className={`flex items-center min-w-[120px] sm:min-w-[120px] ${
+    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-2 lg:gap-3 text-base lg:text-sm mb-4 lg:mb-2">
+      <p className={`flex items-center min-w-[120px] lg:min-w-[120px] ${
         theme === 'dark' ? 'text-gray-400' :
         theme === 'colorblind' ? colors.label :
         'text-gray-600'
       }`}>
-        {icon && <span className={`mr-1 sm:mr-2 w-4 h-4 sm:w-5 sm:h-5 ${
+        {icon && <span className={`mr-1 lg:mr-2 w-4 h-4 lg:w-5 lg:h-5 ${
           theme === 'colorblind' ? colors.icon : ''
         }`}>{icon}</span>}
         {label}:
       </p>
-      <p className={`font-medium break-words max-w-full sm:max-w-[60%] ${
+      <p className={`font-medium break-words max-w-full lg:max-w-[60%] ${
         theme === 'light' ? 'text-gray-900' :
         theme === 'colorblind' ? (
           valueColor.includes('warning') ? colors.warning : 
@@ -136,8 +136,8 @@ export default function ImpactSidebar({ impact, resetImpact, theme = 'dark', col
 
   if (!impact) {
     return (
-      <div className="flex-grow flex items-center justify-center p-2 sm:p-4">
-        <div className={`text-center p-3 sm:p-4 border-2 border-dashed rounded-lg max-w-xs sm:max-w-sm mx-auto ${
+      <div className="flex-grow flex items-center justify-center p-2 lg:p-4">
+        <div className={`text-center p-3 lg:p-4 border-2 border-dashed rounded-lg max-w-xs lg:max-w-sm mx-auto ${
           theme === 'colorblind' ? 'border-white' : 'border-gray-600'
         }`}>
           <p className={`font-medium ${theme === 'colorblind' ? 'text-white' : 'text-gray-300'}`}>
@@ -155,8 +155,8 @@ export default function ImpactSidebar({ impact, resetImpact, theme = 'dark', col
   const { source, consequences, mitigation } = details;
 
   return (
-    <div className="flex-grow overflow-y-auto px-3 sm:px-4 lg:pr-4 xl:pr-6 max-w-full sm:max-w-md lg:max-w-lg xl:max-w-xl mx-auto lg:mx-0 h-[75vh] md:h-[80vh] lg:h-auto pb-4 lg:pb-0">
-      <InfoSection title={t('selected-asteroid')} icon={<Telescope className="w-4 sm:w-5 h-4 sm:h-5" />} theme={theme} colorblindType={colorblindType}>
+    <div className="flex-grow overflow-y-auto px-3 lg:px-4 lg:pr-4 xl:pr-6 max-w-full lg:max-w-md lg:max-w-lg xl:max-w-xl mx-auto lg:mx-0 h-[75vh] lg:h-auto pb-4 lg:pb-0">
+      <InfoSection title={t('selected-asteroid')} icon={<Telescope className="w-4 lg:w-5 h-4 lg:h-5" />} theme={theme} colorblindType={colorblindType}>
         <StatItem label={t('name')} value={source.name} theme={theme} colorblindType={colorblindType} />
         <StatItem label={t('est_diameter')} value={source.diameter} theme={theme} colorblindType={colorblindType} />
         <StatItem label={t('relative-velocity')} value={source.velocity} theme={theme} colorblindType={colorblindType} />
@@ -186,7 +186,7 @@ export default function ImpactSidebar({ impact, resetImpact, theme = 'dark', col
           href={source.jplUrl} 
           target="_blank" 
           rel="noopener noreferrer" 
-          className={`text-base sm:text-sm flex items-center mt-4 sm:mt-3 py-2 sm:py-0 transition-colors ${
+          className={`text-base lg:text-sm flex items-center mt-4 lg:mt-3 py-2 lg:py-0 transition-colors ${
             theme === 'colorblind'
               ? 'text-white hover:text-white/80'
               : 'text-cyan-400 hover:text-cyan-300'
@@ -259,10 +259,10 @@ export default function ImpactSidebar({ impact, resetImpact, theme = 'dark', col
         />
       </InfoSection>
 
-      <div className="hidden lg:flex justify-center mt-6 sm:mt-6">
+      <div className="hidden lg:flex justify-center mt-6 lg:mt-6">
         <button 
           onClick={resetImpact} 
-          className={`w-full sm:w-auto px-4 sm:px-4 py-3 sm:py-2 rounded-lg text-sm sm:text-sm transform transition duration-200 hover:-translate-y-1 hover:shadow-md ${
+          className={`w-full lg:w-auto px-4 lg:px-4 py-3 lg:py-2 rounded-lg text-sm lg:text-sm transform transition duration-200 hover:-translate-y-1 hover:shadow-md ${
             theme === 'light' 
               ? 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50' 
               : theme === 'colorblind'
