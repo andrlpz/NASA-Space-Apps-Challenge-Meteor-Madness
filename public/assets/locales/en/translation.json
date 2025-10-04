@@ -38,5 +38,9 @@
   "recommended-action": "Recommended Action",
   "reset-simulation": "Reset Simulation",
   "darkmode": "Dark Mode",
-  "satellitemode": "Satellite View"
+  "satellitemode": "Satellite View",
+  "sortby": "Sort by",
+  "date": "Date",
+  "none": "None"
+  
 }

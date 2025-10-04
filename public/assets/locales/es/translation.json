@@ -38,5 +38,8 @@
   "recommended-action": "Accion Recomendada",
   "reset-simulation": "Reiniciar Simulación",
   "darkmode": "Modo Oscuro",
-  "satellitemode": "Vista Satelital"
+  "satellitemode": "Vista Satelital",
+  "sortby": "Ordenar por",
+  "date": "Fecha",
+  "none": "Ninguno"
 }
