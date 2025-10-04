@@ -71,10 +71,9 @@ export default function AsteroidList({ asteroids, onSelect }) {
 
       <div className="flex-1 overflow-y-auto mt-2 space-y-2">
         {sortedAsteroids.map((a) => {
-          const diameter = a.estimated_diameter?.meters?.estimated_diameter_max?.toFixed(0) ?? 'N/A';
-          const velocity = parseFloat(a.close_approach_data?.[0]?.relative_velocity?.kilometers_per_second ?? 0).toFixed(1);
+          const diameter = a.estimated_diameter.meters.estimated_diameter_max.toFixed(0);
+          const velocity = parseFloat(a.close_approach_data[0].relative_velocity.kilometers_per_second).toFixed(1);
           const isSelected = selectedAsteroid?.id === a.id;
-
 
           return (
             <button
