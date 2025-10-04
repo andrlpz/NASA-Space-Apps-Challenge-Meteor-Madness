@@ -1,9 +1,5 @@
-import React, { useState } from "react";
-import { useTranslation } from 'react-i18next'
-import i18next from 'i18next'
-import cookies from 'js-cookie'
-
-
+import React, { useState, useCallback, useEffect, useMemo } from "react";
+import { useTranslation } from 'react-i18next';
 
 export default function AsteroidList({ asteroids, onSelect, theme = 'dark', colorblindType = 'deuteranopia' }) {
 
@@ -78,7 +74,11 @@ export default function AsteroidList({ asteroids, onSelect, theme = 'dark', colo
             a.close_approach_data[0].relative_velocity.kilometers_per_second
           ).toFixed(1);
 
-          const isSelected = selectedId === a.id;
+      <div className="flex-1 overflow-y-auto mt-2 space-y-2">
+        {sortedAsteroids.map((a) => {
+          const diameter = a.estimated_diameter.meters.estimated_diameter_max.toFixed(0);
+          const velocity = parseFloat(a.close_approach_data[0].relative_velocity.kilometers_per_second).toFixed(1);
+          const isSelected = selectedAsteroid?.id === a.id;
 
           return (
             <button
@@ -95,6 +95,14 @@ export default function AsteroidList({ asteroids, onSelect, theme = 'dark', colo
                 {a.name.replace(/[()]/g, "")}
               </p>
               <p className={`text-sm ${styles.secondaryText}`}>
+              id={a.id}
+              aria-pressed={isSelected}
+              title={formatName(a.name)}
+              onClick={() => handleSelect(a)}
+              className={`w-full p-3 ${isSelected ? selectedStyle : normalStyle} hover:bg-gray-500 rounded-lg text-left`}
+            >
+              <p className="font-semibold">{formatName(a.name)}</p>
+              <p className="text-sm text-gray-400">
                 {t('size')}: {diameter} m | {t('velocity')}: {velocity} km/s
               </p>
               {a.is_potentially_hazardous_asteroid && (
@@ -116,6 +124,9 @@ export default function AsteroidList({ asteroids, onSelect, theme = 'dark', colo
         <p className={`text-[10px] lg:text-xs mt-1.5 lg:mt-2 ${theme === 'light' ? 'text-green-600' : 'text-green-500'}`}>
           {t('click_stimulate')}
         </p>
+
+      {selectedAsteroid && (
+        <p className="text-xs text-green-600 mt-2">{t('click_stimulate')}</p>
       )}
     </div>
   );

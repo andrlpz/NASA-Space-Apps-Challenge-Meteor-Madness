@@ -6,3 +6,9 @@ js-cookie
 tailwind
 three
 leafleat
+@reduxjs/toolkit
+react-redux
+
+@react-three/fiber 
+@react-three/drei 
+three

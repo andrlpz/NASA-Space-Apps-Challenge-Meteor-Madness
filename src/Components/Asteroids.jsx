@@ -35,7 +35,7 @@ const Asteroids = () => {
       try {
 
         const res = await fetch(
-          'https://api.nasa.gov/neo/rest/v1/neo/browse?api_key='+import.meta.env.VITE_NASA_API_KEY
+          'https://api.pafodev.com/nasaapi/neo1'
         )
         const data = await res.json()
         const asteroidsList = data.near_earth_objects
@@ -102,7 +102,6 @@ const Asteroids = () => {
         <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} />
       </Canvas>
 
-      {/* Info Panel */}
       <div className="absolute top-4 left-4 bg-gray-900 bg-opacity-70 text-white p-4 rounded-lg shadow-lg max-w-xs">
         <label htmlFor="asteroid-select" className="block text-sm font-medium text-gray-300">
           Select Asteroid

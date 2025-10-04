@@ -36,5 +36,10 @@
     }
   },
   "recommended-action": "Action recommandée",
-  "reset-simulation": "Réinitialiser la simulation"
+  "reset-simulation": "Réinitialiser la simulation",
+  "darkmode": "Mode Sombre",
+  "satellitemode": "Vue Satellite",
+  "sortby": "Trier par",
+  "date": "Date",
+  "none": "Aucun"
 }

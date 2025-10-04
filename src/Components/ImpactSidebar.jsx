@@ -194,6 +194,11 @@ export default function ImpactSidebar({ impact, resetImpact, theme = 'dark', col
         >
           {t('view-jpl-database')} <ExternalLink className="w-4 h-4 ml-2" />
         </a>
+        {source.jplUrl && source.jplUrl !== 'N/A' && source.jplUrl !== null && (
+          <a href={source.jplUrl} target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300 text-sm flex items-center mt-3 transition-colors">
+            {t('view-jpl-database')} <ExternalLink className="w-4 h-4 ml-2" />
+          </a>
+        )}
       </InfoSection>
 
       <InfoSection title={t('consequences')} icon={<Zap className="w-5 h-5" />} theme={theme} colorblindType={colorblindType}>
