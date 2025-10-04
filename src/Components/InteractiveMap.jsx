@@ -62,7 +62,11 @@ export default function InteractiveMap({ impact, onMapClick, theme, colorblindTy
         <Circle
           center={impact.position} 
           pathOptions={getImpactColors()} 
-          radius={impact.radius} 
+          radius={impact.details.source.diameter ? 
+            // Convert diameter from meters to kilometers and use it to scale the circle
+            // Multiply by 1000 to make it visible on the map (since the diameter is in meters)
+            parseFloat(impact.details.source.diameter.replace(/[^0-9.]/g, '')) * 1000 :
+            impact.radius} 
         />
       )}
     </MapContainer>
