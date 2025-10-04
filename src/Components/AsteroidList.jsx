@@ -67,11 +67,11 @@ export default function AsteroidList({ asteroids, onSelect, theme = 'dark', colo
   const { t } = useTranslation()
 
   return (
-    <div className="flex flex-col h-96">
+    <div className="flex flex-col h-[45vh] md:h-96">
       <p className={`text-sm font-semibold mb-2 ${styles.text}`}>
         {t('current')} {selectedName}
       </p>
-      <div className="flex-1 overflow-y-auto mt-4 space-y-2">
+      <div className="flex-1 overflow-y-auto mt-2 sm:mt-4 space-y-1.5 sm:space-y-2">
         {asteroids.map((a) => {
           const diameter = a.estimated_diameter.meters.estimated_diameter_max.toFixed(0);
           const velocity = parseFloat(

@@ -167,12 +167,12 @@ const Wexio = () => {
   };
 
   return (
-    <div className={`relative flex h-screen w-full font-sans ${
+    <div className={`relative flex flex-col md:flex-row h-screen w-full font-sans overflow-hidden ${
         theme === 'dark' ? 'bg-gray-900 text-white' : 
         theme === 'colorblind' ? `bg-[${getColorblindColors().background}]` : 
         'bg-gray-50 text-gray-900'
       }`}>
-      <aside className={`w-full max-w-sm p-6 shadow-md flex flex-col ${
+      <aside className={`w-full md:w-96 p-4 sm:p-6 shadow-md flex flex-col h-[40vh] md:h-screen md:min-h-screen overflow-y-auto ${
         theme === 'dark' ? 'bg-gray-800' : 
         theme === 'colorblind' ? `bg-[${getColorblindColors().primary}] text-[${getColorblindColors().secondary}]` : 
         'bg-gray-100 border-r border-gray-200'

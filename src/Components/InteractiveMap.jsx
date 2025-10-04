@@ -47,9 +47,10 @@ export default function InteractiveMap({ impact, onMapClick, theme, colorblindTy
   return (
     <MapContainer 
       center={[20, 0]} 
-      zoom={3} 
+      zoom={2}
       scrollWheelZoom={true}
       style={{ height: '100%', width: '100%', zIndex: 1 }}
+      className="h-[45vh] md:h-screen"
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
