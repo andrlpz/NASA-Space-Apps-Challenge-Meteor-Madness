@@ -7,6 +7,7 @@ const initialState = {
   diameter: 550,
   velocity: 550,
   selectedAsteroid: null,
+  lastActiveMode: 'asteroids', // Nuevo campo para recordar el último modo activo
 }
 
 const impactSlice = createSlice({
@@ -19,12 +20,21 @@ const impactSlice = createSlice({
     resetImpact: (state) => {
       state.impactEvent = null
       state.selectedAsteroid = null
-      state.showAsteroidList = true
-      state.showSliders = false
+      // Restaurar según el último modo activo
+      if (state.lastActiveMode === 'sliders') {
+        state.showSliders = true
+        state.showAsteroidList = false
+      } else {
+        state.showSliders = false
+        state.showAsteroidList = true
+      }
     },
     showSliders: (state) => {
       state.showSliders = true
       state.showAsteroidList = false
+      state.lastActiveMode = 'sliders'
+      state.impactEvent = null // AGREGAR ESTA LÍNEA - Limpiar impacto al mostrar sliders
+      state.selectedAsteroid = null // También limpiar asteroide seleccionado
     },
     hideSliders: (state) => {
       state.showSliders = false
@@ -32,6 +42,9 @@ const impactSlice = createSlice({
     showAsteroidList: (state) => {
       state.showSliders = false
       state.showAsteroidList = true
+      state.lastActiveMode = 'asteroids'
+      state.impactEvent = null // AGREGAR ESTA LÍNEA - Limpiar impacto al mostrar asteroides
+      state.selectedAsteroid = null // También limpiar asteroide seleccionado
     },
     hideAsteroidList: (state) => {
       state.showAsteroidList = false

@@ -13,13 +13,11 @@
   transition: background-color 0.3s, color 0.3s;
 }
 
-/* Styles for light button on dark map */
 .map-toggle-btn.dark {
   background-color: #fff;
   color: #000;
 }
 
-/* Styles for dark button on light/satellite map */
 .map-toggle-btn.satellite {
   background-color: #000;
   color: #fff;

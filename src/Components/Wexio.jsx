@@ -45,7 +45,6 @@ const languages = [
 const Wexio = () => {
   const dispatch = useDispatch();
   
-  // Estados de Redux
   const {
     impactEvent,
     showSliders: showSlidersState,
@@ -55,7 +54,6 @@ const Wexio = () => {
     selectedAsteroid,
   } = useSelector((state) => state.impact);
 
-  // Estados locales
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [asteroids, setAsteroids] = useState([]);
@@ -115,7 +113,6 @@ const Wexio = () => {
 
   const handleMapClick = (latlng) => {
     if (showSlidersState) {
-      // Simular impacto usando valores de los sliders
       const diameterMeters = diameter;
       const velocityKms = velocity;
       
@@ -154,11 +151,9 @@ const Wexio = () => {
         },
       }));
       
-      // OCULTAR SLIDERS después de la simulación
       dispatch(hideSliders());
     
     } else if (selectedAsteroid) {
-      // Simular impacto usando asteroide seleccionado
       const diameterMeters = selectedAsteroid.estimated_diameter.meters.estimated_diameter_max;
       const velocityKms = parseFloat(selectedAsteroid.close_approach_data[0].relative_velocity.kilometers_per_second);
 
@@ -194,35 +189,7 @@ const Wexio = () => {
         },
       }));
       
-      // OCULTAR LISTA DE ASTEROIDES después de la simulación
       dispatch(hideAsteroidList());
-    } else {
-      // Si no hay sliders activos ni asteroide seleccionado, mostrar mensaje básico
-      dispatch(setImpactEvent({
-        position: latlng,
-        radius: 30000,
-        details: {
-          source: {
-            name: 'Click simulation',
-            diameter: 'Unknown',
-            velocity: 'Unknown',
-            isPotentiallyHazardous: false,
-            closeApproachDate: 'N/A',
-            missDistance: 'N/A',
-            absoluteMagnitude: 'N/A',
-            jplUrl: 'N/A',
-          },
-          consequences: {
-            impactEnergy: 'Select an asteroid or use sliders for simulation',
-            seismicEffect: 'N/A',
-            airBlast: 'N/A',
-          },
-          mitigation: {
-            threatLevel: 'UNKNOWN',
-            recommendedAction: 'Please select an asteroid from the list or use the sliders to customize parameters.',
-          },
-        },
-      }));
     }
   };
 
@@ -272,7 +239,9 @@ const Wexio = () => {
                 <AsteroidList asteroids={asteroids} onSelect={(asteroid) => dispatch(setSelectedAsteroid(asteroid))} />
               </div>
             )}
-            <ImpactSidebar impact={impactEvent} resetImpact={handleResetImpact} />
+            {impactEvent && (
+              <ImpactSidebar impact={impactEvent} resetImpact={handleResetImpact} />
+            )}
           </>
         )}
       </aside>

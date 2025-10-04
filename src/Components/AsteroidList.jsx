@@ -23,7 +23,6 @@ export default function AsteroidList({ asteroids, onSelect }) {
     }
   }, [selectedAsteroid]);
 
-  // Sort asteroids based on filter
   const sortedAsteroids = useMemo(() => {
     if (!asteroids) return [];
 
@@ -50,7 +49,6 @@ export default function AsteroidList({ asteroids, onSelect }) {
 
   return (
     <div className="flex flex-col h-96">
-      {/* Filter Selector */}
       <div className="flex space-x-2 mb-2">
         <label>{t('sortby')}:</label>
         <select
