@@ -12,7 +12,7 @@ const initialState = {
   currentZoomLevel: 2, // Track current zoom level
   previousZoomLevel: 2, // Track previous zoom level to determine direction
   zoomThresholdFor2D: 3.5, // Zoom level to switch to 2D map (higher zoom = more detailed view)
-  zoomThresholdFor3D: 3.5, // Zoom level to switch back to 3D map (lower zoom = global view)
+  zoomThresholdFor3D: 2, // Zoom level to switch back to 3D map (lower zoom = global view)
   showModeChangeNotification: false, // Show notification when mode changes automatically
 }
 
@@ -72,20 +72,26 @@ const impactSlice = createSlice({
       const previousZoomLevel = state.currentZoomLevel
       state.previousZoomLevel = previousZoomLevel
       state.currentZoomLevel = newZoomLevel
-      
-      // Determine zoom direction
-      const isZoomingIn = newZoomLevel > previousZoomLevel
-      const isZoomingOut = newZoomLevel < previousZoomLevel
-      
-      // Directional auto-switching logic
-      if (state.is3DMap && isZoomingIn && newZoomLevel >= state.zoomThresholdFor2D) {
-        // Switch from 3D to 2D only when zooming IN
+
+      // Switch to 2D only when zooming in past the threshold
+      if (
+        state.is3DMap &&
+        previousZoomLevel < state.zoomThresholdFor2D &&
+        newZoomLevel >= state.zoomThresholdFor2D &&
+        newZoomLevel > previousZoomLevel
+      ) {
         state.is3DMap = false
-        state.showModeChangeNotification = true
-      } else if (!state.is3DMap && isZoomingOut && newZoomLevel <= state.zoomThresholdFor3D) {
-        // Switch from 2D to 3D only when zooming OUT
+        state.showModeChangeNotification = false
+      }
+      // Switch to 3D only when zooming out past the threshold
+      else if (
+        !state.is3DMap &&
+        previousZoomLevel > state.zoomThresholdFor3D &&
+        newZoomLevel <= state.zoomThresholdFor3D &&
+        newZoomLevel < previousZoomLevel
+      ) {
         state.is3DMap = true
-        state.showModeChangeNotification = true
+        state.showModeChangeNotification = false
       }
     },
     setZoomThresholds: (state, action) => {

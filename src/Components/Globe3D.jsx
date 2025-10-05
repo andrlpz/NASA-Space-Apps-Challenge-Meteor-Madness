@@ -78,30 +78,26 @@ function CameraController() {
   const changeThreshold = 0.05 // Minimum change to update zoom level (more sensitive)
 
   useFrame(({ camera }) => {
-    const currentDistance = camera.position.length()
-    
-    if (lastDistance.current !== null) {
-      const distanceChange = Math.abs(currentDistance - lastDistance.current)
-      
-      if (distanceChange > changeThreshold) {
-        // Convert camera distance to equivalent zoom level
-        // Further away = lower zoom level, closer = higher zoom level
-        // Map distance range [2.0, 8] to zoom range [10, 1] for more sensitivity
-        const minDistance = 2.0
-        const maxDistance = 8
-        const minZoom = 1
-        const maxZoom = 10
-        
-        const clampedDistance = Math.max(minDistance, Math.min(maxDistance, currentDistance))
-        const zoomLevel = maxZoom - ((clampedDistance - minDistance) / (maxDistance - minDistance)) * (maxZoom - minZoom)
-        
-        dispatch(updateZoomLevel(Math.round(zoomLevel * 20) / 20)) // Round to 0.05 precision
-        lastDistance.current = currentDistance
-      }
-    } else {
+  const currentDistance = camera.position.length()
+  if (lastDistance.current !== null) {
+    const distanceChange = Math.abs(currentDistance - lastDistance.current)
+    if (distanceChange > changeThreshold) {
+      const minDistance = 2.0
+      const maxDistance = 8.0
+      const minZoom = 2    // match zoomThresholdFor3D
+      const maxZoom = 3.5  // match zoomThresholdFor2D
+
+      const clampedDistance = Math.max(minDistance, Math.min(maxDistance, currentDistance))
+      const zoomLevel = minZoom + ((maxDistance - clampedDistance) / (maxDistance - minDistance)) * (maxZoom - minZoom)
+
+      //console.log('Distance:', currentDistance, 'Clamped:', clampedDistance, 'ZoomLevel:', zoomLevel)
+      dispatch(updateZoomLevel(Math.round(zoomLevel * 20) / 20))
       lastDistance.current = currentDistance
     }
-  })
+  } else {
+    lastDistance.current = currentDistance
+  }
+})
 
   return null
 }
@@ -121,7 +117,7 @@ export default function Globe3D({ impact, onMapClick }){
         
         {picked && <ClickMarker lat={picked.lat} lng={picked.lng} />}
         {impact && <ImpactRing lat={impact.position.lat} lng={impact.position.lng} radiusMeters={impact.radius} />}
-        <OrbitControls enablePan={false} />
+        <OrbitControls enablePan={false} zoomSpeed={1} />
         <CameraController />
       </Canvas>
       <div className="absolute top-3 left-3 bg-black/60 text-white text-xs px-3 py-2 rounded">
