@@ -30,13 +30,13 @@ export default function ImpactSidebar({ impact, resetImpact }) {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-white flex items-center">
             <div className="w-3 h-3 bg-red-500 rounded-full mr-3 animate-pulse"></div>
-            Impact Analysis
+            {t('impactAnalysis')}
           </h2>
           <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center border-2 border-red-500">
             <AlertTriangle className="w-6 h-6 text-red-400" />
           </div>
         </div>
-        <p className="text-gray-300 text-sm">Detailed impact simulation results</p>
+        <p className="text-gray-300 text-sm">{t('detailedSimulationResults')}</p>
       </div>
 
       {/* Asteroid Information */}

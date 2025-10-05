@@ -2,14 +2,21 @@
 
 /* Light theme variables and overrides */
 :root.light {
-  --bg-primary: #f8fafc;
-  --bg-secondary: #e2e8f0;
-  --bg-tertiary: #cbd5e1;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #e2e8f0;
+  --bg-quaternary: #cbd5e1;
   --text-primary: #1e293b;
   --text-secondary: #475569;
   --text-tertiary: #64748b;
+  --text-quaternary: #94a3b8;
   --border-primary: #cbd5e1;
+  --border-secondary: #94a3b8;
   --accent-color: #0ea5e9;
+  --accent-secondary: #0284c7;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
 }
 
 /* Light theme body override */
@@ -18,7 +25,7 @@ html.light body {
   color: var(--text-primary);
 }
 
-/* Light theme component overrides */
+/* Light theme background overrides */
 .light .bg-gray-900 {
   background-color: var(--bg-primary) !important;
 }
@@ -31,7 +38,24 @@ html.light body {
   background-color: var(--bg-tertiary) !important;
 }
 
+.light .bg-gray-600 {
+  background-color: var(--bg-quaternary) !important;
+}
+
+.light .bg-gray-500 {
+  background-color: var(--border-secondary) !important;
+}
+
+/* Light theme text color overrides */
 .light .text-white {
+  color: var(--text-primary) !important;
+}
+
+.light .text-gray-100 {
+  color: var(--text-primary) !important;
+}
+
+.light .text-gray-200 {
   color: var(--text-primary) !important;
 }
 
@@ -43,10 +67,412 @@ html.light body {
   color: var(--text-tertiary) !important;
 }
 
+.light .text-gray-500 {
+  color: var(--text-quaternary) !important;
+}
+
+/* Light theme border overrides */
 .light .border-gray-600 {
   border-color: var(--border-primary) !important;
 }
 
 .light .border-gray-700 {
   border-color: var(--border-primary) !important;
+}
+
+.light .border-gray-500 {
+  border-color: var(--border-secondary) !important;
+}
+
+/* Light theme specific overrides for gradient backgrounds */
+.light .bg-gray-800\/30 {
+  background-color: rgba(248, 250, 252, 0.8) !important;
+}
+
+.light .bg-gray-700\/30 {
+  background-color: rgba(226, 232, 240, 0.8) !important;
+}
+
+/* Light theme hover states */
+.light .hover\:bg-gray-700:hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+.light .hover\:bg-gray-600:hover {
+  background-color: var(--bg-quaternary) !important;
+}
+
+.light .hover\:bg-gray-500:hover {
+  background-color: var(--border-secondary) !important;
+}
+
+/* Light theme shadow adjustments */
+.light .shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.light .shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
+}
+
+.light .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Light theme specific component overrides */
+.light .bg-black\/60 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Light theme button overrides */
+.light button {
+  color: var(--text-primary) !important;
+}
+
+.light button.bg-gray-700 {
+  background-color: var(--bg-tertiary) !important;
+  border-color: var(--border-primary) !important;
+}
+
+.light button.bg-gray-800 {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-primary) !important;
+}
+
+/* Light theme input overrides */
+.light input,
+.light select {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-primary) !important;
+}
+
+/* Light theme accent colors - keep original colors for semantic meaning */
+.light .text-cyan-400 {
+  color: #22d3ee !important;
+}
+
+.light .text-blue-300 {
+  color: #93c5fd !important;
+}
+
+.light .text-blue-500 {
+  color: #3b82f6 !important;
+}
+
+.light .text-green-600 {
+  color: #10b981 !important;
+}
+
+.light .text-red-400 {
+  color: #f87171 !important;
+}
+
+/* Light theme Globe3D info box */
+.light .bg-black\/60 {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid var(--border-primary) !important;
+}
+
+/* Light theme for sidebar and panels */
+.light aside {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Light theme for main content area */
+.light main {
+  background-color: var(--bg-primary) !important;
+}
+
+/* Light theme for configuration panel */
+.light .fixed {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Light theme slider overrides */
+.light .bg-gray-700 input[type="range"] {
+  background-color: var(--bg-quaternary) !important;
+}
+
+/* Light theme scrollbar (webkit browsers) */
+.light ::-webkit-scrollbar {
+  background-color: var(--bg-secondary);
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background-color: var(--bg-quaternary);
+  border-radius: 4px;
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+  background-color: var(--border-secondary);
+}
+
+/* Light theme for React components with inline styles */
+.light [style*="background-color"] {
+  background-color: var(--bg-secondary) !important;
+}
+
+/* Light theme specific component styles */
+.light .bg-gradient-to-br {
+  background: linear-gradient(to bottom right, var(--bg-secondary), var(--bg-tertiary)) !important;
+}
+
+/* Light theme map toggle button */
+.light .map-toggle-btn.dark {
+  background-color: var(--text-primary) !important;
+  color: var(--bg-primary) !important;
+}
+
+.light .map-toggle-btn.satellite {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-primary) !important;
+}
+
+/* Light theme ImpactSidebar specific styles */
+.light .bg-gray-700\/30 {
+  background-color: rgba(248, 250, 252, 0.9) !important;
+  border-color: var(--border-primary) !important;
+}
+
+.light .bg-gray-800\/30 {
+  background-color: rgba(241, 245, 249, 0.9) !important;
+  border-color: var(--border-primary) !important;
+}
+
+/* Light theme for Asteroid List items */
+.light .hover\:bg-gray-500:hover {
+  background-color: var(--bg-quaternary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Light theme for sliders */
+.light input[type="range"] {
+  background-color: var(--bg-quaternary) !important;
+}
+
+.light input[type="range"]::-webkit-slider-thumb {
+  background-color: var(--accent-color) !important;
+}
+
+/* Light theme for select elements */
+.light select option {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Force light colors on all text elements */
+.light * {
+  border-color: var(--border-primary);
+}
+
+.light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
+  color: var(--text-primary) !important;
+}
+
+.light p {
+  color: var(--text-primary) !important;
+}
+
+.light span {
+  color: inherit !important;
+}
+
+.light div {
+  color: inherit;
+}
+
+/* Light theme specific button styles */
+.light .bg-neutral-100 {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
+.light .text-neutral-500 {
+  color: var(--text-secondary) !important;
+}
+
+.light .border-neutral-300 {
+  border-color: var(--border-primary) !important;
+}
+
+/* Light theme reset button specific fixes */
+.light button.bg-neutral-100 {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-primary) !important;
+}
+
+.light button.text-neutral-500 {
+  color: var(--text-primary) !important;
+}
+
+.light button.border-neutral-300 {
+  border-color: var(--border-primary) !important;
+}
+
+/* Force light theme on all buttons with neutral colors */
+.light button[class*="neutral"] {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-primary) !important;
+}
+
+/* Light theme for Canvas background (3D globe) */
+.light canvas {
+  background-color: var(--bg-primary) !important;
+}
+
+/* Force light theme on root container */
+html.light #root {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Override any remaining dark elements with more specific targeting */
+.light [class*="bg-gray-9"] {
+  background-color: var(--bg-primary) !important;
+}
+
+.light [class*="bg-gray-8"] {
+  background-color: var(--bg-secondary) !important;
+}
+
+.light [class*="bg-gray-7"] {
+  background-color: var(--bg-tertiary) !important;
+}
+
+.light [class*="text-white"] {
+  color: var(--text-primary) !important;
+}
+
+/* Light theme for specific UI elements */
+.light .bg-blue-600 {
+  background-color: var(--accent-color) !important;
+}
+
+.light .bg-blue-500 {
+  background-color: var(--accent-secondary) !important;
+}
+
+/* Light theme for tooltips and popups */
+.light .bg-black {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-primary) !important;
+}
+
+/* Light theme for any remaining black backgrounds */
+.light [style*="background: #"] {
+  background-color: var(--bg-secondary) !important;
+}
+
+/* Light theme animation and transition preservation */
+.light * {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Light theme configuration panel specific overrides */
+.light .fixed.bg-gray-800 {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-primary) !important;
+}
+
+.light .fixed button {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
+.light .fixed .text-white {
+  color: var(--text-primary) !important;
+}
+
+.light .fixed .text-gray-300 {
+  color: var(--text-secondary) !important;
+}
+
+.light .fixed .text-gray-400 {
+  color: var(--text-tertiary) !important;
+}
+
+.light .fixed .border-gray-700 {
+  border-color: var(--border-primary) !important;
+}
+
+/* Additional reset button targeting */
+.light button[class*="bg-neutral"],
+.light button[class*="text-neutral"],
+.light button[class*="border-neutral"] {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-primary) !important;
+}
+
+/* Light theme reset button with gradient backgrounds */
+.light .bg-gradient-to-r {
+  background: linear-gradient(to right, var(--bg-tertiary), var(--bg-quaternary)) !important;
+}
+
+.light .from-gray-700 {
+  background: linear-gradient(to right, var(--bg-tertiary), var(--bg-quaternary)) !important;
+}
+
+.light .to-gray-800 {
+  background: linear-gradient(to right, var(--bg-tertiary), var(--bg-quaternary)) !important;
+}
+
+.light .hover\:from-gray-600:hover {
+  background: linear-gradient(to right, var(--bg-quaternary), var(--border-secondary)) !important;
+}
+
+.light .hover\:to-gray-700:hover {
+  background: linear-gradient(to right, var(--bg-quaternary), var(--border-secondary)) !important;
+}
+
+.light .border-gray-500 {
+  border-color: var(--border-primary) !important;
+}
+
+.light .hover\:border-gray-400:hover {
+  border-color: var(--border-secondary) !important;
+}
+
+/* Force text color on gradient buttons */
+.light button[class*="gradient"] {
+  color: var(--text-primary) !important;
+}
+
+.light button[class*="gradient"] span {
+  color: var(--text-primary) !important;
+}
+
+/* Override any remaining black/dark elements in light mode */
+.light [style*="background-color: #000"],
+.light [style*="background: #000"],
+.light [style*="color: #000"] {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Ensure all text elements are visible in light mode */
+.light .text-black {
+  color: var(--text-primary) !important;
+}
+
+/* Light mode specific fixes for any missed elements */
+.light button:not([class*="cyan"]):not([class*="blue"]):not([class*="red"]):not([class*="green"]) {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-primary) !important;
+}
+
+/* Ensure configuration panel doesn't block interactions */
+.light .fixed[style*="z-index"] {
+  pointer-events: auto !important;
 }

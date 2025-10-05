@@ -628,7 +628,7 @@ const Wexio = () => {
           <button
             onClick={() => dispatch(toggleMapMode())}
             className="bg-gray-700 text-white p-2 rounded hover:bg-gray-600 transition-colors flex items-center gap-2"
-            title={is3DMap ? 'Switch to 2D Map' : 'Switch to 3D Globe'}
+            title={is3DMap ? t('switchTo2D') : t('switchTo3D')}
           >
             <span>{is3DMap ? '🗺️' : '🌍'}</span>
             <span className="text-xs">{is3DMap ? '2D' : '3D'}</span>
