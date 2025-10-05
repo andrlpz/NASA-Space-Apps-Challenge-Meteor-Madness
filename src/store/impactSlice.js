@@ -73,6 +73,9 @@ const impactSlice = createSlice({
       state.previousZoomLevel = previousZoomLevel
       state.currentZoomLevel = newZoomLevel
 
+      // Re-enable automatic switching with safer conditions
+      // Only switch when crossing thresholds in the direction of zoom
+      
       // Switch to 2D only when zooming in past the threshold
       if (
         state.is3DMap &&
@@ -81,7 +84,6 @@ const impactSlice = createSlice({
         newZoomLevel > previousZoomLevel
       ) {
         state.is3DMap = false
-        state.showModeChangeNotification = false
       }
       // Switch to 3D only when zooming out past the threshold
       else if (
@@ -91,7 +93,6 @@ const impactSlice = createSlice({
         newZoomLevel < previousZoomLevel
       ) {
         state.is3DMap = true
-        state.showModeChangeNotification = false
       }
     },
     setZoomThresholds: (state, action) => {

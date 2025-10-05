@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Circle, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import './InteractiveMap.css'; // for button styling
@@ -24,9 +24,21 @@ function MapEventsHandler({ onMapClick, onZoomAction }) {
 }
 
 export default function InteractiveMap({ impact, onMapClick }) {
-  const [layer, setLayer] = useState('dark'); // default layer
+  const [layer, setLayer] = useState(localStorage.getItem('mapLayer') || 'dark'); // get from localStorage
   const { t } = useTranslation(); // ✅ moved inside component
   const dispatch = useDispatch();
+
+  // Listen for map layer changes from configuration panel
+  useEffect(() => {
+    const handleMapLayerChange = (event) => {
+      setLayer(event.detail);
+    };
+
+    window.addEventListener('mapLayerChange', handleMapLayerChange);
+    return () => {
+      window.removeEventListener('mapLayerChange', handleMapLayerChange);
+    };
+  }, []);
 
   const handleZoomAction = (zoomLevel) => {
     dispatch(updateZoomLevel(zoomLevel));

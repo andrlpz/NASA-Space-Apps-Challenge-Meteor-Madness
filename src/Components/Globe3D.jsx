@@ -78,26 +78,27 @@ function CameraController() {
   const changeThreshold = 0.05 // Minimum change to update zoom level (more sensitive)
 
   useFrame(({ camera }) => {
-  const currentDistance = camera.position.length()
-  if (lastDistance.current !== null) {
-    const distanceChange = Math.abs(currentDistance - lastDistance.current)
-    if (distanceChange > changeThreshold) {
-      const minDistance = 2.0
-      const maxDistance = 8.0
-      const minZoom = 2    // match zoomThresholdFor3D
-      const maxZoom = 3.5  // match zoomThresholdFor2D
+    const currentDistance = camera.position.length()
+    
+    if (lastDistance.current !== null) {
+      const distanceChange = Math.abs(currentDistance - lastDistance.current)
+      if (distanceChange > changeThreshold) {
+        const minDistance = 2.0
+        const maxDistance = 8.0
+        const minZoom = 2    // match zoomThresholdFor3D
+        const maxZoom = 3.5  // match zoomThresholdFor2D
 
-      const clampedDistance = Math.max(minDistance, Math.min(maxDistance, currentDistance))
-      const zoomLevel = minZoom + ((maxDistance - clampedDistance) / (maxDistance - minDistance)) * (maxZoom - minZoom)
+        const clampedDistance = Math.max(minDistance, Math.min(maxDistance, currentDistance))
+        const zoomLevel = minZoom + ((maxDistance - clampedDistance) / (maxDistance - minDistance)) * (maxZoom - minZoom)
 
-      //console.log('Distance:', currentDistance, 'Clamped:', clampedDistance, 'ZoomLevel:', zoomLevel)
-      dispatch(updateZoomLevel(Math.round(zoomLevel * 20) / 20))
+        // console.log('Distance:', currentDistance, 'Clamped:', clampedDistance, 'ZoomLevel:', zoomLevel)
+        dispatch(updateZoomLevel(Math.round(zoomLevel * 20) / 20))
+        lastDistance.current = currentDistance
+      }
+    } else {
       lastDistance.current = currentDistance
     }
-  } else {
-    lastDistance.current = currentDistance
-  }
-})
+  })
 
   return null
 }

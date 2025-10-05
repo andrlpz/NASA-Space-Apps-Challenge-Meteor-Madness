@@ -1,1 +1,52 @@
 @import "tailwindcss";
+
+/* Light theme variables and overrides */
+:root.light {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #e2e8f0;
+  --bg-tertiary: #cbd5e1;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-tertiary: #64748b;
+  --border-primary: #cbd5e1;
+  --accent-color: #0ea5e9;
+}
+
+/* Light theme body override */
+html.light body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Light theme component overrides */
+.light .bg-gray-900 {
+  background-color: var(--bg-primary) !important;
+}
+
+.light .bg-gray-800 {
+  background-color: var(--bg-secondary) !important;
+}
+
+.light .bg-gray-700 {
+  background-color: var(--bg-tertiary) !important;
+}
+
+.light .text-white {
+  color: var(--text-primary) !important;
+}
+
+.light .text-gray-300 {
+  color: var(--text-secondary) !important;
+}
+
+.light .text-gray-400 {
+  color: var(--text-tertiary) !important;
+}
+
+.light .border-gray-600 {
+  border-color: var(--border-primary) !important;
+}
+
+.light .border-gray-700 {
+  border-color: var(--border-primary) !important;
+}

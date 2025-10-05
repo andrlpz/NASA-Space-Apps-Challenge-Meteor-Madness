@@ -13,13 +13,13 @@ import {
   toggleMapMode,
   updateZoomLevel,
   setMapMode,
-  hideNotification,
 } from '../store/impactSlice';
 import InteractiveMap from './InteractiveMap';
 import ImpactSidebar from './ImpactSidebar';
 import { Target, Loader } from 'lucide-react';
 import AsteroidList from './AsteroidList';
 import Sliders from './Sliders';
+import Configuration from './configuration';
 
 import { Link } from 'react-router-dom';
 
@@ -59,9 +59,6 @@ const Wexio = () => {
     selectedAsteroid,
     is3DMap,
     currentZoomLevel,
-    zoomThresholdFor2D,
-    zoomThresholdFor3D,
-    showModeChangeNotification,
   } = useSelector((state) => state.impact);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -120,16 +117,6 @@ const Wexio = () => {
   useEffect(() => {
     document.title = t('app_title')
   }, [currentLanguage, t])
-
-  // Auto-hide notification after 3 seconds
-  useEffect(() => {
-    if (showModeChangeNotification) {
-      const timer = setTimeout(() => {
-        dispatch(hideNotification())
-      }, 3000)
-      return () => clearTimeout(timer)
-    }
-  }, [showModeChangeNotification, dispatch])
 
   const handleMapClick = (latlng) => {
   const calculateImpact = (diameterMeters, velocityKms) => {
@@ -259,6 +246,9 @@ const Wexio = () => {
 
   return (
     <div className="relative flex h-screen w-full bg-gray-900 text-white font-sans">
+      {/* Configuration Panel - Fixed positioning outside main layout */}
+      <Configuration />
+      
       <aside className="w-full max-w-sm p-6 bg-gray-800 shadow-2xl flex flex-col">
         <div className="flex items-center mb-6">
           <Target className="w-8 h-8 text-red-400 mr-3" />
@@ -298,26 +288,40 @@ const Wexio = () => {
         {!isLoading && !error && (
           <>
             {showAsteroidListState && (
-              <div>
+              <div key="asteroid-list-container">
                 <p className="text-sm mb-2">{t('select')}</p>
                 <AsteroidList asteroids={asteroids} onSelect={(asteroid) => dispatch(setSelectedAsteroid(asteroid))} />
               </div>
             )}
             {impactEvent && (
-              <ImpactSidebar impact={impactEvent} resetImpact={handleResetImpact} />
+              <ImpactSidebar 
+                key={`impact-sidebar-${impactEvent.position.lat}-${impactEvent.position.lng}`}
+                impact={impactEvent} 
+                resetImpact={handleResetImpact} 
+              />
             )}
           </>
         )}
       </aside>
 
       <main className="flex-1 h-full relative">
-        {is3DMap
-          ? <GlobePage impact={impactEvent} onMapClick={handleMapClick} resetImpact={resetImpact} />
-          : <InteractiveMap impact={impactEvent} onMapClick={handleMapClick} />
-        }
+        {is3DMap ? (
+          <GlobePage 
+            key="globe-page"
+            impact={impactEvent} 
+            onMapClick={handleMapClick} 
+            resetImpact={handleResetImpact} 
+          />
+        ) : (
+          <InteractiveMap 
+            key="interactive-map"
+            impact={impactEvent} 
+            onMapClick={handleMapClick} 
+          />
+        )}
         
         {/* Map Mode Toggle Button */}
-        <div className="absolute top-16 right-4 z-10 bg-gray-800 p-2 rounded z-1000">
+        <div className="absolute top-16 right-4 z-[100] bg-gray-800 p-2 rounded shadow-lg">
           <button
             onClick={() => dispatch(toggleMapMode())}
             className="bg-gray-700 text-white p-2 rounded hover:bg-gray-600 transition-colors flex items-center gap-2"
@@ -329,53 +333,8 @@ const Wexio = () => {
           <div className="text-xs text-gray-400 mt-1 text-center">
             Zoom: {currentZoomLevel?.toFixed(2) || '--'}
           </div>
-          <div className="text-xs text-gray-300 mt-1 text-center">
-            2D ≥{zoomThresholdFor2D} | 3D ≤{zoomThresholdFor3D}
-          </div>
-          <div className="w-full bg-gray-600 rounded-full h-1 mt-1">
-            <div 
-              className="bg-blue-500 h-1 rounded-full transition-all duration-300"
-              style={{ 
-                width: is3DMap 
-                  ? `${Math.min(100, (currentZoomLevel / zoomThresholdFor2D) * 100)}%`
-                  : `${Math.max(0, 100 - ((currentZoomLevel - zoomThresholdFor3D) / (zoomThresholdFor2D - zoomThresholdFor3D)) * 100)}%`
-              }}
-            ></div>
-          </div>
         </div>
       </main>
-      <div className="absolute top-4 right-4 z-10 bg-gray-800 p-2 rounded z-1000">
-        <select
-          value={currentLanguageCode}
-          onChange={e => {
-            i18next.changeLanguage(e.target.value);
-            cookies.set('i18next', e.target.value);
-          }}
-          className="bg-gray-700 text-white p-1 rounded"
-        >
-          {languages.map(lang => (
-            <option key={lang.code} value={lang.code}>
-              {lang.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      
-      {/* Auto-switch notification */}
-      {showModeChangeNotification && (
-        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
-          <div className="flex items-center gap-2">
-            <span>{is3DMap ? '🌍' : '🗺️'}</span>
-            <span>Switched to {is3DMap ? '3D Globe' : '2D Map'}</span>
-            <button 
-              onClick={() => dispatch(hideNotification())}
-              className="ml-2 text-white hover:text-gray-300"
-            >
-              ×
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
