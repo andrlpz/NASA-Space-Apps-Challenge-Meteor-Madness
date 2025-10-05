@@ -3,6 +3,7 @@ import React from 'react';
 import { Zap, ShieldCheck, MapPin, Telescope, Gauge, Scale, Wind, ExternalLink, Ruler } from 'lucide-react';
 
 import { useTranslation } from 'react-i18next'
+import InfoButton from './info';
 
 export default function ImpactSidebar({ impact, resetImpact }) {
 
@@ -27,19 +28,20 @@ export default function ImpactSidebar({ impact, resetImpact }) {
   return (
     <div className="flex-grow overflow-y-auto pr-2">
 
-      <InfoSection title={t('selected-asteroid')} icon={<Telescope className="w-5 h-5" />}>
-        <StatItem label={t('name')} value={source.name} />
-        <StatItem label={t('est_diameter')} value={source.diameter} />
-        <StatItem label={t('relative-velocity')} value={source.velocity} />
-        <StatItem label={t('close-approach')} value={source.closeApproachDate} />
+      <InfoSection title={t('selected-asteroid')} icon={<Telescope className="w-5 h-5" />} infoTerm="selected-asteroid">
+        <StatItem label={t('name')} value={source.name} infoTerm="name" />
+        <StatItem label={t('est_diameter')} value={source.diameter} infoTerm="est_diameter" />
+        <StatItem label={t('relative-velocity')} value={source.velocity} infoTerm="relative-velocity" />
+        <StatItem label={t('close-approach')} value={source.closeApproachDate} infoTerm="close-approach" />
 
-        <StatItem label={t('miss-distance')} value={source.missDistance} />
+        <StatItem label={t('miss-distance')} value={source.missDistance} infoTerm="miss-distance" />
 
-        <StatItem label={t('abs-magnitude')} value={source.absoluteMagnitude} />
+        <StatItem label={t('abs-magnitude')} value={source.absoluteMagnitude} infoTerm="abs-magnitude" />
         <StatItem
           label={t('potentially-hazardous')}
           value={source.isPotentiallyHazardous ? `${t('yes')}` : `${t('no')}`}
           valueColor={source.isPotentiallyHazardous ? 'text-red-400' : 'text-green-400'}
+          infoTerm="potentially-hazardous"
         />
 
         {source.jplUrl && source.jplUrl !== 'N/A' && source.jplUrl !== null && (
@@ -49,20 +51,21 @@ export default function ImpactSidebar({ impact, resetImpact }) {
         )}
       </InfoSection>
 
-      <InfoSection title={t('consequences')} icon={<Zap className="w-5 h-5" />}>
-        <StatItem label={t('impact-location')} value={`${t('lat')} ${position.lat.toFixed(3)}, ${t('lng')} ${position.lng.toFixed(3)}`} icon={<MapPin size={16} className="text-gray-400" />} />
-        <StatItem label={t('kinetic-energy')} value={consequences.impactEnergy} icon={<Gauge size={16} className="text-gray-400" />} />
-        <StatItem label={t('seismic-effect')} value={consequences.seismicEffect} icon={<Scale size={16} className="text-gray-400" />} />
-        <StatItem label={t('air-blast')} value={consequences.airBlast} icon={<Wind size={16} className="text-gray-400" />} />
+      <InfoSection title={t('consequences')} icon={<Zap className="w-5 h-5" />} infoTerm="consequences">
+        <StatItem label={t('impact-location')} value={`${t('lat')} ${position.lat.toFixed(3)}, ${t('lng')} ${position.lng.toFixed(3)}`} icon={<MapPin size={16} className="text-gray-400" />} infoTerm="impact-location" />
+        <StatItem label={t('kinetic-energy')} value={consequences.impactEnergy} icon={<Gauge size={16} className="text-gray-400" />} infoTerm="kinetic-energy" />
+        <StatItem label={t('seismic-effect')} value={consequences.seismicEffect} icon={<Scale size={16} className="text-gray-400" />} infoTerm="seismic-effect" />
+        <StatItem label={t('air-blast')} value={consequences.airBlast} icon={<Wind size={16} className="text-gray-400" />} infoTerm="air-blast" />
       </InfoSection>
 
-      <InfoSection title={t('mitigation-report')} icon={<ShieldCheck className="w-5 h-5" />}>
+      <InfoSection title={t('mitigation-report')} icon={<ShieldCheck className="w-5 h-5" />} infoTerm="mitigation-report">
         <StatItem
           label={t('threat-level')}
           value={t(`mitigation.threatlevel.${mitigation.threatLevel}`)}
           valueColor={source.isPotentiallyHazardous ? 'text-yellow-400 font-bold' : 'text-gray-300'}
+          infoTerm="threat-level"
         />
-        <StatItem label={t('recommended-action')} value={mitigation.recommendedAction} />
+        <StatItem label={t('recommended-action')} value={mitigation.recommendedAction} infoTerm="recommended-action" />
       </InfoSection>
 
       <div className="flex justify-center mt-4">
@@ -75,11 +78,12 @@ export default function ImpactSidebar({ impact, resetImpact }) {
 }
 
 
-const InfoSection = ({ title, icon, children }) => (
-  <div className="mb-6 bg-gray-700/30 p-4 rounded-lg">
+const InfoSection = ({ title, icon, children, infoTerm }) => (
+  <div className="mb-6 bg-gray-700/30 p-4 rounded-lg group">
     <h3 className="text-lg font-semibold text-gray-300 flex items-center mb-3">
       {React.cloneElement(icon, { className: "mr-2 text-cyan-400" })}
       {title}
+      {infoTerm && <InfoButton term={infoTerm} />}
     </h3>
     <div className="space-y-2">
       {children}
@@ -87,11 +91,12 @@ const InfoSection = ({ title, icon, children }) => (
   </div>
 );
 
-const StatItem = ({ label, value, valueColor = 'text-white', icon = null }) => (
-  <div className="flex justify-between items-center text-sm">
+const StatItem = ({ label, value, valueColor = 'text-white', icon = null, infoTerm }) => (
+  <div className="flex justify-between items-center text-sm group">
     <p className="text-gray-400 flex items-center">
       {icon && <span className="mr-2">{icon}</span>}
       {label}:
+      {infoTerm && <InfoButton term={infoTerm} />}
     </p>
     <p className={`font-medium ${valueColor}`}>{value}</p>
   </div>

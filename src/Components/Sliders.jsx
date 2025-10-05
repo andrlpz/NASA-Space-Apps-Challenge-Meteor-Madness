@@ -1,6 +1,7 @@
 import React from 'react';
 import RangeSlider from './RangeSlider';
 import { useTranslation } from 'react-i18next'
+import InfoButton from './info';
 
 const Sliders = ({ diameter, setDiameter, velocity, setVelocity }) => {
     const { t } = useTranslation();
@@ -11,15 +12,17 @@ const Sliders = ({ diameter, setDiameter, velocity, setVelocity }) => {
                 {t('adjust_parameters')}
             </h2>
             <div className="flex-1 space-y-8">
-                <div>
-                    <p className="text-base font-semibold text-white mb-2">
+                <div className="group">
+                    <p className="text-base font-semibold text-white mb-2 flex items-center">
                         {t('diameter')}
+                        <InfoButton term="diameter" />
                     </p>
                     <RangeSlider min={0} max={1000} step={10} value={diameter} onChange={setDiameter} />
                 </div>
-                <div>
-                    <p className="text-base font-semibold text-white mb-2">
+                <div className="group">
+                    <p className="text-base font-semibold text-white mb-2 flex items-center">
                         {t('velocity_km_s')}
+                        <InfoButton term="velocity" />
                     </p>
                     <RangeSlider min={12} max={72} step={0} value={velocity} onChange={setVelocity} />
                 </div>
