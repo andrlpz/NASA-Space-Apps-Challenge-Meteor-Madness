@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
+  country: null,
   impactEvent: null,
   showSliders: false,
   showAsteroidList: true,
@@ -113,6 +114,9 @@ const impactSlice = createSlice({
     hideAsteroidSelectionNotification: (state) => {
       state.showAsteroidSelectionNotification = false
     },
+    setCountry: (state, action) => {
+      state.country = action.payload
+    },
     loadStateFromURL: (state, action) => {
       const urlState = action.payload
       
@@ -166,6 +170,7 @@ export const {
   hideNotification,
   showAsteroidSelectionNotification,
   hideAsteroidSelectionNotification,
+  setCountry,
   loadStateFromURL,
   restoreImpactFromURL,
 } = impactSlice.actions

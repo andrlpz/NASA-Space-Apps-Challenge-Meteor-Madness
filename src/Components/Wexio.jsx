@@ -14,7 +14,7 @@ import {
   updateZoomLevel,
   setMapMode,
   hideNotification,
-
+  setCountry,
   loadStateFromURL,
   restoreImpactFromURL,
 } from '../store/impactSlice';
@@ -63,6 +63,7 @@ const Wexio = () => {
   const dispatch = useDispatch();
   
   const {
+    country,
     impactEvent,
     showSliders: showSlidersState,
     showAsteroidList: showAsteroidListState,
@@ -421,6 +422,14 @@ const Wexio = () => {
     let surfaceInfo;
     try {
       surfaceInfo = await detectSurfaceType(latlng.lat, latlng.lng);
+      
+      // Extract and save country information if land is detected
+      if (surfaceInfo.type === 'land' && surfaceInfo.countryInfo) {
+        dispatch(setCountry(surfaceInfo.countryInfo));
+        console.log('Country detected and saved:', surfaceInfo.countryInfo);
+      } else {
+        dispatch(setCountry(null)); // Reset country if not land or no country info
+      }
     } catch (error) {
       console.error('Surface detection failed:', error);
       // Fallback surface info
@@ -431,6 +440,7 @@ const Wexio = () => {
         confidence: 'low',
         source: 'fallback'
       };
+      dispatch(setCountry(null)); // Reset country on error
     }
     
     if (showSlidersState) {
