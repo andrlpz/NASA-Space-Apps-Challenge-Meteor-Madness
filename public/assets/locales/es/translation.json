@@ -48,5 +48,14 @@
   "adjust_parameters": "Ajustar Parámetros de Tu Asteroide Personalizado",
   "diameter": "Diámetro (m)",
   "velocity_km_s": "Velocidad (km/s)",
-  "slide_to_simulate": "Desliza las barras para ajustar los parámetros, luego haz clic en cualquier lugar del mapa para simular el impacto."
+  "slide_to_simulate": "Desliza las barras para ajustar los parámetros, luego haz clic en cualquier lugar del mapa para simular el impacto.",
+  "custom_asteroid_simulation": "Simulación de Asteroide Personalizado",
+  "click_to_simulate": "Haz clic en cualquier parte del mapa para simular el impacto de tu asteroide personalizado.",
+  "footer_note": "Nota: Este proyecto es solo para fines educativos y no proporciona asesoramiento profesional.",
+  "credits": "Créditos",
+  "developers": "Desarrolladores",
+  "data_sources": "Fuentes de Datos",
+  "acknowledgements": "Agradecimientos",
+  "nasa_space_apps_challenge": "Desafío NASA Space Apps 2024",
+  "privacy_policy": "Política de Privacidad"
 }

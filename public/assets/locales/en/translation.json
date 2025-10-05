@@ -48,5 +48,15 @@
   "date": "Date",
   "none": "None",
   "collapse_sidebar": "Collapse sidebar",
-  "expand_sidebar": "Expand sidebar"
+  "expand_sidebar": "Expand sidebar",
+  "custom_asteroid_simulation": "Custom Asteroid Simulation",
+  "click_to_simulate": "Click anywhere on the map to simulate the impact of yourcustomized asteroid.",
+  "footer_note": "Note: This project is for educational purposes only and does not provide professional advice.",
+  "credits": "Credits",
+  "developers": "Developers",
+  "data_sources": "Data Sources",
+  "acknowledgements": "Acknowledgements",
+  "nasa_space_apps_challenge": "NASA Space Apps Challenge 2024",
+  "privacy_policy": "Privacy Policy"
+  
 }
