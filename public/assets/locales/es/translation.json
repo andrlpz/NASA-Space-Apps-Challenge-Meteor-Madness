@@ -48,5 +48,21 @@
   "adjust_parameters": "Ajustar Parámetros de Tu Asteroide Personalizado",
   "diameter": "Diámetro (m)",
   "velocity_km_s": "Velocidad (km/s)",
-  "slide_to_simulate": "Desliza las barras para ajustar los parámetros, luego haz clic en cualquier lugar del mapa para simular el impacto."
+  "slide_to_simulate": "Desliza las barras para ajustar los parámetros, luego haz clic en cualquier lugar del mapa para simular el impacto.",
+  "reset": "Reiniciar",
+  "settings": "Configuración",
+  "language": "Idioma",
+  "theme": "Tema",
+  "dark": "Oscuro",
+  "light": "Claro",
+  "mapView": "Vista del Mapa",
+  "3dGlobe": "Globo 3D",
+  "2dMap": "Mapa 2D",
+  "mapLayer": "Capa del Mapa",
+  "satellite": "Satélite",
+  "settingsSaved": "La configuración se guarda automáticamente",
+  "switchTo2D": "Cambiar a Mapa 2D",
+  "switchTo3D": "Cambiar a Globo 3D",
+  "impactAnalysis": "Análisis de Impacto",
+  "detailedSimulationResults": "Resultados detallados de la simulación de impacto"
 }

@@ -11,6 +11,18 @@ import HttpApi from 'i18next-http-backend'
 import App from './App';
 import './index.css';
 
+// Initialize theme on app start
+const initializeTheme = () => {
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  if (savedTheme === 'light') {
+    document.documentElement.classList.add('light');
+    document.body.classList.add('light');
+  }
+};
+
+// Apply theme immediately
+initializeTheme();
+
 i18next
   .use(HttpApi)
   .use(LanguageDetector)

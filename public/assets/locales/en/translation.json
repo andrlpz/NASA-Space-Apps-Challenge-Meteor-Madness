@@ -48,5 +48,21 @@
   "date": "Date",
   "none": "None",
   "collapse_sidebar": "Collapse sidebar",
-  "expand_sidebar": "Expand sidebar"
+  "expand_sidebar": "Expand sidebar",
+  "reset": "Reset",
+  "settings": "Settings",
+  "language": "Language",
+  "theme": "Theme",
+  "dark": "Dark",
+  "light": "Light",
+  "mapView": "Map View",
+  "3dGlobe": "3D Globe",
+  "2dMap": "2D Map",
+  "mapLayer": "Map Layer",
+  "satellite": "Satellite",
+  "settingsSaved": "Settings are saved automatically",
+  "switchTo2D": "Switch to 2D Map",
+  "switchTo3D": "Switch to 3D Globe",
+  "impactAnalysis": "Impact Analysis",
+  "detailedSimulationResults": "Detailed impact simulation results"
 }

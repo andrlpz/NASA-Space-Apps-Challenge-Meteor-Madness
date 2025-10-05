@@ -48,5 +48,21 @@
   "adjust_parameters": "Ajuster les Paramètres de Votre Astéroïde Personnalisé",
   "diameter": "Diamètre (m)",
   "velocity_km_s": "Vitesse (km/s)",
-  "slide_to_simulate": "Faites glisser les barres pour ajuster les paramètres, puis cliquez n'importe où sur la carte pour simuler l'impact."
+  "slide_to_simulate": "Faites glisser les barres pour ajuster les paramètres, puis cliquez n'importe où sur la carte pour simuler l'impact.",
+  "reset": "Réinitialiser",
+  "settings": "Paramètres",
+  "language": "Langue",
+  "theme": "Thème",
+  "dark": "Sombre",
+  "light": "Clair",
+  "mapView": "Vue de la Carte",
+  "3dGlobe": "Globe 3D",
+  "2dMap": "Carte 2D",
+  "mapLayer": "Couche de Carte",
+  "satellite": "Satellite",
+  "settingsSaved": "Les paramètres sont sauvegardés automatiquement",
+  "switchTo2D": "Passer à la Carte 2D",
+  "switchTo3D": "Passer au Globe 3D",
+  "impactAnalysis": "Analyse d'Impact",
+  "detailedSimulationResults": "Résultats détaillés de la simulation d'impact"
 }

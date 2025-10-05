@@ -35,11 +35,31 @@ export default function Configuration() {
   const currentLanguageCode = cookies.get('i18next') || 'en';
   const currentLanguage = languages.find((l) => l.code === currentLanguageCode);
 
+  // Close panel with Escape key
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen]);
+
   // Initialize theme on component mount
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'dark';
     setTheme(savedTheme);
-    document.documentElement.classList.toggle('light', savedTheme === 'light');
+    
+    // Apply theme to both html and body elements
+    if (savedTheme === 'light') {
+      document.documentElement.classList.add('light');
+      document.body.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+      document.body.classList.remove('light');
+    }
   }, []);
 
   const handleLanguageChange = (languageCode) => {
@@ -50,7 +70,15 @@ export default function Configuration() {
   const handleThemeChange = (newTheme) => {
     setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
-    document.documentElement.classList.toggle('light', newTheme === 'light');
+    
+    // Apply theme to both html and body elements
+    if (newTheme === 'light') {
+      document.documentElement.classList.add('light');
+      document.body.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+      document.body.classList.remove('light');
+    }
   };
 
   const handleMapModeToggle = () => {
@@ -70,7 +98,7 @@ export default function Configuration() {
       <button
         onClick={() => setIsOpen(true)}
         className="fixed top-4 right-4 z-[9999] bg-gray-800 hover:bg-gray-700 text-white p-3 rounded-full shadow-lg transition-all duration-200 border border-gray-600"
-        title="Settings"
+        title={t('settings')}
         style={{ zIndex: 9999 }}
       >
         <Settings className="w-5 h-5" />
@@ -78,19 +106,12 @@ export default function Configuration() {
 
       {/* Settings Panel */}
       {isOpen && (
-        <>
-          {/* Click outside to close overlay */}
-          <div 
-            className="fixed inset-0 z-[9998]" 
-            onClick={() => setIsOpen(false)}
-          />
-          
-          <div className="fixed top-1/2 right-8 transform -translate-y-1/2 bg-gray-800 border border-gray-600 rounded-xl p-6 w-80 shadow-2xl z-[9999] animate-fade-in">
-            {/* Header */}
+        <div className="fixed top-1/2 right-8 transform -translate-y-1/2 bg-gray-800 border border-gray-600 rounded-xl p-6 w-80 shadow-2xl z-[9999] animate-fade-in">
+          {/* Header */}
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center space-x-2">
                 <Settings className="w-5 h-5 text-cyan-400" />
-                <h2 className="text-lg font-semibold text-white">Settings</h2>
+                <h2 className="text-lg font-semibold text-white">{t('settings')}</h2>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
@@ -103,7 +124,7 @@ export default function Configuration() {
             {/* Language Selection */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-300 mb-3">
-                Language
+                {t('language')}
               </label>
               <div className="space-y-2">
                 {languages.map((language) => (
@@ -129,7 +150,7 @@ export default function Configuration() {
             {/* Theme Selection */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-300 mb-3">
-                Theme
+                {t('theme')}
               </label>
               <div className="grid grid-cols-2 gap-2">
                 <button
@@ -141,7 +162,7 @@ export default function Configuration() {
                   }`}
                 >
                   <Moon className="w-4 h-4" />
-                  <span>Dark</span>
+                  <span>{t('dark')}</span>
                 </button>
                 <button
                   onClick={() => handleThemeChange('light')}
@@ -152,7 +173,7 @@ export default function Configuration() {
                   }`}
                 >
                   <Sun className="w-4 h-4" />
-                  <span>Light</span>
+                  <span>{t('light')}</span>
                 </button>
               </div>
             </div>
@@ -160,7 +181,7 @@ export default function Configuration() {
             {/* Map Mode Toggle */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-300 mb-3">
-                Map View
+                {t('mapView')}
               </label>
               <button
                 onClick={handleMapModeToggle}
@@ -171,7 +192,7 @@ export default function Configuration() {
                 }`}
               >
                 <Globe className="w-4 h-4" />
-                <span>{is3DMap ? '3D Globe' : '2D Map'}</span>
+                <span>{is3DMap ? t('3dGlobe') : t('2dMap')}</span>
               </button>
             </div>
 
@@ -179,7 +200,7 @@ export default function Configuration() {
             {!is3DMap && (
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-300 mb-3">
-                  Map Layer
+                  {t('mapLayer')}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
@@ -191,7 +212,7 @@ export default function Configuration() {
                     }`}
                   >
                     <Map className="w-4 h-4" />
-                    <span>Dark</span>
+                    <span>{t('dark')}</span>
                   </button>
                   <button
                     onClick={() => handleMapLayerChange('satellite')}
@@ -202,7 +223,7 @@ export default function Configuration() {
                     }`}
                   >
                     <Satellite className="w-4 h-4" />
-                    <span>Satellite</span>
+                    <span>{t('satellite')}</span>
                   </button>
                 </div>
               </div>
@@ -211,11 +232,10 @@ export default function Configuration() {
             {/* Footer */}
             <div className="pt-4 border-t border-gray-700">
               <p className="text-xs text-gray-400 text-center">
-                Settings are saved automatically
+                {t('settingsSaved')}
               </p>
             </div>
           </div>
-        </>
       )}
 
       {/* Custom Styles */}
