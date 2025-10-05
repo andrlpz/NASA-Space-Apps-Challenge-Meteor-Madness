@@ -1,7 +1,7 @@
 {
   "app_title": "Meteor Madness",
   "page_title": "Asteroid Impact Simulator",
-  "project_name": "Project: Impactor-2025",
+  "project_name": "Challenge: Meteor Madness",
   "fetching": "Fetching NEO data...",
   "select": "Select an asteroid: ",
   "current": "Current asteroid: ",

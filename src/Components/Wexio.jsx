@@ -377,6 +377,11 @@ const Wexio = () => {
   const handleMapClick = async (latlng, clickEvent) => {
     console.log('Map clicked at:', latlng, 'with event:', clickEvent);
     
+    // Prevent impact simulation if no asteroid is selected and sliders are not active
+    if (!showSlidersState && !selectedAsteroid) {
+      console.log('Impact simulation blocked: No asteroid selected and sliders are not active');
+      return;
+    }
     
     // Calculate impact function (moved here for reusability)
     const calculateImpact = (diameterMeters, velocityKms) => {
