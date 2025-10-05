@@ -1,5 +1,27 @@
 @import "tailwindcss";
 
+/* Font Face Declarations */
+@font-face {
+  font-family: 'FutureZ';
+  src: url('./assets/FutureZ.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Welcome Overlay Styles */
+.welcome-overlay {
+  --welcome-bg-color: rgba(0, 0, 0, 0.8);
+}
+
+.welcome-overlay.visible {
+  transform: translateY(0) !important;
+}
+
+.welcome-overlay.hidden {
+  transform: translateY(-100%) !important;
+}
+
 /* Light theme variables and overrides */
 :root.light {
   --bg-primary: #ffffff;

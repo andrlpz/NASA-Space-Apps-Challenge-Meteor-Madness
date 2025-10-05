@@ -38,6 +38,7 @@ import { useTranslation } from 'react-i18next'
 import i18next from 'i18next'
 import GlobePage from './GlobeComponent';
 import { useMeteor } from './MeteorProvider';
+import WelcomeOverlay from './WelcomeOverlay';
 
 
 const languages = [
@@ -83,6 +84,7 @@ const Wexio = () => {
   const [shareSuccess, setShareSuccess] = useState(false);
   const [pendingURLState, setPendingURLState] = useState(null);
   const [mouse, setMouse] = useState({ x: window.innerWidth/2, y: window.innerHeight/2 });
+  const [showWelcome, setShowWelcome] = useState(true);
   const meteor = useMeteor();
 
   const appearSliders = () => {
@@ -95,6 +97,10 @@ const Wexio = () => {
 
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
+  const handleWelcomeStart = () => {
+    setShowWelcome(false);
   };
 
   const currentLanguageCode = cookies.get('i18next') || 'en'
@@ -623,12 +629,20 @@ const Wexio = () => {
 
   return (
     <div className="relative flex h-screen w-full bg-gray-900 text-white font-sans">
-      {/* Configuration Panel - Fixed positioning outside main layout */}
-      <Configuration 
-        onShare={handleShare}
-        shareSuccess={shareSuccess}
-        impactEvent={impactEvent}
+      {/* Welcome Overlay */}
+      <WelcomeOverlay 
+        isVisible={showWelcome}
+        onStart={handleWelcomeStart}
       />
+      
+      {/* Main Content - Darkened when welcome is showing */}
+      <div className={`flex h-screen w-full transition-all duration-300 ${showWelcome ? 'brightness-50' : 'brightness-100'}`}>
+        {/* Configuration Panel - Fixed positioning outside main layout */}
+        <Configuration 
+          onShare={handleShare}
+          shareSuccess={shareSuccess}
+          impactEvent={impactEvent}
+        />
       <aside className={`${isSidebarCollapsed ? 'w-16' : 'w-full max-w-sm'} p-6 bg-gray-800 shadow-2xl flex flex-col transition-all duration-300 ease-in-out relative`}>
         {/* Collapse/Expand Toggle Button */}
         <button
@@ -783,6 +797,7 @@ const Wexio = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };
