@@ -729,34 +729,6 @@ const Wexio = () => {
           ? <GlobePage impact={impactEvent} onMapClick={handleMapClick} />
           : <InteractiveMap impact={impactEvent} onMapClick={handleMapClick} />
         }
-        
-        {/* Map Mode Toggle Button */}
-        <div className="absolute top-16 right-4 z-[200] bg-gray-800 p-2 rounded">
-          <button
-            onClick={() => dispatch(toggleMapMode())}
-            className="bg-gray-700 text-white p-2 rounded hover:bg-gray-600 transition-colors flex items-center gap-2"
-            title={is3DMap ? 'Switch to 2D Map' : 'Switch to 3D Globe'}
-          >
-            <span>{is3DMap ? '🗺' : '🌍'}</span>
-            <span className="text-xs">{is3DMap ? '2D' : '3D'}</span>
-          </button>
-          <div className="text-xs text-gray-400 mt-1 text-center">
-            Zoom: {currentZoomLevel?.toFixed(2) || '--'}
-          </div>
-          <div className="text-xs text-gray-300 mt-1 text-center">
-            2D ≥{zoomThresholdFor2D} | 3D ≤{zoomThresholdFor3D}
-          </div>
-          <div className="w-full bg-gray-600 rounded-full h-1 mt-1">
-            <div 
-              className="bg-blue-500 h-1 rounded-full transition-all duration-300"
-              style={{ 
-                width: is3DMap 
-                  ? `${Math.min(100, (currentZoomLevel / zoomThresholdFor2D) * 100)}%`
-                  : `${Math.max(0, 100 - ((currentZoomLevel - zoomThresholdFor3D) / (zoomThresholdFor2D - zoomThresholdFor3D)) * 100)}%`
-              }}
-            ></div>
-          </div>
-        </div>
       </main>
       
       {/* Auto-switch notification */}
