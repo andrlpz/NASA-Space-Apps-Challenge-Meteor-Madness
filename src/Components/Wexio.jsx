@@ -637,18 +637,42 @@ const Wexio = () => {
           shareSuccess={shareSuccess}
           impactEvent={impactEvent}
         />
-      <aside className={`${isSidebarCollapsed ? 'w-16' : 'w-full max-w-sm'} p-6 bg-gray-800 shadow-2xl flex flex-col transition-all duration-300 ease-in-out relative`}>
-        {/* Collapse/Expand Toggle Button */}
-        <button
-          onClick={toggleSidebar}
-          className="absolute top-4 right-4 z-[100] w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center transition-colors duration-200"
-          title={isSidebarCollapsed ? t('expand_sidebar') || 'Expand sidebar' : t('collapse_sidebar') || 'Collapse sidebar'}
-        >
-          {isSidebarCollapsed ? 
-            <ChevronRight className="w-4 h-4 text-gray-300" /> : 
-            <ChevronLeft className="w-4 h-4 text-gray-300" />
-          }
-        </button>
+      <aside className={`${isSidebarCollapsed ? 'w-16' : 'w-full max-w-sm'} p-6 bg-gray-800 shadow-2xl flex flex-col transition-all duration-300 ease-in-out relative z-20`}>
+        {/* Sidebar Header: Logo + Collapse Button in one row */}
+        <div className="flex items-center justify-between mb-6 relative">
+          <button
+            onClick={() => {
+              const baseUrl = window.location.origin + window.location.pathname;
+              window.location.href = baseUrl;
+            }}
+            className={`flex items-center hover:scale-105 transition-transform duration-200 focus:outline-none group ${isSidebarCollapsed ? 'justify-center w-full' : ''}`}
+            style={{ zIndex: 2 }}
+          >
+            <img 
+              src={LogoImage} 
+              alt="Meteor Madness Logo" 
+              className={`object-contain ${isSidebarCollapsed ? 'w-8 h-8 mx-auto' : 'w-8 h-8 mr-3 group-hover:opacity-80 transition-opacity'}`} 
+            />
+            {/* Only show title/project name if sidebar is open */}
+            {!isSidebarCollapsed && (
+              <div className="text-left">
+                <h1 className="text-2xl font-bold text-white group-hover:text-gray-200 transition-colors cursor-pointer">{t('page_title')}</h1>
+                <p className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors cursor-pointer">{t('project_name')}</p>
+              </div>
+            )}
+          </button>
+          <button
+            onClick={toggleSidebar}
+            className={`ml-2 w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center transition-colors duration-200 ${isSidebarCollapsed ? 'absolute top-0 right-0' : ''}`}
+            title={isSidebarCollapsed ? t('expand_sidebar') || 'Expand sidebar' : t('collapse_sidebar') || 'Collapse sidebar'}
+            style={{ zIndex: 3 }}
+          >
+            {isSidebarCollapsed ? 
+              <ChevronRight className="w-4 h-4 text-gray-300" /> : 
+              <ChevronLeft className="w-4 h-4 text-gray-300" />
+            }
+          </button>
+        </div>
 
         {/* Sidebar Content - Hidden when collapsed */}
         <div className={`${isSidebarCollapsed ? 'hidden' : 'block'} transition-all duration-300 ease-in-out flex flex-col flex-grow overflow-hidden`}>
@@ -661,23 +685,12 @@ const Wexio = () => {
               }}
               className="flex items-center hover:scale-105 transition-transform duration-200 focus:outline-none group"
             >
-            
-
-              <img 
-                src={LogoImage} 
-                alt="Meteor Madness Logo" 
-                className="w-8 h-8 mr-3 group-hover:opacity-80 transition-opacity object-contain" 
-              />
-              <div className="text-left">
-                <h1 className="text-2xl font-bold text-white group-hover:text-gray-200 transition-colors cursor-pointer">{t('page_title')}</h1>
-                <p className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors cursor-pointer">{t('project_name')}</p>
-              </div>
             </button>
           </div>
           
           <div className='flex items-center flex-row space-x-4 mb-4 gap-15 justify-center'>
-            <button className='bg-gray-700 text-white p-1 rounded p-3 hover:underline' onClick={appearSliders}>Sliders</button>
-            <button className='bg-gray-700 text-white p-1 rounded p-3 hover:underline' onClick={appearAsteroids}>Asteroids</button>
+            <button className='bg-gray-700 text-white p-1 rounded p-3 hover:underline' onClick={appearSliders}>{t('sliders-button')}</button>
+            <button className='bg-gray-700 text-white p-1 rounded p-3 hover:underline' onClick={appearAsteroids}>{t('asteroids-button')}</button>
           </div>
 
           {showSlidersState && (
@@ -735,7 +748,7 @@ const Wexio = () => {
         )}
       </aside>
 
-      <main className="flex-1 h-full relative">
+      <main className={`flex-1 h-full relative ${isSidebarCollapsed ? 'w-full' : ''}`}>
         {is3DMap
           ? <GlobePage impact={impactEvent} onMapClick={handleMapClick} />
           : <InteractiveMap impact={impactEvent} onMapClick={handleMapClick} />
