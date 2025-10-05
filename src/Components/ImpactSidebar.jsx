@@ -1,15 +1,27 @@
 import React, { useState } from 'react';
-import { Zap, ShieldCheck, MapPin, Telescope, Gauge, Scale, Wind, ExternalLink, Ruler, Activity, AlertTriangle } from 'lucide-react';
+import { Zap, ShieldCheck, MapPin, Telescope, Gauge, Scale, Wind, ExternalLink, Ruler, Activity, AlertTriangle, Globe, Waves, Mountain } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export default function ImpactSidebar({ impact, resetImpact }) {
   if (!impact) {
-    return null;
+    return (
+      <div className="flex-grow flex items-center justify-center p-4">
+        <div className="text-center p-4 border-2 border-dashed border-gray-600 rounded-lg">
+          <p className="text-gray-300 font-medium">Click on the map to simulate an impact.</p>
+          <p className="text-sm text-gray-500 mt-2">
+            The sidebar will populate with real data from a selected Near-Earth Object.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   const { t } = useTranslation();
   const { details, position } = impact;
   const { source, consequences, mitigation } = details;
+  
+  // Check if it's a custom simulation
+  const isCustomSimulation = source.name === 'Custom Asteroid Simulation';
 
   return (
     <div className="flex-grow overflow-y-auto pr-2 space-y-6">
@@ -58,20 +70,24 @@ export default function ImpactSidebar({ impact, resetImpact }) {
           icon={<Activity size={14} className="text-orange-400" />}
           infoTerm="relative-velocity" 
         />
-        <StatItem 
-          label={t('close-approach')} 
-          value={source.closeApproachDate} 
-          valueColor="text-yellow-300 font-medium"
-          icon={<div className="w-2 h-2 bg-yellow-400 rounded-full"></div>}
-          infoTerm="close-approach" 
-        />
-        <StatItem 
-          label={t('miss-distance')} 
-          value={source.missDistance} 
-          valueColor="text-cyan-300 font-medium"
-          icon={<div className="w-2 h-2 bg-cyan-400 rounded-full"></div>}
-          infoTerm="miss-distance" 
-        />
+        {!isCustomSimulation && (
+          <>
+            <StatItem 
+              label={t('close-approach')} 
+              value={source.closeApproachDate} 
+              valueColor="text-yellow-300 font-medium"
+              icon={<div className="w-2 h-2 bg-yellow-400 rounded-full"></div>}
+              infoTerm="close-approach" 
+            />
+            <StatItem 
+              label={t('miss-distance')} 
+              value={source.missDistance} 
+              valueColor="text-cyan-300 font-medium"
+              icon={<div className="w-2 h-2 bg-cyan-400 rounded-full"></div>}
+              infoTerm="miss-distance" 
+            />
+          </>
+        )}
         <StatItem 
           label={t('abs-magnitude')} 
           value={source.absoluteMagnitude} 
@@ -104,6 +120,106 @@ export default function ImpactSidebar({ impact, resetImpact }) {
           </div>
         )}
       </InfoSection>
+
+      {/* Surface Analysis Section */}
+      {details.surface && (
+        <InfoSection 
+          title={t('surface-analysis')} 
+          icon={details.surface.type === 'water' ? <Waves className="w-6 h-6" /> : <Mountain className="w-6 h-6" />}
+          bgColor={details.surface.type === 'water' ? "from-blue-600/20 to-cyan-600/20" : "from-green-600/20 to-emerald-600/20"}
+          borderColor={details.surface.type === 'water' ? "border-blue-500/50" : "border-green-500/50"}
+          iconBg={details.surface.type === 'water' ? "bg-blue-500/20" : "bg-green-500/20"}
+          iconBorder={details.surface.type === 'water' ? "border-blue-500" : "border-green-500"}
+          infoTerm="surface-analysis"
+        >
+          <StatItem 
+            label={t('surface-type')} 
+            value={details.surface.description} 
+            valueColor={details.surface.type === 'water' ? 'text-blue-300 font-bold' : 'text-green-300 font-bold'}
+            icon={details.surface.type === 'water' ? <Waves size={16} className="text-blue-400" /> : <Mountain size={16} className="text-green-400" />}
+            infoTerm="surface-type"
+          />
+          <StatItem 
+            label={t('location')} 
+            value={details.surface.location} 
+            valueColor="text-cyan-300 font-semibold"
+            icon={<Globe size={16} className="text-cyan-400" />}
+            infoTerm="location"
+          />
+          <StatItem 
+            label={t('confidence')} 
+            value={details.surface.confidence === 'high' ? t('high') || 'Alta' : t('medium') || 'Media'} 
+            valueColor={details.surface.confidence === 'high' ? 'text-green-300 font-semibold' : 'text-yellow-300 font-semibold'}
+            icon={<div className={`w-2 h-2 ${details.surface.confidence === 'high' ? 'bg-green-400' : 'bg-yellow-400'} rounded-full`}></div>}
+            infoTerm="confidence"
+          />
+          <StatItem 
+            label={t('data-source')} 
+            value={details.surface.source === 'pafodev_api' ? 'PafoDev API' : details.surface.source === 'local_detection' ? t('local-detection') || 'Detección Local' : details.surface.source} 
+            valueColor="text-purple-300 font-medium"
+            icon={<div className="w-2 h-2 bg-purple-400 rounded-full"></div>}
+            infoTerm="data-source"
+          />
+          
+          {/* Country information if available */}
+          {details.surface.countryInfo && details.surface.countryInfo.country && (
+            <>
+              <StatItem 
+                label={t('country')} 
+                value={details.surface.countryInfo.country} 
+                valueColor="text-indigo-300 font-bold"
+                icon={<Globe size={16} className="text-indigo-400" />}
+                infoTerm="country"
+              />
+              {details.surface.countryInfo.population && (
+                <StatItem 
+                  label={t('population')} 
+                  value={details.surface.countryInfo.population?.toLocaleString() || 'N/A'} 
+                  valueColor="text-indigo-300 font-medium"
+                  icon={<div className="w-2 h-2 bg-indigo-400 rounded-full"></div>}
+                  infoTerm="population"
+                />
+              )}
+              {details.surface.countryInfo.region && (
+                <StatItem 
+                  label={t('region')} 
+                  value={details.surface.countryInfo.region} 
+                  valueColor="text-indigo-300 font-medium"
+                  icon={<div className="w-2 h-2 bg-indigo-400 rounded-full"></div>}
+                  infoTerm="region"
+                />
+              )}
+              {details.surface.countryInfo.city && (
+                <StatItem 
+                  label={t('city')} 
+                  value={details.surface.countryInfo.city} 
+                  valueColor="text-indigo-300 font-medium"
+                  icon={<div className="w-2 h-2 bg-indigo-400 rounded-full"></div>}
+                  infoTerm="city"
+                />
+              )}
+              {details.surface.countryInfo.capital && (
+                <StatItem 
+                  label={t('capital') || 'Capital'} 
+                  value={details.surface.countryInfo.capital} 
+                  valueColor="text-indigo-300 font-medium"
+                  icon={<div className="w-2 h-2 bg-indigo-400 rounded-full"></div>}
+                  infoTerm="capital"
+                />
+              )}
+              {details.surface.countryInfo.area && (
+                <StatItem 
+                  label={t('area') || 'Área'} 
+                  value={`${details.surface.countryInfo.area.toLocaleString()} km²`} 
+                  valueColor="text-indigo-300 font-medium"
+                  icon={<div className="w-2 h-2 bg-indigo-400 rounded-full"></div>}
+                  infoTerm="area"
+                />
+              )}
+            </>
+          )}
+        </InfoSection>
+      )}
 
       {/* Impact Consequences */}
       <InfoSection 
@@ -143,6 +259,113 @@ export default function ImpactSidebar({ impact, resetImpact }) {
           icon={<Wind size={16} className="text-pink-400" />} 
           infoTerm="air-blast" 
         />
+        
+        {/* Primary Effect */}
+        {consequences.primaryEffect && (
+          <StatItem 
+            label={t('primary-effect')} 
+            value={consequences.primaryEffect} 
+            valueColor={consequences.primaryEffect.includes('Tsunami') || consequences.primaryEffect.includes('tsunami') ? 'text-blue-300 font-bold' : 'text-orange-300 font-bold'}
+            icon={consequences.primaryEffect.includes('Tsunami') || consequences.primaryEffect.includes('tsunami') ? 
+              <Waves size={16} className="text-blue-400" /> : 
+              <Mountain size={16} className="text-orange-400" />
+            }
+            infoTerm="primary-effect"
+          />
+        )}
+
+        {/* Water-specific effects */}
+        {consequences.tsunamiHeight && (
+          <>
+            <StatItem 
+              label={t('tsunami-height')} 
+              value={consequences.tsunamiHeight} 
+              valueColor="text-blue-300 font-bold"
+              icon={<Waves size={16} className="text-blue-400" />}
+              infoTerm="tsunami-height"
+            />
+            <StatItem 
+              label={t('tsunami-range')} 
+              value={consequences.tsunamiRange} 
+              valueColor="text-blue-300 font-semibold"
+              icon={<div className="w-2 h-2 bg-blue-400 rounded-full"></div>}
+              infoTerm="tsunami-range"
+            />
+            <StatItem 
+              label={t('coastal-impact')} 
+              value={consequences.coastalImpact} 
+              valueColor={consequences.coastalImpact === 'CRÍTICO' ? 'text-red-300 font-bold' : 'text-yellow-300 font-semibold'}
+              icon={<div className={`w-3 h-3 ${consequences.coastalImpact === 'CRÍTICO' ? 'bg-red-500 animate-pulse' : 'bg-yellow-400'} rounded-full`}></div>}
+              infoTerm="coastal-impact"
+            />
+          </>
+        )}
+
+        {/* Land-specific effects */}
+        {consequences.fireballRadius && (
+          <>
+            <StatItem 
+              label={t('fireball-radius')} 
+              value={consequences.fireballRadius} 
+              valueColor="text-orange-300 font-bold"
+              icon={<div className="w-3 h-3 bg-orange-500 rounded-full animate-pulse"></div>}
+              infoTerm="fireball-radius"
+            />
+            <StatItem 
+              label={t('seismic-range')} 
+              value={consequences.seismicRange} 
+              valueColor="text-orange-300 font-semibold"
+              icon={<Scale size={16} className="text-orange-400" />}
+              infoTerm="seismic-range"
+            />
+            <StatItem 
+              label={t('ground-effect')} 
+              value={consequences.groundEffect} 
+              valueColor={consequences.groundEffect?.includes('TOTAL') ? 'text-red-300 font-bold' : 'text-yellow-300 font-semibold'}
+              icon={<div className={`w-3 h-3 ${consequences.groundEffect?.includes('TOTAL') ? 'bg-red-500 animate-pulse' : 'bg-yellow-400'} rounded-full`}></div>}
+              infoTerm="ground-effect"
+            />
+          </>
+        )}
+
+        {/* Crater information */}
+        {consequences.craterInfo && (
+          <StatItem 
+            label={t('crater-info')} 
+            value={consequences.craterInfo} 
+            valueColor="text-gray-300 font-semibold"
+            icon={<Ruler size={16} className="text-gray-400" />}
+            infoTerm="crater-info"
+          />
+        )}
+
+        {consequences.devastationRadius && (
+          <StatItem 
+            label={t('devastation-radius')} 
+            value={consequences.devastationRadius} 
+            valueColor="text-red-300 font-bold"
+            icon={<div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>}
+            infoTerm="devastation-radius"
+          />
+        )}
+
+        {/* Special effects */}
+        {consequences.specialEffects && consequences.specialEffects.length > 0 && (
+          <div className="mt-4 p-3 bg-gray-700/50 rounded-lg border border-gray-600">
+            <p className="text-gray-300 text-sm font-semibold mb-2 flex items-center">
+              <AlertTriangle size={16} className="text-yellow-400 mr-2" />
+              {t('special-effects')}:
+            </p>
+            <ul className="text-xs text-gray-300 space-y-1">
+              {consequences.specialEffects.map((effect, index) => (
+                <li key={index} className="flex items-center">
+                  <div className="w-1 h-1 bg-cyan-400 rounded-full mr-2 animate-pulse"></div>
+                  <span className="text-cyan-200">{effect}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </InfoSection>
 
       {/* Mitigation Report */}
@@ -172,6 +395,17 @@ export default function ImpactSidebar({ impact, resetImpact }) {
           icon={<ShieldCheck size={16} className="text-emerald-400" />}
           infoTerm="recommended-action" 
         />
+        
+        {/* Evacuation Radius */}
+        {mitigation.evacuationRadius && mitigation.evacuationRadius !== 'N/A km' && (
+          <StatItem 
+            label={t('evacuation-radius')} 
+            value={mitigation.evacuationRadius} 
+            valueColor="text-red-300 font-bold"
+            icon={<div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>}
+            infoTerm="evacuation-radius"
+          />
+        )}
       </InfoSection>
 
       {/* Reset Button */}

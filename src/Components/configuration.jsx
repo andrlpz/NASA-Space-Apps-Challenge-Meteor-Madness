@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, X, Globe, Moon, Sun, Map, Satellite } from 'lucide-react';
+import { Settings, X, Globe, Moon, Sun, Map, Satellite, Share2, Copy, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMapMode } from '../store/impactSlice';
@@ -23,7 +23,7 @@ const languages = [
   },
 ];
 
-export default function Configuration() {
+export default function Configuration({ onShare, shareSuccess, impactEvent }) {
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
   const [mapLayer, setMapLayer] = useState(localStorage.getItem('mapLayer') || 'dark');
@@ -146,6 +146,36 @@ export default function Configuration() {
                 ))}
               </div>
             </div>
+
+            {/* Share Section */}
+            {impactEvent && (
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-300 mb-3">
+                  Share Scenario
+                </label>
+                <button
+                  onClick={onShare}
+                  className={`w-full flex items-center justify-center space-x-2 p-3 rounded-lg transition-colors ${
+                    shareSuccess 
+                      ? 'bg-green-600 text-white' 
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }`}
+                  title="Share this impact scenario"
+                >
+                  {shareSuccess ? (
+                    <>
+                      <Check className="w-4 h-4" />
+                      <span>Copied to Clipboard!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Share2 className="w-4 h-4" />
+                      <span>Copy Share Link</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
 
             {/* Theme Selection */}
             <div className="mb-6">
