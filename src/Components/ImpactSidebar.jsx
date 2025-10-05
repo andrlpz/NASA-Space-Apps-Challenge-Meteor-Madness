@@ -24,7 +24,7 @@ export default function ImpactSidebar({ impact, resetImpact }) {
   const isCustomSimulation = source.name === 'Custom Asteroid Simulation';
 
   return (
-    <div className="flex-grow overflow-y-auto pr-2 space-y-6">
+    <div className="flex-grow overflow-y-auto pr-2 space-y-6 scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600 hover:scrollbar-thumb-gray-500">
       {/* Header Card */}
       <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-gray-600 shadow-2xl">
         <div className="flex items-center justify-between mb-4">
@@ -155,7 +155,18 @@ export default function ImpactSidebar({ impact, resetImpact }) {
           />
           <StatItem 
             label={t('data-source')} 
-            value={details.surface.source === 'pafodev_api' ? 'PafoDev API' : details.surface.source === 'local_detection' ? t('local-detection') || 'Detección Local' : details.surface.source} 
+            value={details.surface.source === 'pafodev_api' ? 'PafoDev API' : 
+                   details.surface.source === 'local_detection' ? t('local-detection') || 'Detección Local' : 
+                   details.surface.source === 'OpenStreetMap' ? (
+                     <a 
+                       href="https://www.openstreetmap.org" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="text-purple-300 hover:text-purple-200 underline hover:no-underline transition-colors"
+                     >
+                       OpenStreetMap
+                     </a>
+                   ) : details.surface.source} 
             valueColor="text-purple-300 font-medium"
             icon={<div className="w-2 h-2 bg-purple-400 rounded-full"></div>}
             infoTerm="data-source"

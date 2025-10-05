@@ -14,6 +14,7 @@ const initialState = {
   zoomThresholdFor2D: 3.5, // Zoom level to switch to 2D map (higher zoom = more detailed view)
   zoomThresholdFor3D: 2, // Zoom level to switch back to 3D map (lower zoom = global view)
   showModeChangeNotification: false, // Show notification when mode changes automatically
+  showAsteroidSelectionNotification: false, // Show notification when user tries to simulate without selecting asteroid
 }
 
 const impactSlice = createSlice({
@@ -106,6 +107,12 @@ const impactSlice = createSlice({
     hideNotification: (state) => {
       state.showModeChangeNotification = false
     },
+    showAsteroidSelectionNotification: (state) => {
+      state.showAsteroidSelectionNotification = true
+    },
+    hideAsteroidSelectionNotification: (state) => {
+      state.showAsteroidSelectionNotification = false
+    },
     loadStateFromURL: (state, action) => {
       const urlState = action.payload
       
@@ -157,6 +164,8 @@ export const {
   setZoomThresholds,
   setMapMode,
   hideNotification,
+  showAsteroidSelectionNotification,
+  hideAsteroidSelectionNotification,
   loadStateFromURL,
   restoreImpactFromURL,
 } = impactSlice.actions

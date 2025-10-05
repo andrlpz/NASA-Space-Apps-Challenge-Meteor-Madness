@@ -4,7 +4,7 @@
  */
 
 /**
- * Detects the surface type at given coordinates
+ * Detects the surface type at given coordinates using OpenStreetMap Nominatim API
  * @param {number} lat - Latitude
  * @param {number} lng - Longitude
  * @returns {Object} Surface information object
@@ -16,68 +16,74 @@ export async function detectSurfaceType(lat, lng) {
   }
 
   try {
-    // Try to use PafoDev API for surface detection with timeout
+    // Use OpenStreetMap Nominatim API for reverse geocoding
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
     
-    const response = await fetch(`https://api.pafodev.com/nasaapi/neo3?lat=${lat}&lng=${lng}`, {
-      signal: controller.signal,
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1&extratags=1&namedetails=1`,
+      {
+        signal: controller.signal,
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'Meteor-Madness-App/1.0 (NASA Space Apps Challenge)'
+        }
       }
-    });
+    );
     
     clearTimeout(timeoutId);
     
     if (response.ok) {
       const data = await response.json();
+      console.log('Nominatim API response:', data);
       
-      // The API returns geocoding data similar to Google Maps Geocoding API
-      if (data && data.results && Array.isArray(data.results) && data.results.length > 0) {
-        const result = data.results[0];
+      if (data && data.place_id) {
+        let surfaceType = 'water'; // Default assumption
+        let confidence = 'high';
+        let description = 'Open Water';
+        let locationName = data.display_name || `${lat.toFixed(3)}°, ${lng.toFixed(3)}°`;
         
-        // Extract surface type from address components
-        let surfaceType = 'water'; // Default assumption for coordinates without land components
-        let confidence = 'medium';
-        let description = 'Unknown Area';
-        let locationName = result.formatted_address || `${lat.toFixed(3)}°, ${lng.toFixed(3)}°`;
+        // Check if we have address components (indicates land)
+        if (data.address && Object.keys(data.address).length > 0) {
+          // Has address components - this indicates land
+          surfaceType = 'land';
+          description = 'Land Area';
+          
+          // Check for specific water body types in class/type
+          if (data.class === 'natural' && ['water', 'bay', 'strait', 'fjord'].includes(data.type)) {
+            surfaceType = 'water';
+            description = `Water Body (${data.type})`;
+          } else if (data.class === 'waterway') {
+            surfaceType = 'water';
+            description = `Waterway (${data.type})`;
+          } else if (data.class === 'leisure' && data.type === 'marina') {
+            surfaceType = 'water';
+            description = 'Marina/Harbor';
+          }
+        } else {
+          // No address components - likely water body
+          surfaceType = 'water';
+          description = 'Open Water (No Address)';
+          confidence = 'medium';
+        }
         
-        if (result.address_components && Array.isArray(result.address_components)) {
-          // Check if we have land-based address components
-          const hasLandComponents = result.address_components.some(component => 
-            component.types.includes('country') || 
-            component.types.includes('administrative_area_level_1') ||
-            component.types.includes('locality') ||
-            component.types.includes('postal_code') ||
-            component.types.includes('street_address') ||
-            component.types.includes('route') ||
-            component.types.includes('premise')
-          );
-          
-          // Check for water-related components
-          const hasWaterComponents = result.address_components.some(component =>
-            component.long_name.toLowerCase().includes('ocean') ||
-            component.long_name.toLowerCase().includes('sea') ||
-            component.long_name.toLowerCase().includes('gulf') ||
-            component.long_name.toLowerCase().includes('bay') ||
-            component.long_name.toLowerCase().includes('strait') ||
-            component.long_name.toLowerCase().includes('channel')
-          );
-          
-          if (hasLandComponents && !hasWaterComponents) {
-            surfaceType = 'land';
-            confidence = 'high';
-            description = 'Land Area (Geocoded)';
-          } else if (hasWaterComponents) {
-            surfaceType = 'water';
-            confidence = 'high';
-            description = 'Water Body (Geocoded)';
-          } else if (!hasLandComponents) {
-            // No land components found, likely water
-            surfaceType = 'water';
-            confidence = 'high';
-            description = 'Open Water (No Land Components)';
+        // Extract country info from address
+        const countryInfo = data.address?.country || null;
+        
+        // Create location description based on available data
+        if (data.address) {
+          const locationParts = [];
+          if (data.address.city || data.address.town || data.address.village) {
+            locationParts.push(data.address.city || data.address.town || data.address.village);
+          }
+          if (data.address.state || data.address.region) {
+            locationParts.push(data.address.state || data.address.region);
+          }
+          if (data.address.country) {
+            locationParts.push(data.address.country);
+          }
+          if (locationParts.length > 0) {
+            locationName = locationParts.join(', ');
           }
         }
         
@@ -86,155 +92,50 @@ export async function detectSurfaceType(lat, lng) {
           description: description,
           location: locationName,
           confidence: confidence,
-          source: 'pafodev_api',
-          countryInfo: result.address_components?.find(c => c.types.includes('country'))?.long_name || null,
+          source: 'OpenStreetMap',
+          countryInfo: countryInfo,
           apiData: {
-            fullResponse: result,
+            fullResponse: data,
             coordinates: { lat, lng }
           }
         };
-      } else if (data && typeof data === 'object') {
-        // Fallback: try to parse other possible response formats
+      } else {
+        // No data found - likely open ocean
         return {
-          type: data.isWater ? 'water' : 'land',
-          description: data.isWater ? 
-            (data.waterBodyType || 'Ocean/Water Body') : 
-            (data.description || 'Land Surface'),
-          location: data.location || data.placeName || `${lat.toFixed(3)}°, ${lng.toFixed(3)}°`,
-          confidence: data.confidence || 'medium',
-          source: 'pafodev_api',
-          countryInfo: data.countryInfo || data.country || null
+          type: 'water',
+          description: 'Open Ocean ',
+          location: `${lat.toFixed(3)}°, ${lng.toFixed(3)}°`,
+          confidence: 'medium',
+          source: 'OpenStreetMap',
+          countryInfo: null,
+          apiData: {
+            coordinates: { lat, lng }
+          }
         };
       }
+    } else {
+      console.log('Nominatim API response not ok:', response.status, response.statusText);
     }
-    
-    // If API response is not ok or data is invalid, fall through to local detection
-    console.log('API response not ok or invalid, using local detection');
     
   } catch (error) {
-    // Log the error but continue with fallback
-    console.log('Surface detection API error:', error.message, '- using local detection');
+    console.log('Surface detection API error:', error.message);
   }
   
-  // Fallback to improved local geographic detection
-  return detectSurfaceTypeLocal(lat, lng);
-}
-
-/**
- * Local surface detection using basic geographic heuristics
- * @param {number} lat - Latitude  
- * @param {number} lng - Longitude
- * @returns {Object} Basic surface information
- */
-function detectSurfaceTypeLocal(lat, lng) {
-  // More accurate land/water detection using known land masses and water bodies
-  
-  // First, check if it's clearly in major land masses
-  const isInMajorLandMass = (
-    // North America
-    (lng >= -168 && lng <= -52 && lat >= 7 && lat <= 72 && 
-     !(lng >= -165 && lng <= -140 && lat >= 55 && lat <= 72)) || // Excluding Bering Sea
-    
-    // South America
-    (lng >= -82 && lng <= -34 && lat >= -56 && lat <= 13) ||
-    
-    // Europe
-    (lng >= -10 && lng <= 40 && lat >= 35 && lat <= 71 && 
-     !(lng >= 20 && lng <= 30 && lat >= 35 && lat <= 42)) || // Excluding Mediterranean
-    
-    // Africa
-    (lng >= -17 && lng <= 51 && lat >= -35 && lat <= 37) ||
-    
-    // Asia (main landmass)
-    (lng >= 26 && lng <= 180 && lat >= 1 && lat <= 78 && 
-     !(lng >= 100 && lng <= 140 && lat >= 1 && lat <= 25)) || // Excluding Southeast Asian seas
-    
-    // Australia
-    (lng >= 113 && lng <= 154 && lat >= -44 && lat <= -10) ||
-    
-    // Antarctica (land under ice)
-    (lat <= -60)
-  );
-
-  // Check for major water bodies
-  const isInMajorWaterBody = (
-    // Pacific Ocean (main areas)
-    (lng >= -180 && lng <= -120 && lat >= -60 && lat <= 60 && !isInMajorLandMass) ||
-    (lng >= 120 && lng <= 180 && lat >= -60 && lat <= 60 && !isInMajorLandMass) ||
-    
-    // Atlantic Ocean
-    (lng >= -70 && lng <= -10 && lat >= -60 && lat <= 70 && !isInMajorLandMass) ||
-    
-    // Indian Ocean
-    (lng >= 20 && lng <= 120 && lat >= -60 && lat <= 30 && !isInMajorLandMass) ||
-    
-    // Arctic Ocean
-    (lat >= 70 && !isInMajorLandMass) ||
-    
-    // Major seas and gulfs
-    // Mediterranean Sea
-    (lng >= 5 && lng <= 36 && lat >= 30 && lat <= 46) ||
-    // Red Sea
-    (lng >= 32 && lng <= 43 && lat >= 12 && lat <= 30) ||
-    // Persian Gulf
-    (lng >= 48 && lng <= 56 && lat >= 24 && lat <= 30) ||
-    // Gulf of Mexico
-    (lng >= -98 && lng <= -80 && lat >= 18 && lat <= 31) ||
-    // Caribbean Sea
-    (lng >= -85 && lng <= -60 && lat >= 9 && lat <= 25) ||
-    // North Sea
-    (lng >= -4 && lng <= 12 && lat >= 51 && lat <= 62) ||
-    // Baltic Sea
-    (lng >= 9 && lng <= 31 && lat >= 54 && lat <= 66)
-  );
-
-  // Enhanced logic: if clearly in water, return water; if clearly on land, return land
-  const isWater = isInMajorWaterBody && !isInMajorLandMass;
-  const isLand = isInMajorLandMass && !isInMajorWaterBody;
-  
-  // For ambiguous areas, use additional heuristics
-  let surfaceType, confidence, description;
-  
-  if (isWater) {
-    surfaceType = 'water';
-    confidence = 'high';
-    description = 'Ocean/Sea Area';
-  } else if (isLand) {
-    surfaceType = 'land';
-    confidence = 'high';
-    description = 'Continental Land Mass';
-  } else {
-    // For coastal or island areas, make educated guess based on distance from known land centers
-    const distanceFromLandCenters = Math.min(
-      // Distance from major population centers (rough approximation)
-      Math.abs(lat - 40) + Math.abs(lng - (-95)), // North America center
-      Math.abs(lat - (-15)) + Math.abs(lng - (-60)), // South America center
-      Math.abs(lat - 50) + Math.abs(lng - 10), // Europe center
-      Math.abs(lat - 0) + Math.abs(lng - 20), // Africa center
-      Math.abs(lat - 35) + Math.abs(lng - 105), // Asia center
-      Math.abs(lat - (-25)) + Math.abs(lng - 135) // Australia center
-    );
-    
-    if (distanceFromLandCenters < 30) {
-      surfaceType = 'land';
-      confidence = 'medium';
-      description = 'Coastal/Island Area';
-    } else {
-      surfaceType = 'water';
-      confidence = 'medium';
-      description = 'Open Ocean (Estimated)';
-    }
-  }
-
+  // Fallback: If API fails, assume water for unknown coordinates
   return {
-    type: surfaceType,
-    description: description,
+    type: 'water',
+    description: 'Unknown Surface (API Error)',
     location: `${lat.toFixed(3)}°, ${lng.toFixed(3)}°`,
-    confidence: confidence,
-    source: 'local_detection',
-    countryInfo: null
+    confidence: 'low',
+    source: 'fallback',
+    countryInfo: null,
+    apiData: {
+      coordinates: { lat, lng }
+    }
   };
 }
+
+
 
 /**
  * Calculates surface-specific effects based on impact parameters
@@ -261,15 +162,15 @@ export function calculateSurfaceSpecificEffects(surfaceInfo, diameterMeters, vel
     
     return {
       ...baseEffects,
-      tsunamiHeight: `${tsunamiHeightMeters.toFixed(1)} metros`,
-      tsunamiRange: `${tsunamiRangeKm.toFixed(0)} km desde el punto de impacto`,
-      coastalImpact: energyMegatons > 10 ? 'CRÍTICO' : energyMegatons > 1 ? 'ALTO' : 'MODERADO',
+      tsunamiHeight: `${tsunamiHeightMeters.toFixed(1)} meters`,
+      tsunamiRange: `${tsunamiRangeKm.toFixed(0)} km from impact point`,
+      coastalImpact: energyMegatons > 10 ? 'CRITICAL' : energyMegatons > 1 ? 'HIGH' : 'MODERATE',
       specialEffects: [
-        'Generación de ondas sísmicas submarinas',
-        'Vaporización masiva de agua',
-        'Lluvia ácida por vapor contaminado',
-        'Perturbación de corrientes oceánicas',
-        ...(energyMegatons > 5 ? ['Efectos climáticos globales por vapor de agua'] : [])
+        'Generation of underwater seismic waves',
+        'Massive water vaporization',
+        'Acid rain from contaminated vapor',
+        'Disruption of ocean currents',
+        ...(energyMegatons > 5 ? ['Global climate effects from water vapor'] : [])
       ]
     };
   } else {
@@ -279,18 +180,18 @@ export function calculateSurfaceSpecificEffects(surfaceInfo, diameterMeters, vel
     
     return {
       ...baseEffects,
-      fireballRadius: `${fireballRadiusKm.toFixed(1)} km de radio`,
-      seismicRange: `Efectos sísmicos hasta ${seismicRangeKm.toFixed(0)} km`,
-      groundEffect: energyMegatons > 50 ? 'DESTRUCCIÓN TOTAL en un radio de 100 km' : 
-                   energyMegatons > 10 ? 'Destrucción masiva local' : 
-                   'Daños severos en área inmediata',
+      fireballRadius: `${fireballRadiusKm.toFixed(1)} km radius`,
+      seismicRange: `Seismic effects up to ${seismicRangeKm.toFixed(0)} km`,
+      groundEffect: energyMegatons > 50 ? 'TOTAL DESTRUCTION within 100 km radius' : 
+                   energyMegatons > 10 ? 'Massive local destruction' : 
+                   'Severe damage in immediate area',
       specialEffects: [
-        'Formación de cráter de impacto',
-        'Eyección de material rocoso',
-        'Incendios forestales masivos',
-        'Contaminación atmosférica por polvo',
-        ...(energyMegatons > 10 ? ['Invierno de impacto regional'] : []),
-        ...(energyMegatons > 100 ? ['Extinción masiva potencial'] : [])
+        'Impact crater formation',
+        'Rock material ejection',
+        'Massive forest fires',
+        'Atmospheric dust contamination',
+        ...(energyMegatons > 10 ? ['Regional impact winter'] : []),
+        ...(energyMegatons > 100 ? ['Potential mass extinction'] : [])
       ]
     };
   }
