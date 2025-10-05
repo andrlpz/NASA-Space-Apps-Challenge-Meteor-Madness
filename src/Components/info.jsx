@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import cookies from 'js-cookie';
 
-// Add custom styles for animations
+// Add custom styles for animations and scrollbars
 const tooltipStyles = `
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-100%) scale(0.95); }
@@ -11,6 +13,40 @@ const tooltipStyles = `
   
   .animate-fade-in {
     animation: fadeIn 0.2s ease-out;
+  }
+
+  /* Beautiful scrollbar styles */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(31, 41, 55, 0.5);
+    border-radius: 10px;
+    border: 1px solid rgba(75, 85, 99, 0.3);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #3b82f6, #06b6d4);
+    border-radius: 10px;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #2563eb, #0891b2);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-corner {
+    background: rgba(31, 41, 55, 0.5);
+  }
+
+  /* Firefox scrollbar styling */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #3b82f6 rgba(31, 41, 55, 0.5);
   }
 `;
 
@@ -149,63 +185,147 @@ const definitions = {
   }
 };
 
-// Tooltip component that shows definition
-const DefinitionTooltip = ({ term, language, position }) => {
+// Tooltip component that shows definition - Fixed positioning relative to viewport
+const DefinitionTooltip = ({ term, language, buttonRef }) => {
   const definition = definitions[language]?.[term] || definitions.en[term] || "Definition not available.";
   
-  return (
+  // Calculate fixed position based on button's viewport position
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+  
+  useEffect(() => {
+    if (buttonRef?.current) {
+      const updatePosition = () => {
+        const rect = buttonRef.current.getBoundingClientRect();
+        const tooltipWidth = 320; // w-80 = 320px
+        const tooltipHeight = 120; // approximate height
+        
+        // Position tooltip above the button, centered horizontally
+        let left = rect.left + rect.width / 2 - tooltipWidth / 2;
+        let top = rect.top - tooltipHeight - 10; // 10px gap
+        
+        // Keep tooltip within viewport bounds
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
+        // Adjust horizontal position if needed
+        if (left < 10) left = 10;
+        if (left + tooltipWidth > viewportWidth - 10) left = viewportWidth - tooltipWidth - 10;
+        
+        // If tooltip would go above viewport, position it below the button
+        if (top < 10) {
+          top = rect.bottom + 10;
+        }
+        
+        setPosition({ top, left });
+      };
+      
+      updatePosition();
+      window.addEventListener('scroll', updatePosition);
+      window.addEventListener('resize', updatePosition);
+      
+      return () => {
+        window.removeEventListener('scroll', updatePosition);
+        window.removeEventListener('resize', updatePosition);
+      };
+    }
+  }, [buttonRef]);
+  
+  return createPortal(
     <div 
-      className="absolute z-50 bg-gray-800 border border-cyan-400/50 rounded-lg p-3 max-w-xs shadow-xl animate-fade-in pointer-events-none"
-      style={{
-        top: position.top - 10,
+      className="fixed z-[99999] bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50 rounded-lg p-4 w-80 shadow-2xl animate-fade-in pointer-events-none custom-scrollbar"
+      style={{ 
+        top: position.top, 
         left: position.left,
-        transform: 'translateY(-100%)',
+        isolation: 'isolate'
       }}
     >
       <div className="flex items-center space-x-2 mb-2">
-        <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>
+        <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
         <h4 className="text-sm font-semibold text-cyan-400 capitalize">
           {term.replace(/-/g, ' ')}
         </h4>
       </div>
-      <p className="text-gray-200 text-xs leading-relaxed">
+      <p className="text-gray-200 text-xs leading-relaxed max-h-32 overflow-y-auto">
         {definition}
       </p>
-      {/* Tooltip arrow */}
-      <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-cyan-400/50"></div>
-    </div>
+      
+      {/* Arrow pointing to the button */}
+      <div 
+        className="absolute w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-cyan-400/50"
+        style={{ 
+          top: '100%', 
+          left: '50%', 
+          transform: 'translateX(-50%)'
+        }}
+      ></div>
+    </div>,
+    document.body
   );
 };
 
 // Info button component
 const InfoButton = ({ term, className = "" }) => {
   const [showTooltip, setShowTooltip] = useState(false);
-  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const buttonRef = useRef(null);
   const { i18n } = useTranslation();
-  const currentLanguage = i18n.language || 'en';
+  
+  // Get current language from cookies and i18n with fallback
+  const currentLanguageCode = cookies.get('i18next') || i18n.language || 'en';
+  
+  // Normalize language code to match our definitions structure
+  let currentLanguage = 'en'; // default
+  if (currentLanguageCode.startsWith('es') || currentLanguageCode === 'es') {
+    currentLanguage = 'es';
+  } else if (currentLanguageCode.startsWith('fr') || currentLanguageCode === 'fr') {
+    currentLanguage = 'fr';
+  }
   
   // Check if definition exists for this term
   const hasDefinition = definitions[currentLanguage]?.[term] || definitions.en[term];
   
   if (!hasDefinition) {
+    console.warn(`No definition found for term: ${term} in language: ${currentLanguage}`);
     return null;
   }
 
   const handleMouseEnter = () => {
-    if (buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setTooltipPosition({
-        top: rect.top + window.scrollY,
-        left: rect.left + window.scrollX + rect.width / 2,
-      });
-      setShowTooltip(true);
-    }
+    setShowTooltip(true);
   };
 
   const handleMouseLeave = () => {
     setShowTooltip(false);
   };
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowTooltip(!showTooltip);
+  };
+
+  // Close tooltip when clicking outside or pressing Escape
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (buttonRef.current && !buttonRef.current.contains(e.target)) {
+        setShowTooltip(false);
+      }
+    };
+
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        setShowTooltip(false);
+      }
+    };
+
+    if (showTooltip) {
+      document.addEventListener('mousedown', handleOutsideClick);
+      document.addEventListener('keydown', handleEscape);
+      
+      return () => {
+        document.removeEventListener('mousedown', handleOutsideClick);
+        document.removeEventListener('keydown', handleEscape);
+      };
+    }
+  }, [showTooltip]);
   
   return (
     <>
@@ -213,8 +333,11 @@ const InfoButton = ({ term, className = "" }) => {
         ref={buttonRef}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className={`inline-flex items-center justify-center w-4 h-4 ml-2 text-gray-400 hover:text-cyan-400 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100 ${className}`}
-        title="Hover for definition"
+        onClick={handleClick}
+        className={`inline-flex items-center justify-center w-6 h-6 ml-1 text-gray-400 hover:text-cyan-400 rounded-full transition-all duration-200 opacity-70 group-hover:opacity-100 hover:opacity-100 hover:bg-cyan-400/10 p-1 ${className}`}
+        title="Click or hover for definition"
+        type="button"
+        aria-label={`Definition for ${term.replace(/-/g, ' ')}`}
       >
         <Info className="w-3 h-3" />
       </button>
@@ -223,7 +346,7 @@ const InfoButton = ({ term, className = "" }) => {
         <DefinitionTooltip 
           term={term}
           language={currentLanguage}
-          position={tooltipPosition}
+          buttonRef={buttonRef}
         />
       )}
     </>

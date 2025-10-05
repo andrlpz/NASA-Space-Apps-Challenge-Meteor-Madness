@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Zap, ShieldCheck, MapPin, Telescope, Gauge, Scale, Wind, ExternalLink, Ruler, Activity, AlertTriangle, Globe, Waves, Mountain } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import InfoButton from './info';
 
 export default function ImpactSidebar({ impact, resetImpact }) {
   if (!impact) {
@@ -366,6 +367,7 @@ export default function ImpactSidebar({ impact, resetImpact }) {
             <p className="text-gray-300 text-sm font-semibold mb-2 flex items-center">
               <AlertTriangle size={16} className="text-yellow-400 mr-2" />
               {t('special-effects')}:
+              <InfoButton term="special-effects" />
             </p>
             <ul className="text-xs text-gray-300 space-y-1">
               {consequences.specialEffects.map((effect, index) => (
@@ -484,54 +486,3 @@ const StatItemWide = ({ label, value, valueColor = 'text-white', icon = null, in
     </div>
   </div>
 );
-
-const InfoButton = ({ term }) => {
-  const [showTooltip, setShowTooltip] = useState(false);
-  const { t } = useTranslation();
-
-  const getTooltipContent = (term) => {
-    // Add your tooltip content here
-    const tooltips = {
-      'selected-asteroid': 'Information about the selected asteroid from NASA database',
-      'name': 'Official designation of the asteroid',
-      'est_diameter': 'Estimated size range of the asteroid in meters',
-      'relative-velocity': 'Speed of asteroid relative to Earth',
-      'close-approach': 'Date of closest approach to Earth',
-      'miss-distance': 'Distance asteroid will miss Earth by',
-      'abs-magnitude': 'Absolute magnitude - brightness measurement',
-      'potentially-hazardous': 'Classification based on size and orbit',
-      'consequences': 'Predicted effects if impact occurred',
-      'impact-location': 'Coordinates where impact would occur',
-      'kinetic-energy': 'Energy released upon impact',
-      'seismic-effect': 'Earthquake-like effects from impact',
-      'air-blast': 'Atmospheric shock wave effects',
-      'mitigation-report': 'Recommended response strategies',
-      'threat-level': 'Assessment of danger level',
-      'recommended-action': 'Suggested response measures'
-    };
-    return tooltips[term] || 'Additional information';
-  };
-
-  return (
-    <div className="relative inline-block">
-      <button 
-        className="ml-2 w-4 h-4 bg-blue-600 hover:bg-blue-500 rounded-full text-xs text-white transition-all duration-200 hover:scale-110 flex items-center justify-center"
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
-        onClick={() => setShowTooltip(!showTooltip)}
-      >
-        ?
-      </button>
-      
-      {showTooltip && (
-        <div className="absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg shadow-xl border border-gray-600 max-w-xs whitespace-normal">
-          <div className="text-center">
-            {getTooltipContent(term)}
-          </div>
-          {/* Tooltip arrow */}
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-        </div>
-      )}
-    </div>
-  );
-};
