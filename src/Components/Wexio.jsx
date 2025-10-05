@@ -395,7 +395,6 @@ const Wexio = () => {
       {showModeChangeNotification && (
         <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
           <div className="flex items-center gap-2">
-            <span>{is3DMap ? '🌍' : '🗺️'}</span>
             <span>Switched to {is3DMap ? '3D Globe' : '2D Map'}</span>
             <button 
               onClick={() => dispatch(hideNotification())}
