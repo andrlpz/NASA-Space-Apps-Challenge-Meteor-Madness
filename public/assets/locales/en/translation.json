@@ -171,7 +171,22 @@
   "seismic-magnitude": "Seismic Magnitude",
   "seismic-range": "Seismic Range",
   "ground-range": "Ground Range",
-  "ground-effect": "Ground Effect"
+  "ground-effect": "Ground Effect",
+  "surface-analysis": "Surface Analysis",
+  "ocean-analysis": "Ocean Analysis",
+  "land-analysis": "Land Analysis",
+  "tsunami-risk": "Tsunami Risk",
+  "tsunami-height": "Tsunami Height",
+  "tsunami-range": "Tsunami Range",
+  "population-impact": "Population Impact",
+  "infrastructure-impact": "Infrastructure Impact",
+  "economic-impact": "Economic Impact",
+  "emergency-impact": "Emergency Impact",
+  "education-impact": "Education Impact",
+  "coastal-impact": "Coastal Impact",
+  "inland-impact": "Inland Impact",
+  "global-impact": "Global Impact",
+  "detailed-analysis": "Detailed Analysis"
 
 
 

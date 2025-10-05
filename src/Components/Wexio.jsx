@@ -14,8 +14,7 @@ import {
   updateZoomLevel,
   setMapMode,
   hideNotification,
-  showAsteroidSelectionNotification,
-  hideAsteroidSelectionNotification,
+
   loadStateFromURL,
   restoreImpactFromURL,
 } from '../store/impactSlice';
@@ -39,6 +38,7 @@ import i18next from 'i18next'
 import GlobePage from './GlobeComponent';
 import { useMeteor } from './MeteorProvider';
 import WelcomeOverlay from './WelcomeOverlay';
+import Carita from './Carita';
 
 
 const languages = [
@@ -74,7 +74,6 @@ const Wexio = () => {
     zoomThresholdFor2D,
     zoomThresholdFor3D,
     showModeChangeNotification,
-    showAsteroidSelectionNotification,
   } = useSelector((state) => state.impact);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -335,16 +334,6 @@ const Wexio = () => {
     }
   }, [showModeChangeNotification, dispatch])
 
-  // Auto-hide asteroid selection notification after 3 seconds
-  useEffect(() => {
-    if (showAsteroidSelectionNotification) {
-      const timer = setTimeout(() => {
-        dispatch(hideAsteroidSelectionNotification())
-      }, 3000)
-      return () => clearTimeout(timer)
-    }
-  }, [showAsteroidSelectionNotification, dispatch])
-
   // Load state from URL on mount
   useEffect(() => {
     const params = getCurrentURLParams();
@@ -388,12 +377,6 @@ const Wexio = () => {
   const handleMapClick = async (latlng, clickEvent) => {
     console.log('Map clicked at:', latlng, 'with event:', clickEvent);
     
-    // Prevent impact simulation if asteroid list is shown but no asteroid is selected
-    if (showAsteroidListState && !selectedAsteroid) {
-      console.log('Impact simulation blocked: Asteroid list is shown but no asteroid selected');
-      dispatch(showAsteroidSelectionNotification());
-      return;
-    }
     
     // Calculate impact function (moved here for reusability)
     const calculateImpact = (diameterMeters, velocityKms) => {
@@ -460,7 +443,7 @@ const Wexio = () => {
             seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
             primaryEffect: surfaceEffects.primaryEffect,
             airBlast: 'Significant overpressure event expected.',
-            craterInfo: `${surfaceEffects.craterDiameter?.toFixed(0) || craterDiameter} meters - ${surfaceEffects.craterType}`,
+            craterInfo: `${surfaceEffects.craterDiameter?.toFixed(0) || craterDiameter} metros - ${surfaceEffects.craterType}`,
             devastationRadius: `${surfaceEffects.devastationRadius?.toFixed(0) || devastationRadius} km`,
             specialEffects: surfaceEffects.specialEffects,
             ...(surfaceInfo.type === 'water' && {
@@ -534,7 +517,7 @@ const Wexio = () => {
             seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
             primaryEffect: surfaceEffects.primaryEffect,
             airBlast: 'Significant overpressure event expected.',
-            craterInfo: `${surfaceEffects.craterDiameter?.toFixed(0) || 'N/A'} meters - ${surfaceEffects.craterType}`,
+            craterInfo: `${surfaceEffects.craterDiameter?.toFixed(0) || 'N/A'} metros - ${surfaceEffects.craterType}`,
             devastationRadius: `${surfaceEffects.devastationRadius?.toFixed(0) || 'N/A'} km`,
             specialEffects: surfaceEffects.specialEffects,
             ...(surfaceInfo.type === 'water' && {
@@ -669,7 +652,11 @@ const Wexio = () => {
             >
             
 
-              <Target className="w-8 h-8 text-red-400 mr-3 group-hover:text-red-300 transition-colors" />
+              <img 
+                src="/src/assets/logo.png" 
+                alt="Meteor Madness Logo" 
+                className="w-8 h-8 mr-3 group-hover:opacity-80 transition-opacity object-contain" 
+              />
               <div className="text-left">
                 <h1 className="text-2xl font-bold text-white group-hover:text-gray-200 transition-colors cursor-pointer">{t('page_title')}</h1>
                 <p className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors cursor-pointer">{t('project_name')}</p>
@@ -724,7 +711,11 @@ const Wexio = () => {
         {isSidebarCollapsed && (
           <div className="flex flex-col items-center space-y-4 mt-4">
             <div className="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center">
-              <Target className="w-4 h-4 text-red-400" />
+              <img 
+                src="/src/assets/logo.png" 
+                alt="Meteor Madness Logo" 
+                className="w-4 h-4 object-contain opacity-80" 
+              />
             </div>
             {impactEvent && (
               <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" title="Impact Analysis Active"></div>
@@ -783,20 +774,7 @@ const Wexio = () => {
         </div>
       )}
 
-      {/* Asteroid selection notification */}
-      {showAsteroidSelectionNotification && (
-        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg">
-          <div className="flex items-center gap-2">
-            <span>Please select an asteroid from the list to simulate an impact</span>
-            <button 
-              onClick={() => dispatch(hideAsteroidSelectionNotification())}
-              className="ml-2 text-white hover:text-gray-300"
-            >
-              ×
-            </button>
-          </div>
-        </div>
-      )}
+      <Carita mock={false} />
       </div>
     </div>
   );
