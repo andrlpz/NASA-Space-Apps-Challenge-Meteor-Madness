@@ -64,5 +64,7 @@
   "switchTo2D": "Passer à la Carte 2D",
   "switchTo3D": "Passer au Globe 3D",
   "impactAnalysis": "Analyse d'Impact",
-  "detailedSimulationResults": "Résultats détaillés de la simulation d'impact"
+  "detailedSimulationResults": "Résultats détaillés de la simulation d'impact",
+  "asteroids-button": "Astéroïdes",
+  "sliders-button": "Curseurs"
 }

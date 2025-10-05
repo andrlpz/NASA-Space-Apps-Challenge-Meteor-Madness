@@ -186,11 +186,7 @@
   "coastal-impact": "Coastal Impact",
   "inland-impact": "Inland Impact",
   "global-impact": "Global Impact",
-  "detailed-analysis": "Detailed Analysis"
-
-
-
-
-
-  
+  "detailed-analysis": "Detailed Analysis",
+  "asteroids-button": "Asteroids",
+  "sliders-button": "Sliders"
 }
