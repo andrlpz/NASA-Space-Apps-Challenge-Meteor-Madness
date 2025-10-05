@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   setImpactEvent,
@@ -14,12 +14,20 @@ import {
   updateZoomLevel,
   setMapMode,
   hideNotification,
+  loadStateFromURL,
+  restoreImpactFromURL,
 } from '../store/impactSlice';
 import InteractiveMap from './InteractiveMap';
 import ImpactSidebar from './ImpactSidebar';
-import { Target, Loader, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Target, Loader, ChevronLeft, ChevronRight, Share2, Copy, Check } from 'lucide-react';
 import AsteroidList from './AsteroidList';
 import Sliders from './Sliders';
+import { 
+  getCurrentURLParams, 
+  decodeURLToState, 
+  updateURL, 
+  copyShareableURL 
+} from '../lib/urlUtils';
 
 import cookies from 'js-cookie'
 import { useTranslation } from 'react-i18next'
@@ -66,6 +74,8 @@ const Wexio = () => {
   const [error, setError] = useState(null);
   const [asteroids, setAsteroids] = useState([]);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [shareSuccess, setShareSuccess] = useState(false);
+  const [pendingURLState, setPendingURLState] = useState(null);
 
   const appearSliders = () => {
     dispatch(showSliders());
@@ -86,6 +96,162 @@ const Wexio = () => {
   function handleResetImpact() {
     dispatch(resetImpact());
   }
+
+  // Handle sharing current state
+  const handleShare = async () => {
+    const success = await copyShareableURL({
+      impactEvent,
+      selectedAsteroid,
+      diameter,
+      velocity,
+      is3DMap
+    });
+    
+    if (success) {
+      setShareSuccess(true);
+      setTimeout(() => setShareSuccess(false), 2000);
+    }
+  };
+
+  // Calculate impact function (moved here for reusability)
+  const calculateImpact = (diameterMeters, velocityKms) => {
+    const radius = diameterMeters / 2;
+    const volume = (4 / 3) * Math.PI * Math.pow(radius, 3); // m³
+    const density = 3000; // kg/m³ typical rock
+    const mass = density * volume; // kg
+    const kineticEnergyJoules = 0.5 * mass * Math.pow(velocityKms * 1000, 2); // J
+    const energyMegatons = kineticEnergyJoules / 4.184e15; // MT TNT
+
+    // Realistic seismic magnitude
+    const seismicMagnitude = Math.min((2 / 3) * Math.log10(kineticEnergyJoules) - 3.2, 10).toFixed(1);
+
+    // Crater and devastation radius approximations
+    const craterDiameter = Math.min(diameterMeters * 20, 20000); // max 20 km
+    const devastationRadius = Math.min(energyMegatons * 10, 500); // max 500 km
+    const evacuationRadius = Math.min(energyMegatons * 5, 200); // max 200 km
+
+    return {
+      energyMegatons: energyMegatons.toFixed(2),
+      seismicMagnitude,
+      craterDiameter: craterDiameter.toFixed(0),
+      devastationRadius: devastationRadius.toFixed(0),
+      evacuationRadius: evacuationRadius.toFixed(0),
+    };
+  };
+
+  // Function to restore impact from URL parameters
+  const restoreImpactFromURL = useCallback((impactPosition, impactType, asteroidName, asteroidData, customDiameter, customVelocity) => {
+    if (impactType === 'asteroid' && asteroidName) {
+      // Try to find the asteroid in the loaded list
+      let foundAsteroid = asteroids.find(asteroid => 
+        asteroid.name.replace(/[()]/g, '') === asteroidName
+      );
+      
+      // If not found in list, create from stored data
+      if (!foundAsteroid && asteroidData) {
+        foundAsteroid = {
+          name: asteroidData.name,
+          id: asteroidData.id,
+          estimated_diameter: {
+            meters: {
+              estimated_diameter_max: asteroidData.diameter
+            }
+          },
+          close_approach_data: [{
+            relative_velocity: {
+              kilometers_per_second: asteroidData.velocity.toString()
+            },
+            close_approach_date_full: 'Restored from URL',
+            miss_distance: {
+              kilometers: '0'
+            }
+          }],
+          is_potentially_hazardous_asteroid: asteroidData.isPotentiallyHazardous,
+          absolute_magnitude_h: 'N/A',
+          nasa_jpl_url: 'N/A'
+        };
+      }
+      
+      if (foundAsteroid) {
+        dispatch(setSelectedAsteroid(foundAsteroid));
+        dispatch(hideAsteroidList()); // Ensure asteroid list stays hidden
+        
+        // Create asteroid impact event only if we have a position
+        if (impactPosition) {
+          const diameterMeters = foundAsteroid.estimated_diameter.meters.estimated_diameter_max;
+          const velocityKms = parseFloat(foundAsteroid.close_approach_data[0].relative_velocity.kilometers_per_second);
+          const { energyMegatons, seismicMagnitude } = calculateImpact(diameterMeters, velocityKms);
+
+          dispatch(setImpactEvent({
+            position: impactPosition,
+            radius: 60000,
+            details: {
+              source: {
+                name: foundAsteroid.name.replace(/[()]/g, ''),
+                diameter: `${diameterMeters.toFixed(2)} meters`,
+                velocity: `${velocityKms.toFixed(2)} km/s`,
+                isPotentiallyHazardous: foundAsteroid.is_potentially_hazardous_asteroid,
+                closeApproachDate: foundAsteroid.close_approach_data[0].close_approach_date_full,
+                missDistance: `${parseFloat(foundAsteroid.close_approach_data[0].miss_distance.kilometers).toLocaleString()} km`,
+                absoluteMagnitude: foundAsteroid.absolute_magnitude_h,
+                jplUrl: foundAsteroid.nasa_jpl_url,
+              },
+              consequences: {
+                impactEnergy: `${energyMegatons} Megatons TNT`,
+                seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
+                airBlast: 'Significant overpressure event expected.',
+              },
+              mitigation: {
+                threatLevel: foundAsteroid.is_potentially_hazardous_asteroid ? 'MONITORING REQUIRED' : 'LOW',
+                recommendedAction: 'Further observation to refine orbital parameters.',
+              },
+            },
+          }));
+        }
+      }
+    } else if (impactType === 'custom' && customDiameter && customVelocity) {
+      // Set custom values
+      dispatch(setDiameter(customDiameter));
+      dispatch(setVelocity(customVelocity));
+      dispatch(showSliders());
+      dispatch(hideAsteroidList()); // Ensure asteroid list stays hidden
+      
+      // Create custom impact event only if we have a position
+      if (impactPosition) {
+        const { energyMegatons, seismicMagnitude, craterDiameter, devastationRadius, evacuationRadius } =
+          calculateImpact(customDiameter, customVelocity);
+
+        dispatch(setImpactEvent({
+          position: impactPosition,
+          radius: 60000,
+          details: {
+            source: {
+              name: 'Custom Asteroid Simulation',
+              diameter: `${customDiameter.toFixed(2)} meters`,
+              velocity: `${customVelocity.toFixed(2)} km/s`,
+              isPotentiallyHazardous: customDiameter > 140,
+              closeApproachDate: 'Custom Simulation',
+              missDistance: 'Impact Simulation',
+              absoluteMagnitude: 'N/A',
+              jplUrl: 'N/A',
+            },
+            consequences: {
+              impactEnergy: `${energyMegatons} Megatons TNT`,
+              seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
+              airBlast: 'Significant overpressure event expected.',
+              craterDiameter: `${craterDiameter} meters`,
+              devastationRadius: `${devastationRadius} km`,
+            },
+            mitigation: {
+              threatLevel: customDiameter > 1000 ? 'EXTREME' : customDiameter > 500 ? 'HIGH' : 'MODERATE',
+              recommendedAction: 'Custom simulation - Adjust sliders to test different scenarios.',
+              evacuationRadius: `${evacuationRadius} km`,
+            },
+          },
+        }));
+      }
+    }
+  }, [asteroids, calculateImpact, dispatch]);
 
   useEffect(() => {
     const fetchAsteroidData = async () => {
@@ -133,31 +299,47 @@ const Wexio = () => {
     }
   }, [showModeChangeNotification, dispatch])
 
+  // Load state from URL on mount
+  useEffect(() => {
+    const params = getCurrentURLParams();
+    const urlState = decodeURLToState(params);
+    
+    if (Object.keys(urlState).length > 0) {
+      console.log('Loading state from URL:', urlState);
+      setPendingURLState(urlState);
+      dispatch(loadStateFromURL(urlState));
+    }
+  }, [dispatch]);
+
+  // Restore impact from URL after asteroids are loaded
+  useEffect(() => {
+    if (pendingURLState && asteroids.length > 0 && !isLoading) {
+      console.log('Restoring impact from URL:', pendingURLState);
+      const { impactPosition, impactType, asteroidName, asteroidData, customDiameter, customVelocity } = pendingURLState;
+      
+      // Restore configuration even without position, or with position
+      if (impactPosition || impactType) {
+        restoreImpactFromURL(impactPosition, impactType, asteroidName, asteroidData, customDiameter, customVelocity);
+      }
+      
+      setPendingURLState(null);
+    }
+  }, [pendingURLState, asteroids, isLoading, restoreImpactFromURL]);
+
+  // Update URL when state changes
+  useEffect(() => {
+    if (!isLoading && !pendingURLState) {
+      updateURL({
+        impactEvent,
+        selectedAsteroid,
+        diameter,
+        velocity,
+        is3DMap
+      });
+    }
+  }, [impactEvent, selectedAsteroid, diameter, velocity, is3DMap, isLoading, pendingURLState]);
+
   const handleMapClick = (latlng) => {
-  const calculateImpact = (diameterMeters, velocityKms) => {
-    const radius = diameterMeters / 2;
-    const volume = (4 / 3) * Math.PI * Math.pow(radius, 3); // m³
-    const density = 3000; // kg/m³ typical rock
-    const mass = density * volume; // kg
-    const kineticEnergyJoules = 0.5 * mass * Math.pow(velocityKms * 1000, 2); // J
-    const energyMegatons = kineticEnergyJoules / 4.184e15; // MT TNT
-
-    // Realistic seismic magnitude
-    const seismicMagnitude = Math.min((2 / 3) * Math.log10(kineticEnergyJoules) - 3.2, 10).toFixed(1);
-
-    // Crater and devastation radius approximations
-    const craterDiameter = Math.min(diameterMeters * 20, 20000); // max 20 km
-    const devastationRadius = Math.min(energyMegatons * 10, 500); // max 500 km
-    const evacuationRadius = Math.min(energyMegatons * 5, 200); // max 200 km
-
-    return {
-      energyMegatons: energyMegatons.toFixed(2),
-      seismicMagnitude,
-      craterDiameter: craterDiameter.toFixed(0),
-      devastationRadius: devastationRadius.toFixed(0),
-      evacuationRadius: evacuationRadius.toFixed(0),
-    };
-  };
 
   if (showSlidersState) {
     // Custom slider simulation
@@ -374,7 +556,7 @@ const Wexio = () => {
           </div>
         </div>
       </main>
-      <div className="absolute top-4 right-4 z-10 bg-gray-800 p-2 rounded z-1000">
+      <div className="absolute top-4 right-4 z-10 bg-gray-800 p-2 rounded z-1000 flex items-center gap-2">
         <select
           value={currentLanguageCode}
           onChange={e => {
@@ -389,6 +571,31 @@ const Wexio = () => {
             </option>
           ))}
         </select>
+        
+        {/* Share Button */}
+        {impactEvent && (
+          <button
+            onClick={handleShare}
+            className={`flex items-center gap-1 px-3 py-1 rounded transition-colors ${
+              shareSuccess 
+                ? 'bg-green-600 text-white' 
+                : 'bg-blue-600 hover:bg-blue-700 text-white'
+            }`}
+            title="Share this impact scenario"
+          >
+            {shareSuccess ? (
+              <>
+                <Check className="w-4 h-4" />
+                <span className="text-xs">Copied!</span>
+              </>
+            ) : (
+              <>
+                <Share2 className="w-4 h-4" />
+                <span className="text-xs">Share</span>
+              </>
+            )}
+          </button>
+        )}
       </div>
       
       {/* Auto-switch notification */}
