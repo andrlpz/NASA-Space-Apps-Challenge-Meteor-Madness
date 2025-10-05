@@ -46,6 +46,7 @@
   "satellitemode": "Satellite View",
   "sortby": "Sort by",
   "date": "Date",
-  "none": "None"
-  
+  "none": "None",
+  "collapse_sidebar": "Collapse sidebar",
+  "expand_sidebar": "Expand sidebar"
 }

@@ -50,7 +50,7 @@ function ImpactRing({ lat, lng, radiusMeters, color='#ef4444' }){
 }
 function Earth({ onHover, onPick }){
   const [day, normal, spec, clouds]=useTexture([iday,inormal,ispec,iclouds])
-  day.colorSpace=THREE.SRGBColorSpace
+  if (day) day.colorSpace=THREE.SRGBColorSpace
   const [down,setDown]=useState([0,0])
   return (
     <group>
@@ -90,7 +90,6 @@ function CameraController() {
       const clampedDistance = Math.max(minDistance, Math.min(maxDistance, currentDistance))
       const zoomLevel = minZoom + ((maxDistance - clampedDistance) / (maxDistance - minDistance)) * (maxZoom - minZoom)
 
-      //console.log('Distance:', currentDistance, 'Clamped:', clampedDistance, 'ZoomLevel:', zoomLevel)
       dispatch(updateZoomLevel(Math.round(zoomLevel * 20) / 20))
       lastDistance.current = currentDistance
     }

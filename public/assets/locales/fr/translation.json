@@ -32,7 +32,8 @@
   "mitigation": {
     "threatlevel": {
       "MONITORING REQUIRED": "SURVEILLANCE REQUISE",
-      "LOW": "FAIBLE"
+      "LOW": "FAIBLE",
+      "HIGH": "ÉLEVÉ"
     }
   },
   "recommended-action": "Action recommandée",
@@ -41,5 +42,11 @@
   "satellitemode": "Vue Satellite",
   "sortby": "Trier par",
   "date": "Date",
-  "none": "Aucun"
+  "none": "Aucun",
+  "collapse_sidebar": "Réduire la barre latérale",
+  "expand_sidebar": "Étendre la barre latérale",
+  "adjust_parameters": "Ajuster les Paramètres de Votre Astéroïde Personnalisé",
+  "diameter": "Diamètre (m)",
+  "velocity_km_s": "Vitesse (km/s)",
+  "slide_to_simulate": "Faites glisser les barres pour ajuster les paramètres, puis cliquez n'importe où sur la carte pour simuler l'impact."
 }

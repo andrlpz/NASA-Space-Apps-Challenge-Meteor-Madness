@@ -17,11 +17,9 @@ import {
 } from '../store/impactSlice';
 import InteractiveMap from './InteractiveMap';
 import ImpactSidebar from './ImpactSidebar';
-import { Target, Loader } from 'lucide-react';
+import { Target, Loader, ChevronLeft, ChevronRight } from 'lucide-react';
 import AsteroidList from './AsteroidList';
 import Sliders from './Sliders';
-
-import { Link } from 'react-router-dom';
 
 import cookies from 'js-cookie'
 import { useTranslation } from 'react-i18next'
@@ -67,6 +65,7 @@ const Wexio = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [asteroids, setAsteroids] = useState([]);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const appearSliders = () => {
     dispatch(showSliders());
@@ -74,6 +73,10 @@ const Wexio = () => {
   
   const appearAsteroids = () => {
     dispatch(showAsteroidList());
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
   const currentLanguageCode = cookies.get('i18next') || 'en'
@@ -106,7 +109,6 @@ const Wexio = () => {
         }
 
         setAsteroids(allAsteroids);
-        console.log('Sample asteroid:', allAsteroids[0]);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -259,60 +261,88 @@ const Wexio = () => {
 
   return (
     <div className="relative flex h-screen w-full bg-gray-900 text-white font-sans">
-      <aside className="w-full max-w-sm p-6 bg-gray-800 shadow-2xl flex flex-col">
-        <div className="flex items-center mb-6">
-          <Target className="w-8 h-8 text-red-400 mr-3" />
-          <div>
-            <h1 className="text-2xl font-bold">{t('page_title')}</h1>
-            <p className="text-sm text-gray-400">{t('project_name')}</p>
+      <aside className={`${isSidebarCollapsed ? 'w-16' : 'w-full max-w-sm'} p-6 bg-gray-800 shadow-2xl flex flex-col transition-all duration-300 ease-in-out relative`}>
+        {/* Collapse/Expand Toggle Button */}
+        <button
+          onClick={toggleSidebar}
+          className="absolute top-4 right-4 z-10 w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center transition-colors duration-200"
+          title={isSidebarCollapsed ? t('expand_sidebar') || 'Expand sidebar' : t('collapse_sidebar') || 'Collapse sidebar'}
+        >
+          {isSidebarCollapsed ? 
+            <ChevronRight className="w-4 h-4 text-gray-300" /> : 
+            <ChevronLeft className="w-4 h-4 text-gray-300" />
+          }
+        </button>
+
+        {/* Sidebar Content - Hidden when collapsed */}
+        <div className={`${isSidebarCollapsed ? 'hidden' : 'block'} transition-all duration-300 ease-in-out flex flex-col flex-grow overflow-hidden`}>
+          <div className="flex items-center mb-6">
+            <Target className="w-8 h-8 text-red-400 mr-3" />
+            <div>
+              <h1 className="text-2xl font-bold">{t('page_title')}</h1>
+              <p className="text-sm text-gray-400">{t('project_name')}</p>
+            </div>
           </div>
+          
+          <div className='flex items-center flex-row space-x-4 mb-4 gap-15 justify-center'>
+            <button className='bg-gray-700 text-white p-1 rounded p-3 hover:underline' onClick={appearSliders}>Sliders</button>
+            <button className='bg-gray-700 text-white p-1 rounded p-3 hover:underline' onClick={appearAsteroids}>Asteroids</button>
+          </div>
+
+          {showSlidersState && (
+            <div className="mb-4">
+              <Sliders
+                diameter={diameter}
+                setDiameter={(value) => dispatch(setDiameter(value))}
+                velocity={velocity}
+                setVelocity={(value) => dispatch(setVelocity(value))}
+              />
+            </div>
+          )}
+
+          {isLoading && (
+            <div className="flex-grow flex items-center justify-center">
+              <Loader className="animate-spin" />
+              <p className="ml-2">{t('fetching')}</p>
+            </div>
+          )}
+          {error && (
+            <div className="flex-grow flex items-center justify-center text-red-400">
+              <p>Error: {error}</p>
+            </div>
+          )}
+
+          {!isLoading && !error && (
+            <>
+              {showAsteroidListState && (
+                <div>
+                  <p className="text-sm mb-2">{t('select')}</p>
+                  <AsteroidList asteroids={asteroids} onSelect={(asteroid) => dispatch(setSelectedAsteroid(asteroid))} />
+                </div>
+              )}
+              {impactEvent && (
+                <ImpactSidebar impact={impactEvent} resetImpact={handleResetImpact} />
+              )}
+            </>
+          )}
         </div>
-        <div className='flex items-center flex-row space-x-4 mb-4 gap-15 justify-center'>
-          <button className='bg-gray-700 text-white p-1 rounded p-3 hover:underline' onClick={appearSliders}>Sliders</button>
-          <button className='bg-gray-700 text-white p-1 rounded p-3 hover:underline' onClick={appearAsteroids}>Asteroids</button>
-        </div>
 
-        {showSlidersState && (
-          <div className="mb-4">
-            <Sliders
-              diameter={diameter}
-              setDiameter={(value) => dispatch(setDiameter(value))}
-              velocity={velocity}
-              setVelocity={(value) => dispatch(setVelocity(value))}
-            />
-          </div>
-        )}
-
-        {isLoading && (
-          <div className="flex-grow flex items-center justify-center">
-            <Loader className="animate-spin" />
-            <p className="ml-2">{t('fetching')}</p>
-          </div>
-        )}
-        {error && (
-          <div className="flex-grow flex items-center justify-center text-red-400">
-            <p>Error: {error}</p>
-          </div>
-        )}
-
-        {!isLoading && !error && (
-          <>
-            {showAsteroidListState && (
-              <div>
-                <p className="text-sm mb-2">{t('select')}</p>
-                <AsteroidList asteroids={asteroids} onSelect={(asteroid) => dispatch(setSelectedAsteroid(asteroid))} />
-              </div>
-            )}
+        {/* Collapsed State - Show only essential icons */}
+        {isSidebarCollapsed && (
+          <div className="flex flex-col items-center space-y-4 mt-4">
+            <div className="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center">
+              <Target className="w-4 h-4 text-red-400" />
+            </div>
             {impactEvent && (
-              <ImpactSidebar impact={impactEvent} resetImpact={handleResetImpact} />
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" title="Impact Analysis Active"></div>
             )}
-          </>
+          </div>
         )}
       </aside>
 
       <main className="flex-1 h-full relative">
         {is3DMap
-          ? <GlobePage impact={impactEvent} onMapClick={handleMapClick} resetImpact={resetImpact} />
+          ? <GlobePage impact={impactEvent} onMapClick={handleMapClick} />
           : <InteractiveMap impact={impactEvent} onMapClick={handleMapClick} />
         }
         

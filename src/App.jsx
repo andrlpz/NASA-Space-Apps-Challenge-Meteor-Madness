@@ -14,7 +14,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Wexio />} />
       <Route path="/Asteroids" element={<Asteroids />} />
-      <Route path="/Niggers" element={<GlobePage />} />
+      <Route path="/Globe" element={<GlobePage />} />
 
     </Routes>
       
