@@ -106,6 +106,39 @@ const impactSlice = createSlice({
     hideNotification: (state) => {
       state.showModeChangeNotification = false
     },
+    loadStateFromURL: (state, action) => {
+      const urlState = action.payload
+      
+      // Apply URL state to current state
+      if (urlState.is3DMap !== undefined) {
+        state.is3DMap = urlState.is3DMap
+      }
+      
+      if (urlState.impactType === 'custom') {
+        state.showSliders = true
+        state.showAsteroidList = false
+        state.lastActiveMode = 'sliders'
+        state.diameter = urlState.customDiameter
+        state.velocity = urlState.customVelocity
+      } else if (urlState.impactType === 'asteroid') {
+        state.showSliders = false
+        state.showAsteroidList = false  // Hide asteroid list since one is already selected from URL
+        state.lastActiveMode = 'asteroids'
+        // The actual asteroid selection will be handled in the component
+        // after the asteroid list is loaded
+      }
+    },
+    restoreImpactFromURL: (state, action) => {
+      const { impactEvent, selectedAsteroid } = action.payload
+      
+      if (impactEvent) {
+        state.impactEvent = impactEvent
+      }
+      
+      if (selectedAsteroid) {
+        state.selectedAsteroid = selectedAsteroid
+      }
+    },
   },
 })
 
@@ -124,6 +157,8 @@ export const {
   setZoomThresholds,
   setMapMode,
   hideNotification,
+  loadStateFromURL,
+  restoreImpactFromURL,
 } = impactSlice.actions
 
 export default impactSlice.reducer

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   setImpactEvent,
@@ -13,13 +13,13 @@ import {
   toggleMapMode,
   updateZoomLevel,
   setMapMode,
+  hideNotification,
 } from '../store/impactSlice';
 import InteractiveMap from './InteractiveMap';
 import ImpactSidebar from './ImpactSidebar';
-import { Target, Loader } from 'lucide-react';
+import { Target, Loader, ChevronLeft, ChevronRight, Share2, Copy, Check } from 'lucide-react';
 import AsteroidList from './AsteroidList';
 import Sliders from './Sliders';
-import Configuration from './configuration';
 
 import { Link } from 'react-router-dom';
 
@@ -64,6 +64,9 @@ const Wexio = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [asteroids, setAsteroids] = useState([]);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [shareSuccess, setShareSuccess] = useState(false);
+  const [pendingURLState, setPendingURLState] = useState(null);
 
   const appearSliders = () => {
     dispatch(showSliders());
@@ -71,6 +74,10 @@ const Wexio = () => {
   
   const appearAsteroids = () => {
     dispatch(showAsteroidList());
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
   const currentLanguageCode = cookies.get('i18next') || 'en'
@@ -81,44 +88,23 @@ const Wexio = () => {
     dispatch(resetImpact());
   }
 
-  useEffect(() => {
-    const fetchAsteroidData = async () => {
-      const API_KEY = import.meta.env.VITE_NASA_API_KEY;
-      const START_DATE = '2025-06-01';
-      const END_DATE = '2025-06-08';
-      const API_URL = `https://api.pafodev.com/nasaapi/neo2`;
+  // Handle sharing current state
+  const handleShare = async () => {
+    const success = await copyShareableURL({
+      impactEvent,
+      selectedAsteroid,
+      diameter,
+      velocity,
+      is3DMap
+    });
+    
+    if (success) {
+      setShareSuccess(true);
+      setTimeout(() => setShareSuccess(false), 2000);
+    }
+  };
 
-      try {
-        const response = await fetch(API_URL);
-        if (!response.ok) throw new Error(`Error: ${response.status}`);
-        const data = await response.json();
-
-        let allAsteroids = [];
-        Object.keys(data.near_earth_objects).forEach(date => {
-          allAsteroids = allAsteroids.concat(data.near_earth_objects[date]);
-        });
-
-        if (allAsteroids.length === 0) {
-          throw new Error('No asteroids found in the selected date range.');
-        }
-
-        setAsteroids(allAsteroids);
-        console.log('Sample asteroid:', allAsteroids[0]);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAsteroidData();
-  }, []);
-
-  useEffect(() => {
-    document.title = t('app_title')
-  }, [currentLanguage, t])
-
-  const handleMapClick = (latlng) => {
+  // Calculate impact function (moved here for reusability)
   const calculateImpact = (diameterMeters, velocityKms) => {
     const radius = diameterMeters / 2;
     const volume = (4 / 3) * Math.PI * Math.pow(radius, 3); // m³
@@ -143,6 +129,168 @@ const Wexio = () => {
       evacuationRadius: evacuationRadius.toFixed(0),
     };
   };
+
+  // Function to restore impact from URL parameters
+  const restoreImpactFromURL = useCallback((impactPosition, impactType, asteroidName, asteroidData, customDiameter, customVelocity) => {
+    if (impactType === 'asteroid' && asteroidName) {
+      // Try to find the asteroid in the loaded list
+      let foundAsteroid = asteroids.find(asteroid => 
+        asteroid.name.replace(/[()]/g, '') === asteroidName
+      );
+      
+      // If not found in list, create from stored data
+      if (!foundAsteroid && asteroidData) {
+        foundAsteroid = {
+          name: asteroidData.name,
+          id: asteroidData.id,
+          estimated_diameter: {
+            meters: {
+              estimated_diameter_max: asteroidData.diameter
+            }
+          },
+          close_approach_data: [{
+            relative_velocity: {
+              kilometers_per_second: asteroidData.velocity.toString()
+            },
+            close_approach_date_full: 'Restored from URL',
+            miss_distance: {
+              kilometers: '0'
+            }
+          }],
+          is_potentially_hazardous_asteroid: asteroidData.isPotentiallyHazardous,
+          absolute_magnitude_h: 'N/A',
+          nasa_jpl_url: 'N/A'
+        };
+      }
+      
+      if (foundAsteroid) {
+        dispatch(setSelectedAsteroid(foundAsteroid));
+        dispatch(hideAsteroidList()); // Ensure asteroid list stays hidden
+        
+        // Create asteroid impact event only if we have a position
+        if (impactPosition) {
+          const diameterMeters = foundAsteroid.estimated_diameter.meters.estimated_diameter_max;
+          const velocityKms = parseFloat(foundAsteroid.close_approach_data[0].relative_velocity.kilometers_per_second);
+          const { energyMegatons, seismicMagnitude } = calculateImpact(diameterMeters, velocityKms);
+
+          dispatch(setImpactEvent({
+            position: impactPosition,
+            radius: 60000,
+            details: {
+              source: {
+                name: foundAsteroid.name.replace(/[()]/g, ''),
+                diameter: `${diameterMeters.toFixed(2)} meters`,
+                velocity: `${velocityKms.toFixed(2)} km/s`,
+                isPotentiallyHazardous: foundAsteroid.is_potentially_hazardous_asteroid,
+                closeApproachDate: foundAsteroid.close_approach_data[0].close_approach_date_full,
+                missDistance: `${parseFloat(foundAsteroid.close_approach_data[0].miss_distance.kilometers).toLocaleString()} km`,
+                absoluteMagnitude: foundAsteroid.absolute_magnitude_h,
+                jplUrl: foundAsteroid.nasa_jpl_url,
+              },
+              consequences: {
+                impactEnergy: `${energyMegatons} Megatons TNT`,
+                seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
+                airBlast: 'Significant overpressure event expected.',
+              },
+              mitigation: {
+                threatLevel: foundAsteroid.is_potentially_hazardous_asteroid ? 'MONITORING REQUIRED' : 'LOW',
+                recommendedAction: 'Further observation to refine orbital parameters.',
+              },
+            },
+          }));
+        }
+      }
+    } else if (impactType === 'custom' && customDiameter && customVelocity) {
+      // Set custom values
+      dispatch(setDiameter(customDiameter));
+      dispatch(setVelocity(customVelocity));
+      dispatch(showSliders());
+      dispatch(hideAsteroidList()); // Ensure asteroid list stays hidden
+      
+      // Create custom impact event only if we have a position
+      if (impactPosition) {
+        const { energyMegatons, seismicMagnitude, craterDiameter, devastationRadius, evacuationRadius } =
+          calculateImpact(customDiameter, customVelocity);
+
+        dispatch(setImpactEvent({
+          position: impactPosition,
+          radius: 60000,
+          details: {
+            source: {
+              name: 'Custom Asteroid Simulation',
+              diameter: `${customDiameter.toFixed(2)} meters`,
+              velocity: `${customVelocity.toFixed(2)} km/s`,
+              isPotentiallyHazardous: customDiameter > 140,
+              closeApproachDate: 'Custom Simulation',
+              missDistance: 'Impact Simulation',
+              absoluteMagnitude: 'N/A',
+              jplUrl: 'N/A',
+            },
+            consequences: {
+              impactEnergy: `${energyMegatons} Megatons TNT`,
+              seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
+              airBlast: 'Significant overpressure event expected.',
+              craterDiameter: `${craterDiameter} meters`,
+              devastationRadius: `${devastationRadius} km`,
+            },
+            mitigation: {
+              threatLevel: customDiameter > 1000 ? 'EXTREME' : customDiameter > 500 ? 'HIGH' : 'MODERATE',
+              recommendedAction: 'Custom simulation - Adjust sliders to test different scenarios.',
+              evacuationRadius: `${evacuationRadius} km`,
+            },
+          },
+        }));
+      }
+    }
+  }, [asteroids, calculateImpact, dispatch]);
+
+  useEffect(() => {
+    const fetchAsteroidData = async () => {
+      const API_KEY = import.meta.env.VITE_NASA_API_KEY;
+      const START_DATE = '2025-06-01';
+      const END_DATE = '2025-06-08';
+      const API_URL = `https://api.pafodev.com/nasaapi/neo2`;
+
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error(`Error: ${response.status}`);
+        const data = await response.json();
+
+        let allAsteroids = [];
+        Object.keys(data.near_earth_objects).forEach(date => {
+          allAsteroids = allAsteroids.concat(data.near_earth_objects[date]);
+        });
+
+        if (allAsteroids.length === 0) {
+          throw new Error('No asteroids found in the selected date range.');
+        }
+
+        setAsteroids(allAsteroids);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAsteroidData();
+  }, []);
+
+  useEffect(() => {
+    document.title = t('app_title')
+  }, [currentLanguage, t])
+
+  // Auto-hide notification after 3 seconds
+  useEffect(() => {
+    if (showModeChangeNotification) {
+      const timer = setTimeout(() => {
+        dispatch(hideNotification())
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [showModeChangeNotification, dispatch])
+
+  const handleMapClick = (latlng) => {
 
   if (showSlidersState) {
     // Custom slider simulation
@@ -246,9 +394,6 @@ const Wexio = () => {
 
   return (
     <div className="relative flex h-screen w-full bg-gray-900 text-white font-sans">
-      {/* Configuration Panel - Fixed positioning outside main layout */}
-      <Configuration />
-      
       <aside className="w-full max-w-sm p-6 bg-gray-800 shadow-2xl flex flex-col">
         <div className="flex items-center mb-6">
           <Target className="w-8 h-8 text-red-400 mr-3" />
@@ -262,63 +407,49 @@ const Wexio = () => {
           <button className='bg-gray-700 text-white p-1 rounded p-3 hover:underline' onClick={appearAsteroids}>Asteroids</button>
         </div>
 
-        {showSlidersState && (
-          <div className="mb-4">
-            <Sliders
-              diameter={diameter}
-              setDiameter={(value) => dispatch(setDiameter(value))}
-              velocity={velocity}
-              setVelocity={(value) => dispatch(setVelocity(value))}
-            />
-          </div>
-        )}
+          {showSlidersState && (
+            <div className="mb-4">
+              <Sliders
+                diameter={diameter}
+                setDiameter={(value) => dispatch(setDiameter(value))}
+                velocity={velocity}
+                setVelocity={(value) => dispatch(setVelocity(value))}
+              />
+            </div>
+          )}
 
-        {isLoading && (
-          <div className="flex-grow flex items-center justify-center">
-            <Loader className="animate-spin" />
-            <p className="ml-2">{t('fetching')}</p>
-          </div>
-        )}
-        {error && (
-          <div className="flex-grow flex items-center justify-center text-red-400">
-            <p>Error: {error}</p>
-          </div>
-        )}
+          {isLoading && (
+            <div className="flex-grow flex items-center justify-center">
+              <Loader className="animate-spin" />
+              <p className="ml-2">{t('fetching')}</p>
+            </div>
+          )}
+          {error && (
+            <div className="flex-grow flex items-center justify-center text-red-400">
+              <p>Error: {error}</p>
+            </div>
+          )}
 
         {!isLoading && !error && (
           <>
             {showAsteroidListState && (
-              <div key="asteroid-list-container">
+              <div>
                 <p className="text-sm mb-2">{t('select')}</p>
                 <AsteroidList asteroids={asteroids} onSelect={(asteroid) => dispatch(setSelectedAsteroid(asteroid))} />
               </div>
             )}
             {impactEvent && (
-              <ImpactSidebar 
-                key={`impact-sidebar-${impactEvent.position.lat}-${impactEvent.position.lng}`}
-                impact={impactEvent} 
-                resetImpact={handleResetImpact} 
-              />
+              <ImpactSidebar impact={impactEvent} resetImpact={handleResetImpact} />
             )}
           </>
         )}
       </aside>
 
       <main className="flex-1 h-full relative">
-        {is3DMap ? (
-          <GlobePage 
-            key="globe-page"
-            impact={impactEvent} 
-            onMapClick={handleMapClick} 
-            resetImpact={handleResetImpact} 
-          />
-        ) : (
-          <InteractiveMap 
-            key="interactive-map"
-            impact={impactEvent} 
-            onMapClick={handleMapClick} 
-          />
-        )}
+        {is3DMap
+          ? <GlobePage impact={impactEvent} onMapClick={handleMapClick} resetImpact={resetImpact} />
+          : <InteractiveMap impact={impactEvent} onMapClick={handleMapClick} />
+        }
         
         {/* Map Mode Toggle Button */}
         <div className="absolute top-16 right-4 z-[100] bg-gray-800 p-2 rounded shadow-lg">
@@ -335,6 +466,38 @@ const Wexio = () => {
           </div>
         </div>
       </main>
+      <div className="absolute top-4 right-4 z-10 bg-gray-800 p-2 rounded z-1000">
+        <select
+          value={currentLanguageCode}
+          onChange={e => {
+            i18next.changeLanguage(e.target.value);
+            cookies.set('i18next', e.target.value);
+          }}
+          className="bg-gray-700 text-white p-1 rounded"
+        >
+          {languages.map(lang => (
+            <option key={lang.code} value={lang.code}>
+              {lang.name}
+            </option>
+          ))}
+        </select>
+      </div>
+      
+      {/* Auto-switch notification */}
+      {showModeChangeNotification && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
+          <div className="flex items-center gap-2">
+            <span>{is3DMap ? '🌍' : '🗺️'}</span>
+            <span>Switched to {is3DMap ? '3D Globe' : '2D Map'}</span>
+            <button 
+              onClick={() => dispatch(hideNotification())}
+              className="ml-2 text-white hover:text-gray-300"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

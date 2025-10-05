@@ -24,7 +24,7 @@ const Sliders = ({ diameter, setDiameter, velocity, setVelocity }) => {
                         {t('velocity_km_s')}
                         <InfoButton term="velocity" />
                     </p>
-                    <RangeSlider min={12} max={72} step={0} value={velocity} onChange={setVelocity} />
+                    <RangeSlider min={12} max={72} step={1} value={velocity} onChange={setVelocity} />
                 </div>
             </div>
             <div className="mt-6 text-xs text-gray-400 text-center">
