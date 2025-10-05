@@ -14,14 +14,21 @@ import {
   updateZoomLevel,
   setMapMode,
   hideNotification,
+  loadStateFromURL,
+  restoreImpactFromURL,
 } from '../store/impactSlice';
 import InteractiveMap from './InteractiveMap';
 import ImpactSidebar from './ImpactSidebar';
-import { Target, Loader, ChevronLeft, ChevronRight, Share2, Copy, Check } from 'lucide-react';
+import { Target, Loader, ChevronLeft, ChevronRight } from 'lucide-react';
 import AsteroidList from './AsteroidList';
 import Sliders from './Sliders';
-
-import { Link } from 'react-router-dom';
+import Configuration from './configuration';
+import { 
+  getCurrentURLParams, 
+  decodeURLToState, 
+  updateURL, 
+  copyShareableURL 
+} from '../lib/urlUtils';
 
 import cookies from 'js-cookie'
 import { useTranslation } from 'react-i18next'
@@ -59,6 +66,9 @@ const Wexio = () => {
     selectedAsteroid,
     is3DMap,
     currentZoomLevel,
+    zoomThresholdFor2D,
+    zoomThresholdFor3D,
+    showModeChangeNotification,
   } = useSelector((state) => state.impact);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -290,6 +300,46 @@ const Wexio = () => {
     }
   }, [showModeChangeNotification, dispatch])
 
+  // Load state from URL on mount
+  useEffect(() => {
+    const params = getCurrentURLParams();
+    const urlState = decodeURLToState(params);
+    
+    if (Object.keys(urlState).length > 0) {
+      console.log('Loading state from URL:', urlState);
+      setPendingURLState(urlState);
+      dispatch(loadStateFromURL(urlState));
+    }
+  }, [dispatch]);
+
+  // Restore impact from URL after asteroids are loaded
+  useEffect(() => {
+    if (pendingURLState && asteroids.length > 0 && !isLoading) {
+      console.log('Restoring impact from URL:', pendingURLState);
+      const { impactPosition, impactType, asteroidName, asteroidData, customDiameter, customVelocity } = pendingURLState;
+      
+      // Restore configuration even without position, or with position
+      if (impactPosition || impactType) {
+        restoreImpactFromURL(impactPosition, impactType, asteroidName, asteroidData, customDiameter, customVelocity);
+      }
+      
+      setPendingURLState(null);
+    }
+  }, [pendingURLState, asteroids, isLoading, restoreImpactFromURL]);
+
+  // Update URL when state changes
+  useEffect(() => {
+    if (!isLoading && !pendingURLState) {
+      updateURL({
+        impactEvent,
+        selectedAsteroid,
+        diameter,
+        velocity,
+        is3DMap
+      });
+    }
+  }, [impactEvent, selectedAsteroid, diameter, velocity, is3DMap, isLoading, pendingURLState]);
+
   const handleMapClick = (latlng) => {
 
   if (showSlidersState) {
@@ -394,18 +444,39 @@ const Wexio = () => {
 
   return (
     <div className="relative flex h-screen w-full bg-gray-900 text-white font-sans">
-      <aside className="w-full max-w-sm p-6 bg-gray-800 shadow-2xl flex flex-col">
-        <div className="flex items-center mb-6">
-          <Target className="w-8 h-8 text-red-400 mr-3" />
-          <div>
-            <h1 className="text-2xl font-bold">{t('page_title')}</h1>
-            <p className="text-sm text-gray-400">{t('project_name')}</p>
+      {/* Configuration Panel - Fixed positioning outside main layout */}
+      <Configuration 
+        onShare={handleShare}
+        shareSuccess={shareSuccess}
+        impactEvent={impactEvent}
+      />
+      <aside className={`${isSidebarCollapsed ? 'w-16' : 'w-full max-w-sm'} p-6 bg-gray-800 shadow-2xl flex flex-col transition-all duration-300 ease-in-out relative`}>
+        {/* Collapse/Expand Toggle Button */}
+        <button
+          onClick={toggleSidebar}
+          className="absolute top-4 right-4 z-10 w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center transition-colors duration-200"
+          title={isSidebarCollapsed ? t('expand_sidebar') || 'Expand sidebar' : t('collapse_sidebar') || 'Collapse sidebar'}
+        >
+          {isSidebarCollapsed ? 
+            <ChevronRight className="w-4 h-4 text-gray-300" /> : 
+            <ChevronLeft className="w-4 h-4 text-gray-300" />
+          }
+        </button>
+
+        {/* Sidebar Content - Hidden when collapsed */}
+        <div className={`${isSidebarCollapsed ? 'hidden' : 'block'} transition-all duration-300 ease-in-out flex flex-col flex-grow overflow-hidden`}>
+          <div className="flex items-center mb-6">
+            <Target className="w-8 h-8 text-red-400 mr-3" />
+            <div>
+              <h1 className="text-2xl font-bold">{t('page_title')}</h1>
+              <p className="text-sm text-gray-400">{t('project_name')}</p>
+            </div>
           </div>
-        </div>
-        <div className='flex items-center flex-row space-x-4 mb-4 gap-15 justify-center'>
-          <button className='bg-gray-700 text-white p-1 rounded p-3 hover:underline' onClick={appearSliders}>Sliders</button>
-          <button className='bg-gray-700 text-white p-1 rounded p-3 hover:underline' onClick={appearAsteroids}>Asteroids</button>
-        </div>
+          
+          <div className='flex items-center flex-row space-x-4 mb-4 gap-15 justify-center'>
+            <button className='bg-gray-700 text-white p-1 rounded p-3 hover:underline' onClick={appearSliders}>Sliders</button>
+            <button className='bg-gray-700 text-white p-1 rounded p-3 hover:underline' onClick={appearAsteroids}>Asteroids</button>
+          </div>
 
           {showSlidersState && (
             <div className="mb-4">
@@ -430,29 +501,42 @@ const Wexio = () => {
             </div>
           )}
 
-        {!isLoading && !error && (
-          <>
-            {showAsteroidListState && (
-              <div>
-                <p className="text-sm mb-2">{t('select')}</p>
-                <AsteroidList asteroids={asteroids} onSelect={(asteroid) => dispatch(setSelectedAsteroid(asteroid))} />
-              </div>
-            )}
+          {!isLoading && !error && (
+            <>
+              {showAsteroidListState && (
+                <div>
+                  <p className="text-sm mb-2">{t('select')}</p>
+                  <AsteroidList asteroids={asteroids} onSelect={(asteroid) => dispatch(setSelectedAsteroid(asteroid))} />
+                </div>
+              )}
+              {impactEvent && (
+                <ImpactSidebar impact={impactEvent} resetImpact={handleResetImpact} />
+              )}
+            </>
+          )}
+        </div>
+
+        {/* Collapsed State - Show only essential icons */}
+        {isSidebarCollapsed && (
+          <div className="flex flex-col items-center space-y-4 mt-4">
+            <div className="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center">
+              <Target className="w-4 h-4 text-red-400" />
+            </div>
             {impactEvent && (
-              <ImpactSidebar impact={impactEvent} resetImpact={handleResetImpact} />
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" title="Impact Analysis Active"></div>
             )}
-          </>
+          </div>
         )}
       </aside>
 
       <main className="flex-1 h-full relative">
         {is3DMap
-          ? <GlobePage impact={impactEvent} onMapClick={handleMapClick} resetImpact={resetImpact} />
+          ? <GlobePage impact={impactEvent} onMapClick={handleMapClick} />
           : <InteractiveMap impact={impactEvent} onMapClick={handleMapClick} />
         }
         
         {/* Map Mode Toggle Button */}
-        <div className="absolute top-16 right-4 z-[100] bg-gray-800 p-2 rounded shadow-lg">
+        <div className="absolute top-16 right-4 z-10 bg-gray-800 p-2 rounded z-1000">
           <button
             onClick={() => dispatch(toggleMapMode())}
             className="bg-gray-700 text-white p-2 rounded hover:bg-gray-600 transition-colors flex items-center gap-2"
@@ -464,30 +548,26 @@ const Wexio = () => {
           <div className="text-xs text-gray-400 mt-1 text-center">
             Zoom: {currentZoomLevel?.toFixed(2) || '--'}
           </div>
+          <div className="text-xs text-gray-300 mt-1 text-center">
+            2D ≥{zoomThresholdFor2D} | 3D ≤{zoomThresholdFor3D}
+          </div>
+          <div className="w-full bg-gray-600 rounded-full h-1 mt-1">
+            <div 
+              className="bg-blue-500 h-1 rounded-full transition-all duration-300"
+              style={{ 
+                width: is3DMap 
+                  ? `${Math.min(100, (currentZoomLevel / zoomThresholdFor2D) * 100)}%`
+                  : `${Math.max(0, 100 - ((currentZoomLevel - zoomThresholdFor3D) / (zoomThresholdFor2D - zoomThresholdFor3D)) * 100)}%`
+              }}
+            ></div>
+          </div>
         </div>
       </main>
-      <div className="absolute top-4 right-4 z-10 bg-gray-800 p-2 rounded z-1000">
-        <select
-          value={currentLanguageCode}
-          onChange={e => {
-            i18next.changeLanguage(e.target.value);
-            cookies.set('i18next', e.target.value);
-          }}
-          className="bg-gray-700 text-white p-1 rounded"
-        >
-          {languages.map(lang => (
-            <option key={lang.code} value={lang.code}>
-              {lang.name}
-            </option>
-          ))}
-        </select>
-      </div>
       
       {/* Auto-switch notification */}
       {showModeChangeNotification && (
         <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
           <div className="flex items-center gap-2">
-            <span>{is3DMap ? '🌍' : '🗺️'}</span>
             <span>Switched to {is3DMap ? '3D Globe' : '2D Map'}</span>
             <button 
               onClick={() => dispatch(hideNotification())}
