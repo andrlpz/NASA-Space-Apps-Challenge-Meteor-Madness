@@ -18,7 +18,7 @@ export async function detectSurfaceType(lat, lng) {
   try {
     // Use OpenStreetMap Nominatim API for reverse geocoding
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout for better performance
     
     const response = await fetch(
       `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1&extratags=1&namedetails=1`,

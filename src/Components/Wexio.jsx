@@ -410,8 +410,28 @@ const Wexio = () => {
     
     console.log('Click coordinates for meteor animation:', { clickX, clickY, clickEvent });
 
-    // Detect surface type using surface detection API
-    const surfaceInfo = await detectSurfaceType(latlng.lat, latlng.lng);
+    // Fire meteor animation immediately for better UX
+    if (meteor && typeof meteor.fireAt === 'function') {
+      const meteorDirection = showSlidersState ? 'top' : selectedAsteroid ? 'right' : 'left';
+      const meteorScale = showSlidersState ? 0.9 : selectedAsteroid ? 1.0 : 0.9;
+      meteor.fireAt(clickX, clickY, { from: meteorDirection, scale: meteorScale, duration: 1200 });
+    }
+
+    // Detect surface type using surface detection API (async, non-blocking)
+    let surfaceInfo;
+    try {
+      surfaceInfo = await detectSurfaceType(latlng.lat, latlng.lng);
+    } catch (error) {
+      console.error('Surface detection failed:', error);
+      // Fallback surface info
+      surfaceInfo = {
+        type: 'unknown',
+        description: 'Surface detection unavailable',
+        location: `${latlng.lat.toFixed(3)}°, ${latlng.lng.toFixed(3)}°`,
+        confidence: 'low',
+        source: 'fallback'
+      };
+    }
     
     if (showSlidersState) {
       const { energyMegatons, seismicMagnitude, craterDiameter, devastationRadius, evacuationRadius } =
@@ -471,14 +491,6 @@ const Wexio = () => {
           },
         },
       }));
-      
-      // Add meteor effect at click location
-      console.log('Firing meteor at click coordinates:', clickX, clickY, 'meteor object:', meteor);
-      if (meteor && typeof meteor.fireAt === 'function') {
-        meteor.fireAt(clickX, clickY, { from: 'top', scale: 0.9, duration: 1200 });
-      } else {
-        console.error('Meteor object not available or fireAt method not found');
-      }
       
       // Hide sliders after simulation
       dispatch(hideSliders());
@@ -546,14 +558,6 @@ const Wexio = () => {
         },
       }));
       
-      // Add meteor effect at click location
-      console.log('Firing meteor at click coordinates:', clickX, clickY, 'meteor object:', meteor);
-      if (meteor && typeof meteor.fireAt === 'function') {
-        meteor.fireAt(clickX, clickY, { from: 'right', scale: 1.0, duration: 1200 });
-      } else {
-        console.error('Meteor object not available or fireAt method not found');
-      }
-      
       // Hide asteroid list after simulation
       dispatch(hideAsteroidList());
       return;
@@ -594,14 +598,6 @@ const Wexio = () => {
         },
       },
     }));
-    
-    // Add meteor effect at click location
-    console.log('Firing meteor at click coordinates:', clickX, clickY, 'meteor object:', meteor);
-    if (meteor && typeof meteor.fireAt === 'function') {
-      meteor.fireAt(clickX, clickY, { from: 'left', scale: 0.9, duration: 1200 });
-    } else {
-      console.error('Meteor object not available or fireAt method not found');
-    }
 
     // Update URL with current state
     updateURL({
@@ -751,7 +747,7 @@ const Wexio = () => {
         </div>
       )}
 
-      <Carita mock={false} />
+      
       </div>
     </div>
   );
