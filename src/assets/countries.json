@@ -1,0 +1,1252 @@
+﻿{
+    "RW":  {
+               "population":  12952209,
+               "name":  "Rwanda",
+               "areaKm2":  26338.0
+           },
+    "TO":  {
+               "population":  105697,
+               "name":  "Tonga",
+               "areaKm2":  747.0
+           },
+    "PN":  {
+               "population":  56,
+               "name":  "Pitcairn Islands",
+               "areaKm2":  47.0
+           },
+    "AX":  {
+               "population":  29458,
+               "name":  "Ã\u0085land Islands",
+               "areaKm2":  1580.0
+           },
+    "VG":  {
+               "population":  30237,
+               "name":  "British Virgin Islands",
+               "areaKm2":  151.0
+           },
+    "LC":  {
+               "population":  183629,
+               "name":  "Saint Lucia",
+               "areaKm2":  616.0
+           },
+    "GT":  {
+               "population":  16858333,
+               "name":  "Guatemala",
+               "areaKm2":  108889.0
+           },
+    "KR":  {
+               "population":  51780579,
+               "name":  "South Korea",
+               "areaKm2":  100210.0
+           },
+    "ET":  {
+               "population":  114963583,
+               "name":  "Ethiopia",
+               "areaKm2":  1104300.0
+           },
+    "UY":  {
+               "population":  3473727,
+               "name":  "Uruguay",
+               "areaKm2":  181034.0
+           },
+    "AZ":  {
+               "population":  10110116,
+               "name":  "Azerbaijan",
+               "areaKm2":  86600.0
+           },
+    "IR":  {
+               "population":  83992953,
+               "name":  "Iran",
+               "areaKm2":  1648195.0
+           },
+    "WF":  {
+               "population":  11750,
+               "name":  "Wallis and Futuna",
+               "areaKm2":  142.0
+           },
+    "NI":  {
+               "population":  6624554,
+               "name":  "Nicaragua",
+               "areaKm2":  130373.0
+           },
+    "AG":  {
+               "population":  97928,
+               "name":  "Antigua and Barbuda",
+               "areaKm2":  442.0
+           },
+    "AW":  {
+               "population":  106766,
+               "name":  "Aruba",
+               "areaKm2":  180.0
+           },
+    "TT":  {
+               "population":  1399491,
+               "name":  "Trinidad and Tobago",
+               "areaKm2":  5130.0
+           },
+    "BI":  {
+               "population":  11890781,
+               "name":  "Burundi",
+               "areaKm2":  27834.0
+           },
+    "CM":  {
+               "population":  26545864,
+               "name":  "Cameroon",
+               "areaKm2":  475442.0
+           },
+    "CL":  {
+               "population":  19116209,
+               "name":  "Chile",
+               "areaKm2":  756102.0
+           },
+    "MG":  {
+               "population":  27691019,
+               "name":  "Madagascar",
+               "areaKm2":  587041.0
+           },
+    "AU":  {
+               "population":  25687041,
+               "name":  "Australia",
+               "areaKm2":  7692024.0
+           },
+    "MF":  {
+               "population":  38659,
+               "name":  "Saint Martin",
+               "areaKm2":  53.0
+           },
+    "AI":  {
+               "population":  13452,
+               "name":  "Anguilla",
+               "areaKm2":  91.0
+           },
+    "BM":  {
+               "population":  63903,
+               "name":  "Bermuda",
+               "areaKm2":  54.0
+           },
+    "KP":  {
+               "population":  25778815,
+               "name":  "North Korea",
+               "areaKm2":  120538.0
+           },
+    "MH":  {
+               "population":  59194,
+               "name":  "Marshall Islands",
+               "areaKm2":  181.0
+           },
+    "TD":  {
+               "population":  16425859,
+               "name":  "Chad",
+               "areaKm2":  1284000.0
+           },
+    "DJ":  {
+               "population":  988002,
+               "name":  "Djibouti",
+               "areaKm2":  23200.0
+           },
+    "CK":  {
+               "population":  18100,
+               "name":  "Cook Islands",
+               "areaKm2":  236.0
+           },
+    "FM":  {
+               "population":  115021,
+               "name":  "Micronesia",
+               "areaKm2":  702.0
+           },
+    "PF":  {
+               "population":  280904,
+               "name":  "French Polynesia",
+               "areaKm2":  4167.0
+           },
+    "CD":  {
+               "population":  108407721,
+               "name":  "DR Congo",
+               "areaKm2":  2344858.0
+           },
+    "NU":  {
+               "population":  1470,
+               "name":  "Niue",
+               "areaKm2":  260.0
+           },
+    "MP":  {
+               "population":  57557,
+               "name":  "Northern Mariana Islands",
+               "areaKm2":  464.0
+           },
+    "GY":  {
+               "population":  786559,
+               "name":  "Guyana",
+               "areaKm2":  214969.0
+           },
+    "GR":  {
+               "population":  10715549,
+               "name":  "Greece",
+               "areaKm2":  131990.0
+           },
+    "HT":  {
+               "population":  11402533,
+               "name":  "Haiti",
+               "areaKm2":  27750.0
+           },
+    "TL":  {
+               "population":  1318442,
+               "name":  "Timor-Leste",
+               "areaKm2":  14874.0
+           },
+    "VI":  {
+               "population":  106290,
+               "name":  "United States Virgin Islands",
+               "areaKm2":  347.0
+           },
+    "GH":  {
+               "population":  31072945,
+               "name":  "Ghana",
+               "areaKm2":  238533.0
+           },
+    "EE":  {
+               "population":  1331057,
+               "name":  "Estonia",
+               "areaKm2":  45227.0
+           },
+    "MS":  {
+               "population":  4922,
+               "name":  "Montserrat",
+               "areaKm2":  102.0
+           },
+    "IM":  {
+               "population":  85032,
+               "name":  "Isle of Man",
+               "areaKm2":  572.0
+           },
+    "UM":  {
+               "population":  300,
+               "name":  "United States Minor Outlying Islands",
+               "areaKm2":  34.2
+           },
+    "EC":  {
+               "population":  17643060,
+               "name":  "Ecuador",
+               "areaKm2":  276841.0
+           },
+    "MM":  {
+               "population":  54409794,
+               "name":  "Myanmar",
+               "areaKm2":  676578.0
+           },
+    "MN":  {
+               "population":  3278292,
+               "name":  "Mongolia",
+               "areaKm2":  1564110.0
+           },
+    "CA":  {
+               "population":  38005238,
+               "name":  "Canada",
+               "areaKm2":  9984670.0
+           },
+    "TG":  {
+               "population":  8278737,
+               "name":  "Togo",
+               "areaKm2":  56785.0
+           },
+    "HM":  {
+               "population":  0,
+               "name":  "Heard Island and McDonald Islands",
+               "areaKm2":  412.0
+           },
+    "CY":  {
+               "population":  1207361,
+               "name":  "Cyprus",
+               "areaKm2":  9251.0
+           },
+    "VA":  {
+               "population":  451,
+               "name":  "Vatican City",
+               "areaKm2":  0.44
+           },
+    "GS":  {
+               "population":  30,
+               "name":  "South Georgia",
+               "areaKm2":  3903.0
+           },
+    "TJ":  {
+               "population":  9537642,
+               "name":  "Tajikistan",
+               "areaKm2":  143100.0
+           },
+    "BZ":  {
+               "population":  397621,
+               "name":  "Belize",
+               "areaKm2":  22966.0
+           },
+    "UA":  {
+               "population":  44134693,
+               "name":  "Ukraine",
+               "areaKm2":  603500.0
+           },
+    "PG":  {
+               "population":  8947027,
+               "name":  "Papua New Guinea",
+               "areaKm2":  462840.0
+           },
+    "PT":  {
+               "population":  10305564,
+               "name":  "Portugal",
+               "areaKm2":  92090.0
+           },
+    "MO":  {
+               "population":  649342,
+               "name":  "Macau",
+               "areaKm2":  30.0
+           },
+    "BY":  {
+               "population":  9398861,
+               "name":  "Belarus",
+               "areaKm2":  207600.0
+           },
+    "BL":  {
+               "population":  4255,
+               "name":  "Saint BarthÃ©lemy",
+               "areaKm2":  21.0
+           },
+    "KY":  {
+               "population":  65720,
+               "name":  "Cayman Islands",
+               "areaKm2":  264.0
+           },
+    "MU":  {
+               "population":  1265740,
+               "name":  "Mauritius",
+               "areaKm2":  2040.0
+           },
+    "MX":  {
+               "population":  128932753,
+               "name":  "Mexico",
+               "areaKm2":  1964375.0
+           },
+    "WS":  {
+               "population":  198410,
+               "name":  "Samoa",
+               "areaKm2":  2842.0
+           },
+    "AF":  {
+               "population":  40218234,
+               "name":  "Afghanistan",
+               "areaKm2":  652230.0
+           },
+    "GL":  {
+               "population":  56367,
+               "name":  "Greenland",
+               "areaKm2":  2166086.0
+           },
+    "LS":  {
+               "population":  2142252,
+               "name":  "Lesotho",
+               "areaKm2":  30355.0
+           },
+    "CV":  {
+               "population":  555988,
+               "name":  "Cape Verde",
+               "areaKm2":  4033.0
+           },
+    "AD":  {
+               "population":  77265,
+               "name":  "Andorra",
+               "areaKm2":  468.0
+           },
+    "AQ":  {
+               "population":  1000,
+               "name":  "Antarctica",
+               "areaKm2":  14000000
+           },
+    "LT":  {
+               "population":  2794700,
+               "name":  "Lithuania",
+               "areaKm2":  65300.0
+           },
+    "TK":  {
+               "population":  1411,
+               "name":  "Tokelau",
+               "areaKm2":  12.0
+           },
+    "BT":  {
+               "population":  771612,
+               "name":  "Bhutan",
+               "areaKm2":  38394.0
+           },
+    "BD":  {
+               "population":  164689383,
+               "name":  "Bangladesh",
+               "areaKm2":  147570.0
+           },
+    "FR":  {
+               "population":  67391582,
+               "name":  "France",
+               "areaKm2":  551695.0
+           },
+    "IS":  {
+               "population":  366425,
+               "name":  "Iceland",
+               "areaKm2":  103000.0
+           },
+    "AL":  {
+               "population":  2837743,
+               "name":  "Albania",
+               "areaKm2":  28748.0
+           },
+    "CW":  {
+               "population":  155014,
+               "name":  "CuraÃ§ao",
+               "areaKm2":  444.0
+           },
+    "UG":  {
+               "population":  45741000,
+               "name":  "Uganda",
+               "areaKm2":  241550.0
+           },
+    "FO":  {
+               "population":  48865,
+               "name":  "Faroe Islands",
+               "areaKm2":  1393.0
+           },
+    "TV":  {
+               "population":  11792,
+               "name":  "Tuvalu",
+               "areaKm2":  26.0
+           },
+    "LU":  {
+               "population":  632275,
+               "name":  "Luxembourg",
+               "areaKm2":  2586.0
+           },
+    "AT":  {
+               "population":  8917205,
+               "name":  "Austria",
+               "areaKm2":  83871.0
+           },
+    "GM":  {
+               "population":  2416664,
+               "name":  "Gambia",
+               "areaKm2":  10689.0
+           },
+    "FK":  {
+               "population":  2563,
+               "name":  "Falkland Islands",
+               "areaKm2":  12173.0
+           },
+    "BE":  {
+               "population":  11555997,
+               "name":  "Belgium",
+               "areaKm2":  30528.0
+           },
+    "CF":  {
+               "population":  4829764,
+               "name":  "Central African Republic",
+               "areaKm2":  622984.0
+           },
+    "MZ":  {
+               "population":  31255435,
+               "name":  "Mozambique",
+               "areaKm2":  801590.0
+           },
+    "CH":  {
+               "population":  8654622,
+               "name":  "Switzerland",
+               "areaKm2":  41284.0
+           },
+    "AR":  {
+               "population":  45376763,
+               "name":  "Argentina",
+               "areaKm2":  2780400.0
+           },
+    "KE":  {
+               "population":  53771300,
+               "name":  "Kenya",
+               "areaKm2":  580367.0
+           },
+    "GW":  {
+               "population":  1967998,
+               "name":  "Guinea-Bissau",
+               "areaKm2":  36125.0
+           },
+    "MQ":  {
+               "population":  378243,
+               "name":  "Martinique",
+               "areaKm2":  1128.0
+           },
+    "RS":  {
+               "population":  6908224,
+               "name":  "Serbia",
+               "areaKm2":  88361.0
+           },
+    "MY":  {
+               "population":  32365998,
+               "name":  "Malaysia",
+               "areaKm2":  330803.0
+           },
+    "DK":  {
+               "population":  5831404,
+               "name":  "Denmark",
+               "areaKm2":  43094.0
+           },
+    "SM":  {
+               "population":  33938,
+               "name":  "San Marino",
+               "areaKm2":  61.0
+           },
+    "NZ":  {
+               "population":  5084300,
+               "name":  "New Zealand",
+               "areaKm2":  270467.0
+           },
+    "SH":  {
+               "population":  53192,
+               "name":  "Saint Helena, Ascension and Tristan da Cunha",
+               "areaKm2":  394.0
+           },
+    "ML":  {
+               "population":  20250834,
+               "name":  "Mali",
+               "areaKm2":  1240192.0
+           },
+    "DE":  {
+               "population":  83240525,
+               "name":  "Germany",
+               "areaKm2":  357114.0
+           },
+    "EH":  {
+               "population":  510713,
+               "name":  "Western Sahara",
+               "areaKm2":  266000.0
+           },
+    "FJ":  {
+               "population":  896444,
+               "name":  "Fiji",
+               "areaKm2":  18272.0
+           },
+    "VE":  {
+               "population":  28435943,
+               "name":  "Venezuela",
+               "areaKm2":  916445.0
+           },
+    "PR":  {
+               "population":  3194034,
+               "name":  "Puerto Rico",
+               "areaKm2":  8870.0
+           },
+    "GI":  {
+               "population":  33691,
+               "name":  "Gibraltar",
+               "areaKm2":  6.0
+           },
+    "TW":  {
+               "population":  23503349,
+               "name":  "Taiwan",
+               "areaKm2":  36193.0
+           },
+    "JO":  {
+               "population":  10203140,
+               "name":  "Jordan",
+               "areaKm2":  89342.0
+           },
+    "MW":  {
+               "population":  19129955,
+               "name":  "Malawi",
+               "areaKm2":  118484.0
+           },
+    "ZW":  {
+               "population":  14862927,
+               "name":  "Zimbabwe",
+               "areaKm2":  390757.0
+           },
+    "PE":  {
+               "population":  32971846,
+               "name":  "Peru",
+               "areaKm2":  1285216.0
+           },
+    "PK":  {
+               "population":  220892331,
+               "name":  "Pakistan",
+               "areaKm2":  881912.0
+           },
+    "KM":  {
+               "population":  869595,
+               "name":  "Comoros",
+               "areaKm2":  1862.0
+           },
+    "OM":  {
+               "population":  5106622,
+               "name":  "Oman",
+               "areaKm2":  309500.0
+           },
+    "RO":  {
+               "population":  19286123,
+               "name":  "Romania",
+               "areaKm2":  238391.0
+           },
+    "GD":  {
+               "population":  112519,
+               "name":  "Grenada",
+               "areaKm2":  344.0
+           },
+    "XK":  {
+               "population":  1775378,
+               "name":  "Kosovo",
+               "areaKm2":  10908.0
+           },
+    "TZ":  {
+               "population":  59734213,
+               "name":  "Tanzania",
+               "areaKm2":  945087.0
+           },
+    "BO":  {
+               "population":  11673029,
+               "name":  "Bolivia",
+               "areaKm2":  1098581.0
+           },
+    "SO":  {
+               "population":  15893219,
+               "name":  "Somalia",
+               "areaKm2":  637657.0
+           },
+    "IN":  {
+               "population":  1380004385,
+               "name":  "India",
+               "areaKm2":  3287590.0
+           },
+    "TM":  {
+               "population":  6031187,
+               "name":  "Turkmenistan",
+               "areaKm2":  488100.0
+           },
+    "NC":  {
+               "population":  271960,
+               "name":  "New Caledonia",
+               "areaKm2":  18575.0
+           },
+    "NA":  {
+               "population":  2540916,
+               "name":  "Namibia",
+               "areaKm2":  825615.0
+           },
+    "GG":  {
+               "population":  62999,
+               "name":  "Guernsey",
+               "areaKm2":  78.0
+           },
+    "PW":  {
+               "population":  18092,
+               "name":  "Palau",
+               "areaKm2":  459.0
+           },
+    "BH":  {
+               "population":  1701583,
+               "name":  "Bahrain",
+               "areaKm2":  765.0
+           },
+    "KG":  {
+               "population":  6591600,
+               "name":  "Kyrgyzstan",
+               "areaKm2":  199951.0
+           },
+    "TN":  {
+               "population":  11818618,
+               "name":  "Tunisia",
+               "areaKm2":  163610.0
+           },
+    "LV":  {
+               "population":  1901548,
+               "name":  "Latvia",
+               "areaKm2":  64559.0
+           },
+    "KH":  {
+               "population":  16718971,
+               "name":  "Cambodia",
+               "areaKm2":  181035.0
+           },
+    "NP":  {
+               "population":  29136808,
+               "name":  "Nepal",
+               "areaKm2":  147181.0
+           },
+    "ST":  {
+               "population":  219161,
+               "name":  "SÃ£o TomÃ© and PrÃ­ncipe",
+               "areaKm2":  964.0
+           },
+    "RU":  {
+               "population":  144104080,
+               "name":  "Russia",
+               "areaKm2":  17098242
+           },
+    "IO":  {
+               "population":  3000,
+               "name":  "British Indian Ocean Territory",
+               "areaKm2":  60.0
+           },
+    "GU":  {
+               "population":  168783,
+               "name":  "Guam",
+               "areaKm2":  549.0
+           },
+    "IQ":  {
+               "population":  40222503,
+               "name":  "Iraq",
+               "areaKm2":  438317.0
+           },
+    "SK":  {
+               "population":  5458827,
+               "name":  "Slovakia",
+               "areaKm2":  49037.0
+           },
+    "AO":  {
+               "population":  32866268,
+               "name":  "Angola",
+               "areaKm2":  1246700.0
+           },
+    "YE":  {
+               "population":  29825968,
+               "name":  "Yemen",
+               "areaKm2":  527968.0
+           },
+    "ID":  {
+               "population":  273523621,
+               "name":  "Indonesia",
+               "areaKm2":  1904569.0
+           },
+    "ES":  {
+               "population":  47351567,
+               "name":  "Spain",
+               "areaKm2":  505992.0
+           },
+    "JM":  {
+               "population":  2961161,
+               "name":  "Jamaica",
+               "areaKm2":  10991.0
+           },
+    "SD":  {
+               "population":  43849269,
+               "name":  "Sudan",
+               "areaKm2":  1886068.0
+           },
+    "BV":  {
+               "population":  0,
+               "name":  "Bouvet Island",
+               "areaKm2":  49.0
+           },
+    "CZ":  {
+               "population":  10698896,
+               "name":  "Czechia",
+               "areaKm2":  78865.0
+           },
+    "EG":  {
+               "population":  102334403,
+               "name":  "Egypt",
+               "areaKm2":  1002450.0
+           },
+    "CU":  {
+               "population":  11326616,
+               "name":  "Cuba",
+               "areaKm2":  109884.0
+           },
+    "QA":  {
+               "population":  2881060,
+               "name":  "Qatar",
+               "areaKm2":  11586.0
+           },
+    "CN":  {
+               "population":  1402112000,
+               "name":  "China",
+               "areaKm2":  9706961.0
+           },
+    "SN":  {
+               "population":  16743930,
+               "name":  "Senegal",
+               "areaKm2":  196722.0
+           },
+    "IT":  {
+               "population":  59554023,
+               "name":  "Italy",
+               "areaKm2":  301336.0
+           },
+    "SE":  {
+               "population":  10353442,
+               "name":  "Sweden",
+               "areaKm2":  450295.0
+           },
+    "TH":  {
+               "population":  69799978,
+               "name":  "Thailand",
+               "areaKm2":  513120.0
+           },
+    "US":  {
+               "population":  329484123,
+               "name":  "United States",
+               "areaKm2":  9372610.0
+           },
+    "MT":  {
+               "population":  525285,
+               "name":  "Malta",
+               "areaKm2":  316.0
+           },
+    "PL":  {
+               "population":  37950802,
+               "name":  "Poland",
+               "areaKm2":  312679.0
+           },
+    "GN":  {
+               "population":  13132792,
+               "name":  "Guinea",
+               "areaKm2":  245857.0
+           },
+    "NF":  {
+               "population":  2302,
+               "name":  "Norfolk Island",
+               "areaKm2":  36.0
+           },
+    "SY":  {
+               "population":  17500657,
+               "name":  "Syria",
+               "areaKm2":  185180.0
+           },
+    "NL":  {
+               "population":  16655799,
+               "name":  "Netherlands",
+               "areaKm2":  41850.0
+           },
+    "GB":  {
+               "population":  67215293,
+               "name":  "United Kingdom",
+               "areaKm2":  242900.0
+           },
+    "BJ":  {
+               "population":  12123198,
+               "name":  "Benin",
+               "areaKm2":  112622.0
+           },
+    "LY":  {
+               "population":  6871287,
+               "name":  "Libya",
+               "areaKm2":  1759540.0
+           },
+    "VC":  {
+               "population":  110947,
+               "name":  "Saint Vincent and the Grenadines",
+               "areaKm2":  389.0
+           },
+    "CC":  {
+               "population":  544,
+               "name":  "Cocos (Keeling) Islands",
+               "areaKm2":  14.0
+           },
+    "MK":  {
+               "population":  2077132,
+               "name":  "North Macedonia",
+               "areaKm2":  25713.0
+           },
+    "NE":  {
+               "population":  24206636,
+               "name":  "Niger",
+               "areaKm2":  1267000.0
+           },
+    "CO":  {
+               "population":  50882884,
+               "name":  "Colombia",
+               "areaKm2":  1141748.0
+           },
+    "TC":  {
+               "population":  38718,
+               "name":  "Turks and Caicos Islands",
+               "areaKm2":  948.0
+           },
+    "LA":  {
+               "population":  7275556,
+               "name":  "Laos",
+               "areaKm2":  236800.0
+           },
+    "VU":  {
+               "population":  307150,
+               "name":  "Vanuatu",
+               "areaKm2":  12189.0
+           },
+    "BS":  {
+               "population":  393248,
+               "name":  "Bahamas",
+               "areaKm2":  13943.0
+           },
+    "IL":  {
+               "population":  9216900,
+               "name":  "Israel",
+               "areaKm2":  20770.0
+           },
+    "LK":  {
+               "population":  21919000,
+               "name":  "Sri Lanka",
+               "areaKm2":  65610.0
+           },
+    "JE":  {
+               "population":  100800,
+               "name":  "Jersey",
+               "areaKm2":  116.0
+           },
+    "SA":  {
+               "population":  34813867,
+               "name":  "Saudi Arabia",
+               "areaKm2":  2149690.0
+           },
+    "BQ":  {
+               "population":  25987,
+               "name":  "Caribbean Netherlands",
+               "areaKm2":  328.0
+           },
+    "HU":  {
+               "population":  9749763,
+               "name":  "Hungary",
+               "areaKm2":  93028.0
+           },
+    "MD":  {
+               "population":  2617820,
+               "name":  "Moldova",
+               "areaKm2":  33846.0
+           },
+    "ZM":  {
+               "population":  18383956,
+               "name":  "Zambia",
+               "areaKm2":  752612.0
+           },
+    "GP":  {
+               "population":  400132,
+               "name":  "Guadeloupe",
+               "areaKm2":  1628.0
+           },
+    "MC":  {
+               "population":  39244,
+               "name":  "Monaco",
+               "areaKm2":  2.02
+           },
+    "BF":  {
+               "population":  20903278,
+               "name":  "Burkina Faso",
+               "areaKm2":  272967.0
+           },
+    "BB":  {
+               "population":  287371,
+               "name":  "Barbados",
+               "areaKm2":  430.0
+           },
+    "CI":  {
+               "population":  26378275,
+               "name":  "Ivory Coast",
+               "areaKm2":  322463.0
+           },
+    "KI":  {
+               "population":  119446,
+               "name":  "Kiribati",
+               "areaKm2":  811.0
+           },
+    "GQ":  {
+               "population":  1402985,
+               "name":  "Equatorial Guinea",
+               "areaKm2":  28051.0
+           },
+    "BN":  {
+               "population":  437483,
+               "name":  "Brunei",
+               "areaKm2":  5765.0
+           },
+    "SG":  {
+               "population":  5685807,
+               "name":  "Singapore",
+               "areaKm2":  710.0
+           },
+    "LI":  {
+               "population":  38137,
+               "name":  "Liechtenstein",
+               "areaKm2":  160.0
+           },
+    "KZ":  {
+               "population":  18754440,
+               "name":  "Kazakhstan",
+               "areaKm2":  2724900.0
+           },
+    "HR":  {
+               "population":  4047200,
+               "name":  "Croatia",
+               "areaKm2":  56594.0
+           },
+    "KN":  {
+               "population":  53192,
+               "name":  "Saint Kitts and Nevis",
+               "areaKm2":  261.0
+           },
+    "SB":  {
+               "population":  686878,
+               "name":  "Solomon Islands",
+               "areaKm2":  28896.0
+           },
+    "MR":  {
+               "population":  4649660,
+               "name":  "Mauritania",
+               "areaKm2":  1030700.0
+           },
+    "JP":  {
+               "population":  125836021,
+               "name":  "Japan",
+               "areaKm2":  377930.0
+           },
+    "BW":  {
+               "population":  2351625,
+               "name":  "Botswana",
+               "areaKm2":  582000.0
+           },
+    "SJ":  {
+               "population":  2562,
+               "name":  "Svalbard and Jan Mayen",
+               "areaKm2":  61399.0
+           },
+    "AS":  {
+               "population":  55197,
+               "name":  "American Samoa",
+               "areaKm2":  199.0
+           },
+    "NG":  {
+               "population":  206139587,
+               "name":  "Nigeria",
+               "areaKm2":  923768.0
+           },
+    "VN":  {
+               "population":  97338583,
+               "name":  "Vietnam",
+               "areaKm2":  331212.0
+           },
+    "NR":  {
+               "population":  10834,
+               "name":  "Nauru",
+               "areaKm2":  21.0
+           },
+    "SX":  {
+               "population":  40812,
+               "name":  "Sint Maarten",
+               "areaKm2":  34.0
+           },
+    "TF":  {
+               "population":  400,
+               "name":  "French Southern and Antarctic Lands",
+               "areaKm2":  7747.0
+           },
+    "ER":  {
+               "population":  5352000,
+               "name":  "Eritrea",
+               "areaKm2":  117600.0
+           },
+    "GF":  {
+               "population":  254541,
+               "name":  "French Guiana",
+               "areaKm2":  83534.0
+           },
+    "SR":  {
+               "population":  586634,
+               "name":  "Suriname",
+               "areaKm2":  163820.0
+           },
+    "NO":  {
+               "population":  5379475,
+               "name":  "Norway",
+               "areaKm2":  323802.0
+           },
+    "MV":  {
+               "population":  540542,
+               "name":  "Maldives",
+               "areaKm2":  300.0
+           },
+    "SI":  {
+               "population":  2100126,
+               "name":  "Slovenia",
+               "areaKm2":  20273.0
+           },
+    "BA":  {
+               "population":  3280815,
+               "name":  "Bosnia and Herzegovina",
+               "areaKm2":  51209.0
+           },
+    "ZA":  {
+               "population":  59308690,
+               "name":  "South Africa",
+               "areaKm2":  1221037.0
+           },
+    "PH":  {
+               "population":  109581085,
+               "name":  "Philippines",
+               "areaKm2":  342353.0
+           },
+    "KW":  {
+               "population":  4270563,
+               "name":  "Kuwait",
+               "areaKm2":  17818.0
+           },
+    "SL":  {
+               "population":  7976985,
+               "name":  "Sierra Leone",
+               "areaKm2":  71740.0
+           },
+    "AE":  {
+               "population":  9890400,
+               "name":  "United Arab Emirates",
+               "areaKm2":  83600.0
+           },
+    "GE":  {
+               "population":  3714000,
+               "name":  "Georgia",
+               "areaKm2":  69700.0
+           },
+    "YT":  {
+               "population":  226915,
+               "name":  "Mayotte",
+               "areaKm2":  374.0
+           },
+    "CX":  {
+               "population":  2072,
+               "name":  "Christmas Island",
+               "areaKm2":  135.0
+           },
+    "SV":  {
+               "population":  6486201,
+               "name":  "El Salvador",
+               "areaKm2":  21041.0
+           },
+    "CR":  {
+               "population":  5094114,
+               "name":  "Costa Rica",
+               "areaKm2":  51100.0
+           },
+    "CG":  {
+               "population":  5657000,
+               "name":  "Republic of the Congo",
+               "areaKm2":  342000.0
+           },
+    "MA":  {
+               "population":  36910558,
+               "name":  "Morocco",
+               "areaKm2":  446550.0
+           },
+    "UZ":  {
+               "population":  34232050,
+               "name":  "Uzbekistan",
+               "areaKm2":  447400.0
+           },
+    "AM":  {
+               "population":  2963234,
+               "name":  "Armenia",
+               "areaKm2":  29743.0
+           },
+    "LR":  {
+               "population":  5057677,
+               "name":  "Liberia",
+               "areaKm2":  111369.0
+           },
+    "HN":  {
+               "population":  9904608,
+               "name":  "Honduras",
+               "areaKm2":  112492.0
+           },
+    "FI":  {
+               "population":  5530719,
+               "name":  "Finland",
+               "areaKm2":  338424.0
+           },
+    "BR":  {
+               "population":  212559409,
+               "name":  "Brazil",
+               "areaKm2":  8515767.0
+           },
+    "IE":  {
+               "population":  4994724,
+               "name":  "Ireland",
+               "areaKm2":  70273.0
+           },
+    "SC":  {
+               "population":  98462,
+               "name":  "Seychelles",
+               "areaKm2":  452.0
+           },
+    "RE":  {
+               "population":  840974,
+               "name":  "RÃ©union",
+               "areaKm2":  2511.0
+           },
+    "ME":  {
+               "population":  621718,
+               "name":  "Montenegro",
+               "areaKm2":  13812.0
+           },
+    "PS":  {
+               "population":  4803269,
+               "name":  "Palestine",
+               "areaKm2":  6220.0
+           },
+    "LB":  {
+               "population":  6825442,
+               "name":  "Lebanon",
+               "areaKm2":  10452.0
+           },
+    "BG":  {
+               "population":  6927288,
+               "name":  "Bulgaria",
+               "areaKm2":  110879.0
+           },
+    "SS":  {
+               "population":  11193729,
+               "name":  "South Sudan",
+               "areaKm2":  619745.0
+           },
+    "SZ":  {
+               "population":  1160164,
+               "name":  "Eswatini",
+               "areaKm2":  17364.0
+           },
+    "HK":  {
+               "population":  7500700,
+               "name":  "Hong Kong",
+               "areaKm2":  1104.0
+           },
+    "GA":  {
+               "population":  2225728,
+               "name":  "Gabon",
+               "areaKm2":  267668.0
+           },
+    "PY":  {
+               "population":  7132530,
+               "name":  "Paraguay",
+               "areaKm2":  406752.0
+           },
+    "TR":  {
+               "population":  84339067,
+               "name":  "Turkey",
+               "areaKm2":  783562.0
+           },
+    "DM":  {
+               "population":  71991,
+               "name":  "Dominica",
+               "areaKm2":  751.0
+           },
+    "DZ":  {
+               "population":  44700000,
+               "name":  "Algeria",
+               "areaKm2":  2381741.0
+           },
+    "PM":  {
+               "population":  6069,
+               "name":  "Saint Pierre and Miquelon",
+               "areaKm2":  242.0
+           },
+    "DO":  {
+               "population":  10847904,
+               "name":  "Dominican Republic",
+               "areaKm2":  48671.0
+           },
+    "PA":  {
+               "population":  4314768,
+               "name":  "Panama",
+               "areaKm2":  75417.0
+           }
+}

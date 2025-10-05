@@ -39,7 +39,7 @@ import GlobePage from './GlobeComponent';
 import { useMeteor } from './MeteorProvider';
 import WelcomeOverlay from './WelcomeOverlay';
 import LogoImage from '../assets/logo.png';
-
+import Carita from './Carita';
 
 const languages = [
   {
@@ -759,6 +759,7 @@ const Wexio = () => {
 
       
       </div>
+      <Carita />
     </div>
   );
 };

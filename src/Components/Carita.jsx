@@ -1,28 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { useSelector } from 'react-redux'
-
-const MOCK_COUNTRIES = {
-  US: { name: 'United States', population: 331002651, areaKm2: 9833520 },
-  MX: { name: 'Mexico', population: 128932753, areaKm2: 1964375 },
-  BR: { name: 'Brazil', population: 212559417, areaKm2: 8515767 },
-  ES: { name: 'Spain', population: 47351567, areaKm2: 505944 },
-  FR: { name: 'France', population: 65273511, areaKm2: 551695 },
-  IN: { name: 'India', population: 1380004385, areaKm2: 3287263 },
-  CN: { name: 'China', population: 1444216107, areaKm2: 9596961 },
-  NG: { name: 'Nigeria', population: 206139589, areaKm2: 923768 },
-}
-
-function mockReverseGeocode(lat, lng) {
-  if (lat >= 25 && lat <= 49 && lng >= -125 && lng <= -66) return { code: 'US', name: MOCK_COUNTRIES.US.name }
-  if (lat >= 14 && lat <= 32 && lng >= -118 && lng <= -86) return { code: 'MX', name: MOCK_COUNTRIES.MX.name }
-  if (lat >= -34 && lat <= 6 && lng >= -74 && lng <= -34) return { code: 'BR', name: MOCK_COUNTRIES.BR.name }
-  if (lat >= 36 && lat <= 44 && lng >= -9.5 && lng <= 3.5) return { code: 'ES', name: MOCK_COUNTRIES.ES.name }
-  if (lat >= 42 && lat <= 51 && lng >= -5 && lng <= 8) return { code: 'FR', name: MOCK_COUNTRIES.FR.name }
-  if (lat >= 6 && lat <= 36 && lng >= 68 && lng <= 98) return { code: 'IN', name: MOCK_COUNTRIES.IN.name }
-  if (lat >= 18 && lat <= 53 && lng >= 73 && lng <= 135) return { code: 'CN', name: MOCK_COUNTRIES.CN.name }
-  if (lat >= 4 && lat <= 14 && lng >= 2 && lng <= 15) return { code: 'NG', name: MOCK_COUNTRIES.NG.name }
-  return { code: 'US', name: MOCK_COUNTRIES.US.name }
-}
+import COUNTRIES_DATA from '../assets/countries.json'
 
 function Confetti({ show }) {
   // no hooks here — safe to mount/unmount
@@ -63,11 +41,21 @@ function Confetti({ show }) {
   )
 }
 
-export default function Carita({ mock = true, goodThreshold = 100000, excellentThreshold = 10000 }) {
+function SadFace({ show }) {
+  if (!show) return null
+  return (
+    <div className="fixed inset-0 pointer-events-none z-[13000] flex items-center justify-center">
+      <div className="text-8xl animate-bounce">😢</div>
+    </div>
+  )
+}
+
+export default function Carita({ goodThreshold = 100000, excellentThreshold = 10000 }) {
   // Always call hooks in the same order:
   const impact = useSelector(s => s.impact.impactEvent)
   const sliderDiameterMeters = useSelector(s => s.impact.diameter)
   const sliderVelocityKms = useSelector(s => s.impact.velocity)
+  const { country } = useSelector((state) => state.impact);
 
   const center = impact?.position ? { lat: impact.position.lat, lng: impact.position.lng } : null
 
@@ -100,71 +88,31 @@ export default function Carita({ mock = true, goodThreshold = 100000, excellentT
 
   const circleAreaKm2 = useMemo(() => Math.PI * impactRadiusKm * impactRadiusKm, [impactRadiusKm])
 
-  const [countryCode, setCountryCode] = useState(null)
-  const [countryName, setCountryName] = useState(null)
-  const [population, setPopulation] = useState(null)
-  const [areaKm2, setAreaKm2] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+  // Get country data from Redux state
+  const countryData = useMemo(() => {
+    if (!country) return null
+    const countryCode = country.toUpperCase()
+    return COUNTRIES_DATA[countryCode] || null
+  }, [country])
 
-  // This effect always exists; it short-circuits if no center.
-  useEffect(() => {
-    let stop = false
-    async function run() {
-      if (!center) return
-      setLoading(true)
-      setError(null)
-      setCountryCode(null)
-      setCountryName(null)
-      setPopulation(null)
-      setAreaKm2(null)
-      try {
-        if (mock) {
-          const m = mockReverseGeocode(center.lat, center.lng)
-          if (stop) return
-          setCountryCode(m.code)
-          setCountryName(m.name)
-          const row = MOCK_COUNTRIES[m.code]
-          setPopulation(row.population)
-          setAreaKm2(row.areaKm2)
-        } else {
-          const rev = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${center.lat}&lon=${center.lng}&zoom=5`)
-          const rj = await rev.json()
-          const code = (rj?.address?.country_code || '').toUpperCase()
-          const name = rj?.address?.country || rj?.display_name || 'Unknown'
-          if (stop) return
-          setCountryCode(code || null)
-          setCountryName(name || null)
-          if (code) {
-            const rc = await fetch(`https://restcountries.com/v3.1/alpha/${code}`)
-            const arr = await rc.json()
-            const item = Array.isArray(arr) ? arr[0] : null
-            const pop = item?.population ?? null
-            const area = item?.area ?? null
-            if (stop) return
-            setPopulation(typeof pop === 'number' ? pop : null)
-            setAreaKm2(typeof area === 'number' ? area : null)
-          }
-        }
-      } catch (e) {
-        if (!stop) setError('Failed to fetch')
-      } finally {
-        if (!stop) setLoading(false)
-      }
-    }
-    run()
-    return () => { stop = true }
-  }, [center, mock])
+  const countryName = countryData?.name || null
+  const population = countryData?.population || null
+  const areaKm2 = countryData?.areaKm2 || null
 
   // These hooks must run every render (even if center is null)
   const density = population && areaKm2 ? population / areaKm2 : null
   const estimatedAffected = density ? Math.round(density * circleAreaKm2) : null
+  // Check if sliders were used (Custom Asteroid Simulation)
+  const isSliderSimulation = useMemo(() => {
+    return impact?.details?.source?.name === 'Custom Asteroid Simulation'
+  }, [impact])
+
   const outcome = useMemo(() => {
     if (estimatedAffected == null) return null
-    if (estimatedAffected <= excellentThreshold) return 'excellent'
+    if (estimatedAffected <= 500) return 'excellent' // Show confetti for 500 or fewer people
     if (estimatedAffected <= goodThreshold) return 'good'
     return 'bad'
-  }, [estimatedAffected, goodThreshold, excellentThreshold])
+  }, [estimatedAffected, goodThreshold])
 
   // Now it's safe to hide when there is no center,
   // because all hooks above have already been called in the same order.
@@ -180,10 +128,7 @@ export default function Carita({ mock = true, goodThreshold = 100000, excellentT
         <div className="mt-2 text-xs text-gray-300">Lat {center.lat.toFixed(3)}°, Lng {center.lng.toFixed(3)}°</div>
         <div className="mt-1 text-[11px] text-gray-400">Velocity {velocityKms.toFixed(1)} km/s • Diameter {(diameterKm).toFixed(2)} km</div>
 
-        {loading && <div className="mt-3 text-sm">Loading…</div>}
-        {error && <div className="mt-3 text-sm text-red-400">{error}</div>}
-
-        {!loading && !error && (
+        {country && (
           <>
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div className="rounded-lg bg-black/30 p-3">
@@ -197,7 +142,7 @@ export default function Carita({ mock = true, goodThreshold = 100000, excellentT
                 </div>
               </div>
               <div className="rounded-lg bg-black/30 p-3">
-                <div className="text+[11px] text-gray-400">Population</div>
+                <div className="text-[11px] text-gray-400">Population</div>
                 <div className="text-lg font-semibold">{population != null ? population.toLocaleString() : '—'}</div>
               </div>
               <div className="rounded-lg bg-black/30 p-3">
@@ -210,9 +155,9 @@ export default function Carita({ mock = true, goodThreshold = 100000, excellentT
                   {estimatedAffected != null ? estimatedAffected.toLocaleString() : '—'}
                 </div>
                 <div className="text-xs mt-1">
-                  {outcome === 'excellent' && 'Excellent outcome. Great mitigation!'}
-                  {outcome === 'good' && 'Good outcome. You reduced the impact.'}
-                  {outcome === 'bad' && 'High impact. Reduce velocity or size to improve.'}
+                  {outcome === 'excellent' && '🎉 Excellent! Minimal casualties. Great job!'}
+                  {outcome === 'good' && 'Good outcome. You reduced the impact significantly.'}
+                  {outcome === 'bad' && '😢 High impact. Many lives at risk. Reduce velocity or size!'}
                 </div>
               </div>
             </div>
@@ -223,13 +168,20 @@ export default function Carita({ mock = true, goodThreshold = 100000, excellentT
             </div>
           </>
         )}
+
+        {!country && (
+          <div className="mt-3 text-sm text-gray-400">
+            No country data available for this location
+          </div>
+        )}
       </div>
 
-      <Confetti show={outcome === 'excellent' || outcome === 'good'} />
+      <Confetti show={outcome === 'excellent' && isSliderSimulation} />
+      <SadFace show={outcome === 'bad' && isSliderSimulation} />
 
-      {outcome === 'bad' && (
+      {outcome === 'bad' && isSliderSimulation && (
         <div className="fixed inset-x-0 top-4 z-[12040] mx-auto w-max rounded-full bg-red-600 text-white text-sm px-4 py-2 shadow-lg">
-          Try lowering velocity or size to save more people
+          😢 Many lives at risk! Try lowering velocity or size to save more people
         </div>
       )}
     </>

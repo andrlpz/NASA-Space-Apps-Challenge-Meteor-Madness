@@ -92,7 +92,8 @@ export async function detectSurfaceType(lat, lng) {
           location: locationName,
           confidence,
           source: "Geoapify",
-          countryInfo: props.country || null,
+          countryInfo: props.country_code || null, // Use 2-letter country code instead of name
+          countryName: props.country || null, // Keep country name for display purposes
           apiData: {
             fullResponse: data,
             coordinates: { lat, lng },
@@ -107,6 +108,7 @@ export async function detectSurfaceType(lat, lng) {
           confidence: "medium",
           source: "Geoapify",
           countryInfo: null,
+          countryName: null,
           apiData: { coordinates: { lat, lng } },
         };
       }
@@ -129,6 +131,7 @@ export async function detectSurfaceType(lat, lng) {
     confidence: "low",
     source: "fallback",
     countryInfo: null,
+    countryName: null,
     apiData: { coordinates: { lat, lng } },
   };
 }
