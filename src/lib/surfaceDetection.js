@@ -20,7 +20,7 @@ export async function detectSurfaceType(lat, lng) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
     
-    const response = await fetch(`https://api.pafodev.com/nasa?lat=${lat}&lng=${lng}`, {
+    const response = await fetch(`https://api.pafodev.com/nasaapi/neo3?lat=${lat}&lng=${lng}`, {
       signal: controller.signal,
       headers: {
         'Accept': 'application/json',
@@ -33,15 +33,75 @@ export async function detectSurfaceType(lat, lng) {
     if (response.ok) {
       const data = await response.json();
       
-      // Validate API response structure
-      if (typeof data === 'object' && data !== null) {
+      // The API returns geocoding data similar to Google Maps Geocoding API
+      if (data && data.results && Array.isArray(data.results) && data.results.length > 0) {
+        const result = data.results[0];
+        
+        // Extract surface type from address components
+        let surfaceType = 'water'; // Default assumption for coordinates without land components
+        let confidence = 'medium';
+        let description = 'Unknown Area';
+        let locationName = result.formatted_address || `${lat.toFixed(3)}°, ${lng.toFixed(3)}°`;
+        
+        if (result.address_components && Array.isArray(result.address_components)) {
+          // Check if we have land-based address components
+          const hasLandComponents = result.address_components.some(component => 
+            component.types.includes('country') || 
+            component.types.includes('administrative_area_level_1') ||
+            component.types.includes('locality') ||
+            component.types.includes('postal_code') ||
+            component.types.includes('street_address') ||
+            component.types.includes('route') ||
+            component.types.includes('premise')
+          );
+          
+          // Check for water-related components
+          const hasWaterComponents = result.address_components.some(component =>
+            component.long_name.toLowerCase().includes('ocean') ||
+            component.long_name.toLowerCase().includes('sea') ||
+            component.long_name.toLowerCase().includes('gulf') ||
+            component.long_name.toLowerCase().includes('bay') ||
+            component.long_name.toLowerCase().includes('strait') ||
+            component.long_name.toLowerCase().includes('channel')
+          );
+          
+          if (hasLandComponents && !hasWaterComponents) {
+            surfaceType = 'land';
+            confidence = 'high';
+            description = 'Land Area (Geocoded)';
+          } else if (hasWaterComponents) {
+            surfaceType = 'water';
+            confidence = 'high';
+            description = 'Water Body (Geocoded)';
+          } else if (!hasLandComponents) {
+            // No land components found, likely water
+            surfaceType = 'water';
+            confidence = 'high';
+            description = 'Open Water (No Land Components)';
+          }
+        }
+        
+        return {
+          type: surfaceType,
+          description: description,
+          location: locationName,
+          confidence: confidence,
+          source: 'pafodev_api',
+          countryInfo: result.address_components?.find(c => c.types.includes('country'))?.long_name || null,
+          apiData: {
+            fullResponse: result,
+            coordinates: { lat, lng }
+          }
+        };
+      } else if (data && typeof data === 'object') {
+        // Fallback: try to parse other possible response formats
         return {
           type: data.isWater ? 'water' : 'land',
           description: data.isWater ? 
             (data.waterBodyType || 'Ocean/Water Body') : 
             (data.description || 'Land Surface'),
           location: data.location || data.placeName || `${lat.toFixed(3)}°, ${lng.toFixed(3)}°`,
-          confidence: data.confidence || 'high',
+          confidence: data.confidence || 'medium',
           source: 'pafodev_api',
           countryInfo: data.countryInfo || data.country || null
         };
@@ -232,6 +292,31 @@ export function calculateSurfaceSpecificEffects(surfaceInfo, diameterMeters, vel
         ...(energyMegatons > 10 ? ['Invierno de impacto regional'] : []),
         ...(energyMegatons > 100 ? ['Extinción masiva potencial'] : [])
       ]
+    };
+  }
+}
+
+/**
+ * Test API endpoint availability
+ * @param {number} lat - Test latitude
+ * @param {number} lng - Test longitude
+ * @returns {Promise<Object>} Test result
+ */
+export async function testAPIEndpoint(lat = 40.7128, lng = -74.0060) {
+  try {
+    const result = await detectSurfaceType(lat, lng);
+    console.log('🧪 API Test Result:', result);
+    return {
+      success: true,
+      result,
+      usingAPI: result.source === 'pafodev_api'
+    };
+  } catch (error) {
+    console.error('❌ API Test Failed:', error);
+    return {
+      success: false,
+      error: error.message,
+      usingAPI: false
     };
   }
 }

@@ -35,6 +35,7 @@ import cookies from 'js-cookie'
 import { useTranslation } from 'react-i18next'
 import i18next from 'i18next'
 import GlobePage from './GlobeComponent';
+import { useMeteor } from './MeteorProvider';
 
 
 const languages = [
@@ -78,6 +79,8 @@ const Wexio = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [shareSuccess, setShareSuccess] = useState(false);
   const [pendingURLState, setPendingURLState] = useState(null);
+  const [mouse, setMouse] = useState({ x: window.innerWidth/2, y: window.innerHeight/2 });
+  const meteor = useMeteor();
 
   const appearSliders = () => {
     dispatch(showSliders());
@@ -114,6 +117,13 @@ const Wexio = () => {
       setTimeout(() => setShareSuccess(false), 2000);
     }
   };
+
+  // Mouse tracking for meteor effects
+  useEffect(() => {
+    const onMove = (e) => setMouse({ x: e.clientX, y: e.clientY })
+    window.addEventListener('mousemove', onMove, { passive: true })
+    return () => window.removeEventListener('mousemove', onMove)
+  }, []);
 
   // Calculate impact function (moved here for reusability)
   const calculateImpact = (diameterMeters, velocityKms) => {
@@ -291,6 +301,7 @@ const Wexio = () => {
         }
 
         setAsteroids(allAsteroids);
+        console.log('Sample asteroid:', allAsteroids[0]);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -355,24 +366,46 @@ const Wexio = () => {
     }
   }, [impactEvent, selectedAsteroid, diameter, velocity, is3DMap, isLoading, pendingURLState]);
 
-  const handleMapClick = async (latlng) => {
+  const handleMapClick = async (latlng, clickEvent) => {
+    console.log('Map clicked at:', latlng, 'with event:', clickEvent);
+    
+    // Calculate impact function (moved here for reusability)
+    const calculateImpact = (diameterMeters, velocityKms) => {
+      const radius = diameterMeters / 2;
+      const volume = (4 / 3) * Math.PI * Math.pow(radius, 3);
+      const density = 3000;
+      const mass = density * volume;
+      const kineticEnergyJoules = 0.5 * mass * Math.pow(velocityKms * 1000, 2);
+      const energyMegatons = kineticEnergyJoules / 4.184e15;
+      const seismicMagnitude = Math.min((2 / 3) * Math.log10(kineticEnergyJoules) - 3.2, 10).toFixed(1);
+      const craterDiameter = Math.min(diameterMeters * 20, 20000);
+      const devastationRadius = Math.min(energyMegatons * 10, 500);
+      const evacuationRadius = Math.min(energyMegatons * 5, 200);
+      return {
+        energyMegatons: energyMegatons.toFixed(2),
+        seismicMagnitude,
+        craterDiameter: craterDiameter.toFixed(0),
+        devastationRadius: devastationRadius.toFixed(0),
+        evacuationRadius: evacuationRadius.toFixed(0),
+      };
+    };
+
+    // Get click coordinates for meteor animation
+    const clickX = clickEvent?.clientX || clickEvent?.nativeEvent?.clientX || window.innerWidth / 2;
+    const clickY = clickEvent?.clientY || clickEvent?.nativeEvent?.clientY || window.innerHeight / 2;
+    
+    console.log('Click coordinates for meteor animation:', { clickX, clickY, clickEvent });
+
     // Detect surface type using surface detection API
     const surfaceInfo = await detectSurfaceType(latlng.lat, latlng.lng);
     
     if (showSlidersState) {
-      // Simulate impact using slider values
-      const diameterMeters = diameter;
-      const velocityKms = velocity;
-      
-      const radius = diameterMeters / 2;
-      const volume = (4 / 3) * Math.PI * Math.pow(radius, 3);
-      const mass = 3000 * volume;
-      const kineticEnergyJoules = 0.5 * mass * Math.pow(velocityKms * 1000, 2);
-      const energyMegatons = (kineticEnergyJoules / 4.184e15).toFixed(2);
+      const { energyMegatons, seismicMagnitude, craterDiameter, devastationRadius, evacuationRadius } =
+        calculateImpact(diameter, velocity);
 
       // Calculate surface-specific effects
-      const surfaceEffects = calculateSurfaceSpecificEffects(surfaceInfo, diameterMeters, velocityKms, parseFloat(energyMegatons));
-      const visualRadius = calculateVisualRadius(diameterMeters, velocityKms);
+      const surfaceEffects = calculateSurfaceSpecificEffects(surfaceInfo, diameter, velocity, parseFloat(energyMegatons));
+      const visualRadius = calculateVisualRadius(diameter, velocity);
 
       dispatch(setImpactEvent({
         position: latlng,
@@ -388,9 +421,9 @@ const Wexio = () => {
           },
           source: {
             name: 'Custom Asteroid Simulation',
-            diameter: `${diameterMeters.toFixed(2)} meters`,
-            velocity: `${velocityKms.toFixed(2)} km/s`,
-            isPotentiallyHazardous: diameterMeters > 140,
+            diameter: `${diameter.toFixed(2)} meters`,
+            velocity: `${velocity.toFixed(2)} km/s`,
+            isPotentiallyHazardous: diameter > 140,
             closeApproachDate: 'Custom Simulation',
             missDistance: 'Impact Simulation',
             absoluteMagnitude: 'N/A',
@@ -398,11 +431,11 @@ const Wexio = () => {
           },
           consequences: {
             impactEnergy: `${energyMegatons} Megatons TNT`,
-            seismicEffect: `Magnitude ${(6 + parseFloat(energyMegatons) / 1000).toFixed(1)} Richter`,
+            seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
             primaryEffect: surfaceEffects.primaryEffect,
             airBlast: 'Significant overpressure event expected.',
-            craterInfo: `${surfaceEffects.craterDiameter?.toFixed(0) || 'N/A'} metros - ${surfaceEffects.craterType}`,
-            devastationRadius: `${surfaceEffects.devastationRadius?.toFixed(0) || 'N/A'} km`,
+            craterInfo: `${surfaceEffects.craterDiameter?.toFixed(0) || craterDiameter} metros - ${surfaceEffects.craterType}`,
+            devastationRadius: `${surfaceEffects.devastationRadius?.toFixed(0) || devastationRadius} km`,
             specialEffects: surfaceEffects.specialEffects,
             ...(surfaceInfo.type === 'water' && {
               tsunamiHeight: surfaceEffects.tsunamiHeight,
@@ -416,28 +449,33 @@ const Wexio = () => {
             }),
           },
           mitigation: {
-            threatLevel: diameterMeters > 1000 ? 'EXTREME' : diameterMeters > 500 ? 'HIGH' : 'MODERATE',
+            threatLevel: diameter > 1000 ? 'EXTREME' : diameter > 500 ? 'HIGH' : 'MODERATE',
             recommendedAction: surfaceInfo.type === 'water' 
               ? 'Tsunami warning systems activated. Coastal evacuation recommended.'
               : 'Ground-based impact. Evacuation of impact zone required.',
-            evacuationRadius: `${surfaceEffects.evacuationRadius?.toFixed(0) || 'N/A'} km`,
+            evacuationRadius: `${surfaceEffects.evacuationRadius?.toFixed(0) || evacuationRadius} km`,
           },
         },
       }));
       
+      // Add meteor effect at click location
+      console.log('Firing meteor at click coordinates:', clickX, clickY, 'meteor object:', meteor);
+      if (meteor && typeof meteor.fireAt === 'function') {
+        meteor.fireAt(clickX, clickY, { from: 'top', scale: 0.9, duration: 1200 });
+      } else {
+        console.error('Meteor object not available or fireAt method not found');
+      }
+      
       // Hide sliders after simulation
       dispatch(hideSliders());
+      return;
     
-    } else if (selectedAsteroid) {
-      // Simulate impact using selected asteroid
+    }
+
+    if (selectedAsteroid) {
       const diameterMeters = selectedAsteroid.estimated_diameter.meters.estimated_diameter_max;
       const velocityKms = parseFloat(selectedAsteroid.close_approach_data[0].relative_velocity.kilometers_per_second);
-
-      const radius = diameterMeters / 2;
-      const volume = (4 / 3) * Math.PI * Math.pow(radius, 3);
-      const mass = 3000 * volume;
-      const kineticEnergyJoules = 0.5 * mass * Math.pow(velocityKms * 1000, 2);
-      const energyMegatons = (kineticEnergyJoules / 4.184e15).toFixed(2);
+      const { energyMegatons, seismicMagnitude } = calculateImpact(diameterMeters, velocityKms);
 
       // Calculate surface-specific effects
       const surfaceEffects = calculateSurfaceSpecificEffects(surfaceInfo, diameterMeters, velocityKms, parseFloat(energyMegatons));
@@ -463,11 +501,11 @@ const Wexio = () => {
             closeApproachDate: selectedAsteroid.close_approach_data[0].close_approach_date_full,
             missDistance: `${parseFloat(selectedAsteroid.close_approach_data[0].miss_distance.kilometers).toLocaleString()} km`,
             absoluteMagnitude: selectedAsteroid.absolute_magnitude_h,
-            jplUrl: selectedAsteroid.nasa_jpl_url,
+            jplUrl: 'N/A',
           },
           consequences: {
             impactEnergy: `${energyMegatons} Megatons TNT`,
-            seismicEffect: `Magnitude ${(6 + parseFloat(energyMegatons) / 1000).toFixed(1)} Richter`,
+            seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
             primaryEffect: surfaceEffects.primaryEffect,
             airBlast: 'Significant overpressure event expected.',
             craterInfo: `${surfaceEffects.craterDiameter?.toFixed(0) || 'N/A'} metros - ${surfaceEffects.craterType}`,
@@ -494,49 +532,61 @@ const Wexio = () => {
         },
       }));
       
+      // Add meteor effect at click location
+      console.log('Firing meteor at click coordinates:', clickX, clickY, 'meteor object:', meteor);
+      if (meteor && typeof meteor.fireAt === 'function') {
+        meteor.fireAt(clickX, clickY, { from: 'right', scale: 1.0, duration: 1200 });
+      } else {
+        console.error('Meteor object not available or fireAt method not found');
+      }
+      
       // Hide asteroid list after simulation
       dispatch(hideAsteroidList());
-    } else {
-      // If no sliders or asteroid selected, show basic message with surface info
-      // Use default small asteroid values for visual representation
-      const defaultDiameter = 100; // 100 meter default
-      const defaultVelocity = 20; // 20 km/s default
-      const visualRadius = calculateVisualRadius(defaultDiameter, defaultVelocity);
-      
-      dispatch(setImpactEvent({
-        position: latlng,
-        radius: visualRadius,
-        details: {
-          surface: {
-            type: surfaceInfo.type,
-            description: surfaceInfo.description,
-            location: surfaceInfo.location,
-            confidence: surfaceInfo.confidence,
-            source: surfaceInfo.source,
-            ...(surfaceInfo.countryInfo && { countryInfo: surfaceInfo.countryInfo })
-          },
-          source: {
-            name: 'Click simulation',
-            diameter: 'Unknown',
-            velocity: 'Unknown',
-            isPotentiallyHazardous: false,
-            closeApproachDate: 'N/A',
-            missDistance: 'N/A',
-            absoluteMagnitude: 'N/A',
-            jplUrl: 'N/A',
-          },
-          consequences: {
-            impactEnergy: 'Select an asteroid or use sliders for simulation',
-            seismicEffect: 'N/A',
-            airBlast: 'N/A',
-            primaryEffect: surfaceInfo.type === 'water' ? 'Possible tsunami' : 'Terrestrial impact',
-          },
-          mitigation: {
-            threatLevel: 'UNKNOWN',
-            recommendedAction: `Surface detected: ${surfaceInfo.description} in ${surfaceInfo.location}. Source: ${surfaceInfo.source}. Please select an asteroid from the list or use sliders to customize parameters.`,
-          },
+      return;
+    }
+
+    // Default case - no sliders or asteroid selected
+    dispatch(setImpactEvent({
+      position: latlng,
+      radius: 30000,
+      details: {
+        surface: {
+          type: surfaceInfo.type,
+          description: surfaceInfo.description,
+          location: surfaceInfo.location,
+          confidence: surfaceInfo.confidence,
+          source: surfaceInfo.source,
+          ...(surfaceInfo.countryInfo && { countryInfo: surfaceInfo.countryInfo })
         },
-      }));
+        source: {
+          name: 'Click simulation',
+          diameter: 'Unknown',
+          velocity: 'Unknown',
+          isPotentiallyHazardous: false,
+          closeApproachDate: 'N/A',
+          missDistance: 'N/A',
+          absoluteMagnitude: 'N/A',
+          jplUrl: 'N/A',
+        },
+        consequences: {
+          impactEnergy: 'Select an asteroid or use sliders for simulation',
+          seismicEffect: 'N/A',
+          airBlast: 'N/A',
+          primaryEffect: surfaceInfo.type === 'water' ? 'Possible tsunami' : 'Terrestrial impact',
+        },
+        mitigation: {
+          threatLevel: 'UNKNOWN',
+          recommendedAction: `Surface detected: ${surfaceInfo.description} in ${surfaceInfo.location}. Source: ${surfaceInfo.source}. Please select an asteroid from the list or use sliders to customize parameters.`,
+        },
+      },
+    }));
+    
+    // Add meteor effect at click location
+    console.log('Firing meteor at click coordinates:', clickX, clickY, 'meteor object:', meteor);
+    if (meteor && typeof meteor.fireAt === 'function') {
+      meteor.fireAt(clickX, clickY, { from: 'left', scale: 0.9, duration: 1200 });
+    } else {
+      console.error('Meteor object not available or fireAt method not found');
     }
 
     // Update URL with current state
@@ -643,6 +693,34 @@ const Wexio = () => {
           ? <GlobePage impact={impactEvent} onMapClick={handleMapClick} />
           : <InteractiveMap impact={impactEvent} onMapClick={handleMapClick} />
         }
+        
+        {/* Map Mode Toggle Button */}
+        <div className="absolute top-16 right-4 z-10 bg-gray-800 p-2 rounded z-1000">
+          <button
+            onClick={() => dispatch(toggleMapMode())}
+            className="bg-gray-700 text-white p-2 rounded hover:bg-gray-600 transition-colors flex items-center gap-2"
+            title={is3DMap ? 'Switch to 2D Map' : 'Switch to 3D Globe'}
+          >
+            <span>{is3DMap ? '🗺' : '🌍'}</span>
+            <span className="text-xs">{is3DMap ? '2D' : '3D'}</span>
+          </button>
+          <div className="text-xs text-gray-400 mt-1 text-center">
+            Zoom: {currentZoomLevel?.toFixed(2) || '--'}
+          </div>
+          <div className="text-xs text-gray-300 mt-1 text-center">
+            2D ≥{zoomThresholdFor2D} | 3D ≤{zoomThresholdFor3D}
+          </div>
+          <div className="w-full bg-gray-600 rounded-full h-1 mt-1">
+            <div 
+              className="bg-blue-500 h-1 rounded-full transition-all duration-300"
+              style={{ 
+                width: is3DMap 
+                  ? `${Math.min(100, (currentZoomLevel / zoomThresholdFor2D) * 100)}%`
+                  : `${Math.max(0, 100 - ((currentZoomLevel - zoomThresholdFor3D) / (zoomThresholdFor2D - zoomThresholdFor3D)) * 100)}%`
+              }}
+            ></div>
+          </div>
+        </div>
       </main>
       
       {/* Auto-switch notification */}

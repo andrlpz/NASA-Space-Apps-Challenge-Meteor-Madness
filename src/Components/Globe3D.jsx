@@ -59,7 +59,11 @@ function Earth({ onHover, onPick }){
         onPointerMove={e=>onHover(toLatLng(e.point))}
         onPointerUp={e=>{
           const dx=Math.abs(e.clientX-down[0]),dy=Math.abs(e.clientY-down[1])
-          if(dx<3&&dy<3) onPick(toLatLng(e.point))
+          if(dx<3&&dy<3) {
+            const latLng = toLatLng(e.point);
+            console.log('Globe click event:', e, 'latLng:', latLng);
+            onPick(latLng, e);
+          }
         }}
       >
         <sphereGeometry args={[1,128,128]} />
@@ -114,7 +118,7 @@ export default function Globe3D({ impact, onMapClick }){
         <ambientLight intensity={0.6}/>
         <directionalLight position={[5,3,5]} intensity={1.2}/>
         <Stars radius={100} depth={50} count={5000} factor={2} fade />
-        <Earth onHover={setHover} onPick={(p)=>{setPicked(p); onMapClick && onMapClick(p)}} />
+        <Earth onHover={setHover} onPick={(p, e)=>{setPicked(p); onMapClick && onMapClick(p, e)}} />
         
         {picked && <ClickMarker lat={picked.lat} lng={picked.lng} />}
         {impact && <ImpactRing lat={impact.position.lat} lng={impact.position.lng} radiusMeters={impact.radius} />}

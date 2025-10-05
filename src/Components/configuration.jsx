@@ -17,6 +17,7 @@ const languages = [
     flag: '🇪🇸',
   },
   {
+    
     code: 'fr',
     name: 'Français',
     flag: '🇫🇷',

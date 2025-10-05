@@ -11,7 +11,9 @@ import { updateZoomLevel } from '../store/impactSlice';
 function MapEventsHandler({ onMapClick, onZoomAction }) {
   const map = useMapEvents({
     click(e) {
-      onMapClick(e.latlng);
+      console.log('Map click event:', e);
+      // Pass both latlng and the original event with screen coordinates
+      onMapClick(e.latlng, e.originalEvent);
     },
     zoomend() {
       if (onZoomAction) {
