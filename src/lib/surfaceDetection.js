@@ -10,128 +10,126 @@
  * @returns {Object} Surface information object
  */
 export async function detectSurfaceType(lat, lng) {
-  // Validate coordinates
+  // ✅ Validate coordinates
   if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-    throw new Error('Invalid coordinates provided');
+    throw new Error("Invalid coordinates provided");
   }
 
+  // 🔑 Replace this with your actual Geoapify key
+  const GEOAPIFY_API_KEY = "3af853c388e54db88930158cdcdfbc25";
+
   try {
-    // Use OpenStreetMap Nominatim API for reverse geocoding
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout for better performance
-    
+    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout
+
+    // 🌍 Use Geoapify Reverse Geocoding API
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1&extratags=1&namedetails=1`,
-      {
-        signal: controller.signal,
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'Meteor-Madness-App/1.0 (NASA Space Apps Challenge)'
-        }
-      }
+      `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&apiKey=${GEOAPIFY_API_KEY}`,
+      { signal: controller.signal }
     );
-    
+
     clearTimeout(timeoutId);
-    
+
     if (response.ok) {
       const data = await response.json();
-      console.log('Nominatim API response:', data);
-      
-      if (data && data.place_id) {
-        let surfaceType = 'water'; // Default assumption
-        let confidence = 'high';
-        let description = 'Open Water';
-        let locationName = data.display_name || `${lat.toFixed(3)}°, ${lng.toFixed(3)}°`;
-        
-        // Check if we have address components (indicates land)
-        if (data.address && Object.keys(data.address).length > 0) {
-          // Has address components - this indicates land
-          surfaceType = 'land';
-          description = 'Land Area';
-          
-          // Check for specific water body types in class/type
-          if (data.class === 'natural' && ['water', 'bay', 'strait', 'fjord'].includes(data.type)) {
-            surfaceType = 'water';
-            description = `Water Body (${data.type})`;
-          } else if (data.class === 'waterway') {
-            surfaceType = 'water';
-            description = `Waterway (${data.type})`;
-          } else if (data.class === 'leisure' && data.type === 'marina') {
-            surfaceType = 'water';
-            description = 'Marina/Harbor';
-          }
-        } else {
-          // No address components - likely water body
-          surfaceType = 'water';
-          description = 'Open Water (No Address)';
-          confidence = 'medium';
-        }
-        
-        // Extract country info from address
-        const countryInfo = data.address?.country || null;
-        
-        // Create location description based on available data
-        if (data.address) {
-          const locationParts = [];
-          if (data.address.city || data.address.town || data.address.village) {
-            locationParts.push(data.address.city || data.address.town || data.address.village);
-          }
-          if (data.address.state || data.address.region) {
-            locationParts.push(data.address.state || data.address.region);
-          }
-          if (data.address.country) {
-            locationParts.push(data.address.country);
-          }
-          if (locationParts.length > 0) {
-            locationName = locationParts.join(', ');
+      console.log("Geoapify API response:", data);
+
+      const feature = data.features?.[0];
+      if (feature) {
+        const props = feature.properties;
+
+        // Default assumptions
+        let surfaceType = "water";
+        let confidence = "medium";
+        let description = "Open Water";
+        let locationName =
+          props.formatted || `${lat.toFixed(3)}°, ${lng.toFixed(3)}°`;
+
+        // 🌎 Check if we have address or place info — indicates land
+        if (props.country) {
+          surfaceType = "land";
+          description = "Land Area";
+          confidence = "high";
+
+          // Special check for water-related features
+          const waterIndicators = [
+            "bay",
+            "sea",
+            "ocean",
+            "lake",
+            "river",
+            "harbor",
+            "marina",
+          ];
+
+          if (
+            waterIndicators.some((word) =>
+              (props.name || "").toLowerCase().includes(word)
+            ) ||
+            ["water", "bay", "sea", "ocean", "lake", "river"].includes(
+              props.result_type
+            )
+          ) {
+            surfaceType = "water";
+            description = `Water Body (${props.result_type || "unknown"})`;
           }
         }
-        
+
+        // 🌍 Extract human-readable location
+        const locationParts = [];
+        if (props.city || props.town || props.village)
+          locationParts.push(props.city || props.town || props.village);
+        if (props.state) locationParts.push(props.state);
+        if (props.country) locationParts.push(props.country);
+
+        if (locationParts.length > 0) {
+          locationName = locationParts.join(", ");
+        }
+
         return {
           type: surfaceType,
-          description: description,
+          description,
           location: locationName,
-          confidence: confidence,
-          source: 'OpenStreetMap',
-          countryInfo: countryInfo,
+          confidence,
+          source: "Geoapify",
+          countryInfo: props.country || null,
           apiData: {
             fullResponse: data,
-            coordinates: { lat, lng }
-          }
+            coordinates: { lat, lng },
+          },
         };
       } else {
-        // No data found - likely open ocean
+        // 🌊 No features returned — likely open ocean
         return {
-          type: 'water',
-          description: 'Open Ocean ',
+          type: "water",
+          description: "Open Ocean",
           location: `${lat.toFixed(3)}°, ${lng.toFixed(3)}°`,
-          confidence: 'medium',
-          source: 'OpenStreetMap',
+          confidence: "medium",
+          source: "Geoapify",
           countryInfo: null,
-          apiData: {
-            coordinates: { lat, lng }
-          }
+          apiData: { coordinates: { lat, lng } },
         };
       }
     } else {
-      console.log('Nominatim API response not ok:', response.status, response.statusText);
+      console.warn(
+        "Geoapify API not ok:",
+        response.status,
+        response.statusText
+      );
     }
-    
   } catch (error) {
-    console.log('Surface detection API error:', error.message);
+    console.warn("Geoapify API error:", error.message);
   }
-  
-  // Fallback: If API fails, assume water for unknown coordinates
+
+  // 🆘 Fallback
   return {
-    type: 'water',
-    description: 'Unknown Surface (API Error)',
+    type: "water",
+    description: "Unknown Surface (API Error)",
     location: `${lat.toFixed(3)}°, ${lng.toFixed(3)}°`,
-    confidence: 'low',
-    source: 'fallback',
+    confidence: "low",
+    source: "fallback",
     countryInfo: null,
-    apiData: {
-      coordinates: { lat, lng }
-    }
+    apiData: { coordinates: { lat, lng } },
   };
 }
 

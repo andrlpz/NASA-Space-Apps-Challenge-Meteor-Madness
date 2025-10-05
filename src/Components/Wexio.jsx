@@ -38,7 +38,7 @@ import i18next from 'i18next'
 import GlobePage from './GlobeComponent';
 import { useMeteor } from './MeteorProvider';
 import WelcomeOverlay from './WelcomeOverlay';
-import Carita from './Carita';
+import LogoImage from '../assets/logo.png';
 
 
 const languages = [
@@ -654,7 +654,7 @@ const Wexio = () => {
             
 
               <img 
-                src="/src/assets/logo.png" 
+                src={LogoImage} 
                 alt="Meteor Madness Logo" 
                 className="w-8 h-8 mr-3 group-hover:opacity-80 transition-opacity object-contain" 
               />
@@ -713,7 +713,7 @@ const Wexio = () => {
           <div className="flex flex-col items-center space-y-4 mt-4">
             <div className="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center">
               <img 
-                src="/src/assets/logo.png" 
+                src={LogoImage} 
                 alt="Meteor Madness Logo" 
                 className="w-4 h-4 object-contain opacity-80" 
               />

@@ -1,5 +1,6 @@
 import React from 'react';
 import BackgroundImage from '../assets/BackgroundStart.jpg';
+import NasaLogo from '../assets/nasalogo.png';
 
 const WelcomeOverlay = ({ onStart, isVisible }) => {
   return (
@@ -67,7 +68,7 @@ const WelcomeOverlay = ({ onStart, isVisible }) => {
           title="NASA Space Apps Challenge"
         >
           <img
-            src="/src/assets/nasalogo.png"
+            src={NasaLogo}
             alt="NASA Logo"
             className="w-8 h-8 object-contain"
           />
