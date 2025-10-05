@@ -97,7 +97,7 @@ export default function Configuration({ onShare, shareSuccess, impactEvent }) {
     <>
       {/* Settings Button */}
       <button
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsOpen(!isOpen)}
         className="fixed top-4 right-4 z-[9000] bg-gray-800 hover:bg-gray-700 text-white p-3 rounded-full shadow-lg transition-all duration-200 border border-gray-600"
         title={t('settings')}
         style={{ zIndex: 9999 }}
@@ -107,21 +107,23 @@ export default function Configuration({ onShare, shareSuccess, impactEvent }) {
 
       {/* Settings Panel */}
       {isOpen && (
-        <div className="fixed top-1/2 right-8 transform -translate-y-1/2 bg-gray-800 border border-gray-600 rounded-xl p-6 w-80 shadow-2xl z-[9000] animate-fade-in">
+        <div className="fixed top-1/2 right-8 transform -translate-y-1/2 bg-gray-800 border border-gray-600 rounded-xl w-80 shadow-2xl z-[9000] animate-fade-in max-h-[80vh] flex flex-col">
           {/* Header */}
-            <div className="flex justify-between items-center mb-6">
-              <div className="flex items-center space-x-2">
-                <Settings className="w-5 h-5 text-cyan-400" />
-                <h2 className="text-lg font-semibold text-white">{t('settings')}</h2>
-              </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
+          <div className="flex justify-between items-center p-6 pb-4 flex-shrink-0">
+            <div className="flex items-center space-x-2">
+              <Settings className="w-5 h-5 text-cyan-400" />
+              <h2 className="text-lg font-semibold text-white">{t('settings')}</h2>
             </div>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
 
+          {/* Scrollable Content */}
+          <div className="flex-1 overflow-y-auto px-6 pb-6 scrollbar-thin scrollbar-track-gray-700 scrollbar-thumb-gray-500 hover:scrollbar-thumb-gray-400">
             {/* Language Selection */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-300 mb-3">
@@ -267,6 +269,7 @@ export default function Configuration({ onShare, shareSuccess, impactEvent }) {
               </p>
             </div>
           </div>
+        </div>
       )}
 
       {/* Custom Styles */}
