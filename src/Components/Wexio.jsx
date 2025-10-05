@@ -10,6 +10,10 @@ import {
   setDiameter,
   setVelocity,
   setSelectedAsteroid,
+  toggleMapMode,
+  updateZoomLevel,
+  setMapMode,
+  hideNotification,
 } from '../store/impactSlice';
 import InteractiveMap from './InteractiveMap';
 import ImpactSidebar from './ImpactSidebar';
@@ -53,6 +57,11 @@ const Wexio = () => {
     diameter,
     velocity,
     selectedAsteroid,
+    is3DMap,
+    currentZoomLevel,
+    zoomThresholdFor2D,
+    zoomThresholdFor3D,
+    showModeChangeNotification,
   } = useSelector((state) => state.impact);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -70,7 +79,6 @@ const Wexio = () => {
   const currentLanguageCode = cookies.get('i18next') || 'en'
   const currentLanguage = languages.find((l) => l.code === currentLanguageCode)
   const { t } = useTranslation()
-  const [is3DMap, setIs3DMap] = useState(true);
 
   function handleResetImpact() {
     dispatch(resetImpact());
@@ -112,6 +120,16 @@ const Wexio = () => {
   useEffect(() => {
     document.title = t('app_title')
   }, [currentLanguage, t])
+
+  // Auto-hide notification after 3 seconds
+  useEffect(() => {
+    if (showModeChangeNotification) {
+      const timer = setTimeout(() => {
+        dispatch(hideNotification())
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [showModeChangeNotification, dispatch])
 
   const handleMapClick = (latlng) => {
   const calculateImpact = (diameterMeters, velocityKms) => {
@@ -297,6 +315,34 @@ const Wexio = () => {
           ? <GlobePage impact={impactEvent} onMapClick={handleMapClick} resetImpact={resetImpact} />
           : <InteractiveMap impact={impactEvent} onMapClick={handleMapClick} />
         }
+        
+        {/* Map Mode Toggle Button */}
+        <div className="absolute top-16 right-4 z-10 bg-gray-800 p-2 rounded z-1000">
+          <button
+            onClick={() => dispatch(toggleMapMode())}
+            className="bg-gray-700 text-white p-2 rounded hover:bg-gray-600 transition-colors flex items-center gap-2"
+            title={is3DMap ? 'Switch to 2D Map' : 'Switch to 3D Globe'}
+          >
+            <span>{is3DMap ? '🗺️' : '🌍'}</span>
+            <span className="text-xs">{is3DMap ? '2D' : '3D'}</span>
+          </button>
+          <div className="text-xs text-gray-400 mt-1 text-center">
+            Zoom: {currentZoomLevel?.toFixed(2) || '--'}
+          </div>
+          <div className="text-xs text-gray-300 mt-1 text-center">
+            2D ≥{zoomThresholdFor2D} | 3D ≤{zoomThresholdFor3D}
+          </div>
+          <div className="w-full bg-gray-600 rounded-full h-1 mt-1">
+            <div 
+              className="bg-blue-500 h-1 rounded-full transition-all duration-300"
+              style={{ 
+                width: is3DMap 
+                  ? `${Math.min(100, (currentZoomLevel / zoomThresholdFor2D) * 100)}%`
+                  : `${Math.max(0, 100 - ((currentZoomLevel - zoomThresholdFor3D) / (zoomThresholdFor2D - zoomThresholdFor3D)) * 100)}%`
+              }}
+            ></div>
+          </div>
+        </div>
       </main>
       <div className="absolute top-4 right-4 z-10 bg-gray-800 p-2 rounded z-1000">
         <select
@@ -314,6 +360,22 @@ const Wexio = () => {
           ))}
         </select>
       </div>
+      
+      {/* Auto-switch notification */}
+      {showModeChangeNotification && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
+          <div className="flex items-center gap-2">
+            <span>{is3DMap ? '🌍' : '🗺️'}</span>
+            <span>Switched to {is3DMap ? '3D Globe' : '2D Map'}</span>
+            <button 
+              onClick={() => dispatch(hideNotification())}
+              className="ml-2 text-white hover:text-gray-300"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,7 +1,9 @@
-import { useMemo, useState, useEffect } from 'react'
-import { Canvas } from '@react-three/fiber'
+import { useMemo, useState, useEffect, useRef } from 'react'
+import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, useTexture, Stars, Line } from '@react-three/drei'
 import * as THREE from 'three'
+import { useDispatch } from 'react-redux'
+import { updateZoomLevel } from '../store/impactSlice'
 import iday from '../assets/earth/earth_day.jpg'
 import inormal from '../assets/earth/earth_normal.png'
 import ispec from '../assets/earth/earth_specular.png'
@@ -10,11 +12,11 @@ import iclouds from '../assets/earth/earth_clouds.jpg'
 function toXYZ(lat, lon, r=1){
   const φ=lat*Math.PI/180
   const λ=lon*Math.PI/180
-  return new THREE.Vector3(r*Math.cos(φ)*Math.cos(λ), r*Math.sin(φ), r*Math.cos(φ)*Math.sin(λ))
+  return new THREE.Vector3(r*Math.cos(φ)*Math.cos(λ), r*Math.sin(φ), -r*Math.cos(φ)*Math.sin(λ))
 }
 function toLatLng(v){
   const r=v.length()
-  return { lat: Math.asin(v.y/r)*180/Math.PI, lng: Math.atan2(v.z,v.x)*180/Math.PI }
+  return { lat: Math.asin(v.y/r)*180/Math.PI, lng: Math.atan2(-v.z,v.x)*180/Math.PI }
 }
 function offsetLatLng(lat, lon, km, bearingDeg){
   const R=6371
@@ -70,6 +72,40 @@ function Earth({ onHover, onPick }){
     </group>
   )
 }
+function CameraController() {
+  const dispatch = useDispatch()
+  const lastDistance = useRef(null)
+  const changeThreshold = 0.05 // Minimum change to update zoom level (more sensitive)
+
+  useFrame(({ camera }) => {
+    const currentDistance = camera.position.length()
+    
+    if (lastDistance.current !== null) {
+      const distanceChange = Math.abs(currentDistance - lastDistance.current)
+      
+      if (distanceChange > changeThreshold) {
+        // Convert camera distance to equivalent zoom level
+        // Further away = lower zoom level, closer = higher zoom level
+        // Map distance range [2.0, 8] to zoom range [10, 1] for more sensitivity
+        const minDistance = 2.0
+        const maxDistance = 8
+        const minZoom = 1
+        const maxZoom = 10
+        
+        const clampedDistance = Math.max(minDistance, Math.min(maxDistance, currentDistance))
+        const zoomLevel = maxZoom - ((clampedDistance - minDistance) / (maxDistance - minDistance)) * (maxZoom - minZoom)
+        
+        dispatch(updateZoomLevel(Math.round(zoomLevel * 20) / 20)) // Round to 0.05 precision
+        lastDistance.current = currentDistance
+      }
+    } else {
+      lastDistance.current = currentDistance
+    }
+  })
+
+  return null
+}
+
 export default function Globe3D({ impact, onMapClick }){
   const [hover,setHover]=useState({lat:0,lng:0})
   const [picked,setPicked]=useState(null)
@@ -86,10 +122,11 @@ export default function Globe3D({ impact, onMapClick }){
         {picked && <ClickMarker lat={picked.lat} lng={picked.lng} />}
         {impact && <ImpactRing lat={impact.position.lat} lng={impact.position.lng} radiusMeters={impact.radius} />}
         <OrbitControls enablePan={false} />
+        <CameraController />
       </Canvas>
       <div className="absolute top-3 left-3 bg-black/60 text-white text-xs px-3 py-2 rounded">
-        <div>Hover: {hover.lat.toFixed(3)}°, {hover.lng.toFixed(3) * -1}°</div>
-        <div>Pick: {picked ? `${picked.lat.toFixed(3)}°, ${picked.lng.toFixed(3) * -1}°` : '—'}</div>
+        <div>Hover: {hover.lat.toFixed(3)}°, {hover.lng.toFixed(3)}°</div>
+        <div>Pick: {picked ? `${picked.lat.toFixed(3)}°, ${picked.lng.toFixed(3)}°` : '—'}</div>
       </div>
     </div>
   )
