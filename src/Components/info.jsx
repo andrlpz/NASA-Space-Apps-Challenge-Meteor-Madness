@@ -15,7 +15,7 @@ const tooltipStyles = `
     animation: fadeIn 0.2s ease-out;
   }
 
-  /* Beautiful scrollbar styles */
+  /* Beautiful scrollbar styles for dark mode */
   .custom-scrollbar::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -43,10 +43,36 @@ const tooltipStyles = `
     background: rgba(31, 41, 55, 0.5);
   }
 
-  /* Firefox scrollbar styling */
+  /* Firefox scrollbar styling for dark mode */
   .custom-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: #3b82f6 rgba(31, 41, 55, 0.5);
+  }
+
+  /* Light mode scrollbar styles */
+  .light .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(226, 232, 240, 0.8) !important;
+    border: 1px solid rgba(148, 163, 184, 0.5) !important;
+  }
+
+  .light .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #3b82f6, #06b6d4) !important;
+    border: 1px solid rgba(59, 130, 246, 0.5) !important;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.2) !important;
+  }
+
+  .light .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #2563eb, #0891b2) !important;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.4) !important;
+  }
+
+  .light .custom-scrollbar::-webkit-scrollbar-corner {
+    background: rgba(226, 232, 240, 0.8) !important;
+  }
+
+  /* Light mode Firefox scrollbar */
+  .light .custom-scrollbar {
+    scrollbar-color: #3b82f6 rgba(226, 232, 240, 0.8) !important;
   }
 `;
 

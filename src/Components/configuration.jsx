@@ -61,6 +61,11 @@ export default function Configuration({ onShare, shareSuccess, impactEvent }) {
       document.documentElement.classList.remove('light');
       document.body.classList.remove('light');
     }
+    
+    // Dispatch initial theme event
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('themeChanged', { detail: savedTheme }));
+    }, 100);
   }, []);
 
   const handleLanguageChange = (languageCode) => {
@@ -80,6 +85,9 @@ export default function Configuration({ onShare, shareSuccess, impactEvent }) {
       document.documentElement.classList.remove('light');
       document.body.classList.remove('light');
     }
+    
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new CustomEvent('themeChanged', { detail: newTheme }));
   };
 
   const handleMapModeToggle = () => {

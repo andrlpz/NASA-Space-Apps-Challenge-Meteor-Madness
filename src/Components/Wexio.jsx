@@ -487,7 +487,7 @@ const Wexio = () => {
       // Add meteor effect at click location
       console.log('Firing meteor at click coordinates:', clickX, clickY, 'meteor object:', meteor);
       if (meteor && typeof meteor.fireAt === 'function') {
-        meteor.fireAt(clickX, clickY, { from: 'top', scale: 0.9, duration: 1200 });
+        meteor.fireAt(clickX, clickY, { from: 'top', scale: 0.9, duration: 300 });
       } else {
         console.error('Meteor object not available or fireAt method not found');
       }
@@ -561,7 +561,7 @@ const Wexio = () => {
       // Add meteor effect at click location
       console.log('Firing meteor at click coordinates:', clickX, clickY, 'meteor object:', meteor);
       if (meteor && typeof meteor.fireAt === 'function') {
-        meteor.fireAt(clickX, clickY, { from: 'right', scale: 1.0, duration: 1200 });
+        meteor.fireAt(clickX, clickY, { from: 'right', scale: 1.0, duration: 300 });
       } else {
         console.error('Meteor object not available or fireAt method not found');
       }
@@ -610,7 +610,7 @@ const Wexio = () => {
     // Add meteor effect at click location
     console.log('Firing meteor at click coordinates:', clickX, clickY, 'meteor object:', meteor);
     if (meteor && typeof meteor.fireAt === 'function') {
-      meteor.fireAt(clickX, clickY, { from: 'left', scale: 0.9, duration: 1200 });
+      meteor.fireAt(clickX, clickY, { from: 'left', scale: 0.9, duration: 300 });
     } else {
       console.error('Meteor object not available or fireAt method not found');
     }

@@ -101,11 +101,51 @@ function CameraController() {
 export default function Globe3D({ impact, onMapClick }){
   const [hover,setHover]=useState({lat:0,lng:0})
   const [picked,setPicked]=useState(null)
+  const [isLightMode, setIsLightMode] = useState(false)
+  
+  // Track theme changes more reliably
+  useEffect(() => {
+    const checkTheme = () => {
+      const lightMode = document.documentElement.classList.contains('light')
+      console.log('Globe3D theme check:', lightMode ? 'light' : 'dark')
+      setIsLightMode(lightMode)
+    }
+    
+    // Initial check
+    checkTheme()
+    
+    // Multiple listeners for theme changes
+    const observer = new MutationObserver(() => {
+      setTimeout(checkTheme, 10)
+    })
+    
+    observer.observe(document.documentElement, { 
+      attributes: true, 
+      attributeFilter: ['class'] 
+    })
+    
+    // Also listen for custom events
+    const handleCustomTheme = () => setTimeout(checkTheme, 10)
+    window.addEventListener('themeChanged', handleCustomTheme)
+    
+    // Periodic check as fallback
+    const interval = setInterval(checkTheme, 1000)
+    
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('themeChanged', handleCustomTheme)
+      clearInterval(interval)
+    }
+  }, [])
+  
+  // Calculate background color
+  const backgroundColor = isLightMode ? '#f1f5f9' : '#0B1220'
+  
   useEffect(()=>{ if(!impact) setPicked(null) },[impact])
   return (
-    <div className="relative w-full h-full">
-      <Canvas camera={{position:[0,0,3.2], fov:45}}>
-        <color attach="background" args={['#0B1220']} />
+    <div className="relative w-full h-full" style={{ backgroundColor }}>
+      <Canvas camera={{position:[0,0,3.2], fov:45}} style={{ background: backgroundColor }}>
+        <color attach="background" args={[backgroundColor]} />
         <ambientLight intensity={0.6}/>
         <directionalLight position={[5,3,5]} intensity={1.2}/>
         <Stars radius={100} depth={50} count={5000} factor={2} fade />
