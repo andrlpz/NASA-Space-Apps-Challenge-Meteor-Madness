@@ -141,6 +141,18 @@ const Wexio = () => {
     };
   };
 
+  // Calculate visual radius for map display based on asteroid size and impact effects
+  const calculateVisualRadius = (diameterMeters, velocityKms) => {
+    const { devastationRadius } = calculateImpact(diameterMeters, velocityKms);
+    const devastationRadiusMeters = parseFloat(devastationRadius) * 1000; // Convert km to meters
+    
+    // Use devastation radius as the visual representation, with reasonable min/max bounds
+    const minRadius = 5000; // 5km minimum for visibility
+    const maxRadius = 500000; // 500km maximum for practical display
+    
+    return Math.max(minRadius, Math.min(maxRadius, devastationRadiusMeters));
+  };
+
   // Function to restore impact from URL parameters
   const restoreImpactFromURL = useCallback((impactPosition, impactType, asteroidName, asteroidData, customDiameter, customVelocity) => {
     if (impactType === 'asteroid' && asteroidName) {
@@ -183,10 +195,11 @@ const Wexio = () => {
           const diameterMeters = foundAsteroid.estimated_diameter.meters.estimated_diameter_max;
           const velocityKms = parseFloat(foundAsteroid.close_approach_data[0].relative_velocity.kilometers_per_second);
           const { energyMegatons, seismicMagnitude } = calculateImpact(diameterMeters, velocityKms);
+          const visualRadius = calculateVisualRadius(diameterMeters, velocityKms);
 
           dispatch(setImpactEvent({
             position: impactPosition,
-            radius: 60000,
+            radius: visualRadius,
             details: {
               source: {
                 name: foundAsteroid.name.replace(/[()]/g, ''),
@@ -222,10 +235,11 @@ const Wexio = () => {
       if (impactPosition) {
         const { energyMegatons, seismicMagnitude, craterDiameter, devastationRadius, evacuationRadius } =
           calculateImpact(customDiameter, customVelocity);
+        const visualRadius = calculateVisualRadius(customDiameter, customVelocity);
 
         dispatch(setImpactEvent({
           position: impactPosition,
-          radius: 60000,
+          radius: visualRadius,
           details: {
             source: {
               name: 'Custom Asteroid Simulation',
@@ -358,10 +372,11 @@ const Wexio = () => {
 
       // Calculate surface-specific effects
       const surfaceEffects = calculateSurfaceSpecificEffects(surfaceInfo, diameterMeters, velocityKms, parseFloat(energyMegatons));
+      const visualRadius = calculateVisualRadius(diameterMeters, velocityKms);
 
       dispatch(setImpactEvent({
         position: latlng,
-        radius: 60000,
+        radius: visualRadius,
         details: {
           surface: {
             type: surfaceInfo.type,
@@ -426,10 +441,11 @@ const Wexio = () => {
 
       // Calculate surface-specific effects
       const surfaceEffects = calculateSurfaceSpecificEffects(surfaceInfo, diameterMeters, velocityKms, parseFloat(energyMegatons));
+      const visualRadius = calculateVisualRadius(diameterMeters, velocityKms);
 
       dispatch(setImpactEvent({
         position: latlng,
-        radius: 60000,
+        radius: visualRadius,
         details: {
           surface: {
             type: surfaceInfo.type,
@@ -482,9 +498,14 @@ const Wexio = () => {
       dispatch(hideAsteroidList());
     } else {
       // If no sliders or asteroid selected, show basic message with surface info
+      // Use default small asteroid values for visual representation
+      const defaultDiameter = 100; // 100 meter default
+      const defaultVelocity = 20; // 20 km/s default
+      const visualRadius = calculateVisualRadius(defaultDiameter, defaultVelocity);
+      
       dispatch(setImpactEvent({
         position: latlng,
-        radius: 30000,
+        radius: visualRadius,
         details: {
           surface: {
             type: surfaceInfo.type,
@@ -622,34 +643,6 @@ const Wexio = () => {
           ? <GlobePage impact={impactEvent} onMapClick={handleMapClick} />
           : <InteractiveMap impact={impactEvent} onMapClick={handleMapClick} />
         }
-        
-        {/* Map Mode Toggle Button */}
-        <div className="absolute top-16 right-4 z-10 bg-gray-800 p-2 rounded z-1000">
-          <button
-            onClick={() => dispatch(toggleMapMode())}
-            className="bg-gray-700 text-white p-2 rounded hover:bg-gray-600 transition-colors flex items-center gap-2"
-            title={is3DMap ? t('switchTo2D') : t('switchTo3D')}
-          >
-            <span>{is3DMap ? '🗺️' : '🌍'}</span>
-            <span className="text-xs">{is3DMap ? '2D' : '3D'}</span>
-          </button>
-          <div className="text-xs text-gray-400 mt-1 text-center">
-            Zoom: {currentZoomLevel?.toFixed(2) || '--'}
-          </div>
-          <div className="text-xs text-gray-300 mt-1 text-center">
-            2D ≥{zoomThresholdFor2D} | 3D ≤{zoomThresholdFor3D}
-          </div>
-          <div className="w-full bg-gray-600 rounded-full h-1 mt-1">
-            <div 
-              className="bg-blue-500 h-1 rounded-full transition-all duration-300"
-              style={{ 
-                width: is3DMap 
-                  ? `${Math.min(100, (currentZoomLevel / zoomThresholdFor2D) * 100)}%`
-                  : `${Math.max(0, 100 - ((currentZoomLevel - zoomThresholdFor3D) / (zoomThresholdFor2D - zoomThresholdFor3D)) * 100)}%`
-              }}
-            ></div>
-          </div>
-        </div>
       </main>
       
       {/* Auto-switch notification */}
