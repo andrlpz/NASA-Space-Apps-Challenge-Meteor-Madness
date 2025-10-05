@@ -5,11 +5,19 @@ import './InteractiveMap.css'; // for button styling
 
 import cookies from 'js-cookie';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
+import { updateZoomLevel } from '../store/impactSlice';
 
-function MapEventsHandler({ onMapClick }) {
-  useMapEvents({
+function MapEventsHandler({ onMapClick, onZoomAction }) {
+  const map = useMapEvents({
     click(e) {
       onMapClick(e.latlng);
+    },
+    zoomend() {
+      if (onZoomAction) {
+        const zoomLevel = map.getZoom();
+        onZoomAction(zoomLevel);
+      }
     },
   });
   return null;
@@ -18,6 +26,11 @@ function MapEventsHandler({ onMapClick }) {
 export default function InteractiveMap({ impact, onMapClick }) {
   const [layer, setLayer] = useState('dark'); // default layer
   const { t } = useTranslation(); // ✅ moved inside component
+  const dispatch = useDispatch();
+
+  const handleZoomAction = (zoomLevel) => {
+    dispatch(updateZoomLevel(zoomLevel));
+  };
 
   const languages = [
     { code: 'fr', name: 'Français', country_code: 'fr' },
@@ -57,7 +70,7 @@ export default function InteractiveMap({ impact, onMapClick }) {
       >
         <TileLayer attribution={attributions[layer]} url={layerUrls[layer]} />
 
-        <MapEventsHandler onMapClick={onMapClick} />
+        <MapEventsHandler onMapClick={onMapClick} onZoomAction={handleZoomAction} />
 
         {impact && (
           <Circle
