@@ -74,7 +74,16 @@ const Wexio = () => {
   const { t } = useTranslation()
 
   function handleResetImpact() {
+    // Verificar si el impacto actual es de una simulación personalizada
+    const isCustomSimulation = impactEvent?.details?.source?.name === 'Custom Asteroid Simulation';
+    
     dispatch(resetImpact());
+    
+    // Si era una simulación personalizada, mostrar sliders
+    // Si era un asteroide real, mostrar lista de asteroides (comportamiento por defecto del resetImpact)
+    if (isCustomSimulation) {
+      dispatch(showSliders());
+    }
   }
 
   useEffect(() => {
@@ -338,7 +347,10 @@ const Wexio = () => {
                 <AsteroidList asteroids={asteroids} onSelect={(asteroid) => dispatch(setSelectedAsteroid(asteroid))} />
               </div>
             )}
-            <ImpactSidebar impact={impactEvent} resetImpact={handleResetImpact} />
+            {/* Solo mostrar ImpactSidebar si no están activos los sliders */}
+            {!showSlidersState && (
+              <ImpactSidebar impact={impactEvent} resetImpact={handleResetImpact} />
+            )}
           </>
         )}
       </aside>
