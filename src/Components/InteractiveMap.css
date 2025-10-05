@@ -3,7 +3,7 @@
   top: 10px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1000;
+  z-index: 500;
   border: none;
   padding: 8px 16px;
   border-radius: 20px;

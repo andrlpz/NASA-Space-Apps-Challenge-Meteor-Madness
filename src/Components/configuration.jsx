@@ -98,7 +98,7 @@ export default function Configuration({ onShare, shareSuccess, impactEvent }) {
       {/* Settings Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed top-4 right-4 z-[9999] bg-gray-800 hover:bg-gray-700 text-white p-3 rounded-full shadow-lg transition-all duration-200 border border-gray-600"
+        className="fixed top-4 right-4 z-[9000] bg-gray-800 hover:bg-gray-700 text-white p-3 rounded-full shadow-lg transition-all duration-200 border border-gray-600"
         title={t('settings')}
         style={{ zIndex: 9999 }}
       >
@@ -107,7 +107,7 @@ export default function Configuration({ onShare, shareSuccess, impactEvent }) {
 
       {/* Settings Panel */}
       {isOpen && (
-        <div className="fixed top-1/2 right-8 transform -translate-y-1/2 bg-gray-800 border border-gray-600 rounded-xl p-6 w-80 shadow-2xl z-[9999] animate-fade-in">
+        <div className="fixed top-1/2 right-8 transform -translate-y-1/2 bg-gray-800 border border-gray-600 rounded-xl p-6 w-80 shadow-2xl z-[9000] animate-fade-in">
           {/* Header */}
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center space-x-2">

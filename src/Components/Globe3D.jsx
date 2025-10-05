@@ -28,15 +28,6 @@ function offsetLatLng(lat, lon, km, bearingDeg){
   const λ2=λ1+Math.atan2(Math.sin(br)*Math.sin(δ)*Math.cos(φ1),Math.cos(δ)-Math.sin(φ1)*Math.sin(φ2))
   return {lat:φ2*180/Math.PI,lng:((λ2*180/Math.PI+540)%360)-180}
 }
-function ClickMarker({ lat, lng }){
-  const pos=useMemo(()=>toXYZ(lat,lng,1.005),[lat,lng])
-  return (
-    <mesh position={pos}>
-      <sphereGeometry args={[0.012,16,16]} />
-      <meshStandardMaterial color="#22d3ee" emissive="#22d3ee" emissiveIntensity={0.6}/>
-    </mesh>
-  )
-}
 function ImpactRing({ lat, lng, radiusMeters, color='#ef4444' }){
   const km=radiusMeters/1000
   const pts=useMemo(()=>{
@@ -120,7 +111,6 @@ export default function Globe3D({ impact, onMapClick }){
         <Stars radius={100} depth={50} count={5000} factor={2} fade />
         <Earth onHover={setHover} onPick={(p, e)=>{setPicked(p); onMapClick && onMapClick(p, e)}} />
         
-        {picked && <ClickMarker lat={picked.lat} lng={picked.lng} />}
         {impact && <ImpactRing lat={impact.position.lat} lng={impact.position.lng} radiusMeters={impact.radius} />}
         <OrbitControls enablePan={false} zoomSpeed={1} />
         <CameraController />

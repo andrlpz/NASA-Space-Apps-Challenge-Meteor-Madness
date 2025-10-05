@@ -613,7 +613,7 @@ const Wexio = () => {
         {/* Collapse/Expand Toggle Button */}
         <button
           onClick={toggleSidebar}
-          className="absolute top-4 right-4 z-10 w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center transition-colors duration-200"
+          className="absolute top-4 right-4 z-[100] w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center transition-colors duration-200"
           title={isSidebarCollapsed ? t('expand_sidebar') || 'Expand sidebar' : t('collapse_sidebar') || 'Collapse sidebar'}
         >
           {isSidebarCollapsed ? 
@@ -695,7 +695,7 @@ const Wexio = () => {
         }
         
         {/* Map Mode Toggle Button */}
-        <div className="absolute top-16 right-4 z-10 bg-gray-800 p-2 rounded z-1000">
+        <div className="absolute top-16 right-4 z-[200] bg-gray-800 p-2 rounded">
           <button
             onClick={() => dispatch(toggleMapMode())}
             className="bg-gray-700 text-white p-2 rounded hover:bg-gray-600 transition-colors flex items-center gap-2"
@@ -725,7 +725,7 @@ const Wexio = () => {
       
       {/* Auto-switch notification */}
       {showModeChangeNotification && (
-        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-[300] bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
           <div className="flex items-center gap-2">
             <span>Switched to {is3DMap ? '3D Globe' : '2D Map'}</span>
             <button 
