@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import COUNTRIES_DATA from '../assets/countries.json'
@@ -58,6 +58,30 @@ export default function Carita({ goodThreshold = 100000, excellentThreshold = 10
   const sliderDiameterMeters = useSelector(s => s.impact.diameter)
   const sliderVelocityKms = useSelector(s => s.impact.velocity)
   const { country } = useSelector((state) => state.impact);
+  
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
+
+  useEffect(() => {
+    const handleClick = (e) => {
+      // Check if click is on settings button or config panel
+      const isSettingsButton = e.target.closest('button')?.title?.toLowerCase().includes('settings') ||
+                              e.target.closest('button')?.querySelector('svg')?.classList.contains('lucide-settings') ||
+                              e.target.closest('[title*="settings"]');
+      
+      const isConfigPanel = e.target.closest('div')?.classList.contains('z-[9000]') ||
+                           e.target.closest('[class*="fixed"][class*="bg-gray-800"]');
+
+      if (isSettingsButton) {
+        setIsConfigOpen(prev => !prev);
+      } else if (!isConfigPanel && isConfigOpen) {
+        // Click outside config panel, close it
+        setIsConfigOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, [isConfigOpen]);
 
   const center = impact?.position ? { lat: impact.position.lat, lng: impact.position.lng } : null
 
@@ -116,9 +140,9 @@ export default function Carita({ goodThreshold = 100000, excellentThreshold = 10
     return 'bad'
   }, [estimatedAffected, goodThreshold])
 
-  // Now it's safe to hide when there is no center,
+  // Now it's safe to hide when there is no center or config is open,
   // because all hooks above have already been called in the same order.
-  if (!center) return null
+  if (!center || isConfigOpen) return null
 
   return (
     <>

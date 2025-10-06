@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Settings, X, Globe, Moon, Sun, Map, Satellite, Share2, Copy, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -28,6 +28,7 @@ export default function Configuration({ onShare, shareSuccess, impactEvent }) {
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
   const [mapLayer, setMapLayer] = useState(localStorage.getItem('mapLayer') || 'dark');
+  const configRef = useRef(null);
   
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
@@ -43,8 +44,19 @@ export default function Configuration({ onShare, shareSuccess, impactEvent }) {
       }
     };
 
+    const handleClickOutside = (e) => {
+      if (isOpen && configRef.current && !configRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+
     document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, [isOpen]);
 
   useEffect(() => {
@@ -106,7 +118,10 @@ export default function Configuration({ onShare, shareSuccess, impactEvent }) {
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 sm:inset-auto sm:top-1/2 sm:right-4 lg:right-8 sm:transform sm:-translate-y-1/2 bg-gray-800 border border-gray-600 rounded-none sm:rounded-xl w-full sm:w-80 lg:w-96 shadow-2xl z-[9000] animate-fade-in max-h-full sm:max-h-[80vh] flex flex-col">
+        <div 
+          ref={configRef}
+          className="fixed inset-0 sm:inset-auto sm:top-1/2 sm:right-4 lg:right-8 sm:transform sm:-translate-y-1/2 bg-gray-800 border border-gray-600 rounded-none sm:rounded-xl w-full sm:w-80 lg:w-96 shadow-2xl z-[9000] animate-fade-in max-h-full sm:max-h-[80vh] flex flex-col"
+        >
           <div className="flex justify-between items-center p-4 sm:p-6 sm:pb-4 flex-shrink-0 border-b sm:border-b-0 border-gray-600">
             <div className="flex items-center space-x-2">
               <Settings className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
