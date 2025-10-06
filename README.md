@@ -1,6 +1,6 @@
 # 🌍 Asteroid Impact Explorer: Interactive Simulator
 
-![Meteor Madness](https://www.spaceappschallenge.org/2025/challenges/meteor-madness/)
+![Meteor Madness](https://img.shields.io/badge/NASA%20Space%20Apps-Challenge%202024-blue)
 ![React](https://img.shields.io/badge/React-19.1.1-61dafb)
 ![Vite](https://img.shields.io/badge/Vite-5.2-646cff)
 ![License](https://img.shields.io/badge/License-MIT-green)
