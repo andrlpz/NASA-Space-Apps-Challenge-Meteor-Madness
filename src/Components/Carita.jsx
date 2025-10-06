@@ -122,38 +122,38 @@ export default function Carita({ goodThreshold = 100000, excellentThreshold = 10
 
   return (
     <>
-      <div className="fixed bottom-4 right-4 z-[12050] max-w-sm w-[92vw] sm:w-[28rem] rounded-xl border border-white/10 bg-gray-900/90 backdrop-blur px-4 py-3 text-white shadow-2xl">
+      <div className="fixed bottom-2 sm:bottom-4 right-2 sm:right-4 z-[12050] max-w-xs sm:max-w-sm w-[95vw] sm:w-[92vw] lg:w-[28rem] rounded-xl border border-white/10 bg-gray-900/90 backdrop-blur px-3 sm:px-4 py-2 sm:py-3 text-white shadow-2xl">
         <div className="flex items-center justify-between">
-          <div className="font-semibold text-sm">{t('impact-snapshot')}</div>
+          <div className="font-semibold text-xs sm:text-sm">{t('impact-snapshot')}</div>
           <div className="text-xs text-gray-400">{impactRadiusKm} {t('km-radius')}</div>
         </div>
-        <div className="mt-2 text-xs text-gray-300">{t('lat')} {center.lat.toFixed(3)}°, {t('lng')} {center.lng.toFixed(3)}°</div>
-        <div className="mt-1 text-[11px] text-gray-400">{t('velocity')} {velocityKms.toFixed(1)} km/s • {t('diameter')} {(diameterKm).toFixed(2)} km</div>
+        <div className="mt-1 sm:mt-2 text-xs text-gray-300">{t('lat')} {center.lat.toFixed(3)}°, {t('lng')} {center.lng.toFixed(3)}°</div>
+        <div className="mt-1 text-[10px] sm:text-[11px] text-gray-400">{t('velocity')} {velocityKms.toFixed(1)} km/s • {t('diameter')} {(diameterKm).toFixed(2)} km</div>
 
         {country && (
           <>
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              <div className="rounded-lg bg-black/30 p-3">
-                <div className="text-[11px] text-gray-400">{t('country')}</div>
-                <div className="text-sm font-semibold">{countryName || '—'}</div>
+            <div className="mt-2 sm:mt-3 grid grid-cols-2 gap-2 sm:gap-3">
+              <div className="rounded-lg bg-black/30 p-2 sm:p-3">
+                <div className="text-[10px] sm:text-[11px] text-gray-400">{t('country')}</div>
+                <div className="text-xs sm:text-sm font-semibold truncate">{countryName || '—'}</div>
               </div>
-              <div className="rounded-lg bg-black/30 p-3">
-                <div className="text-[11px] text-gray-400">{t('people-per-km2')}</div>
-                <div className="text-lg font-semibold">
+              <div className="rounded-lg bg-black/30 p-2 sm:p-3">
+                <div className="text-[10px] sm:text-[11px] text-gray-400">{t('people-per-km2')}</div>
+                <div className="text-sm sm:text-lg font-semibold">
                   {population && areaKm2 ? Math.round(population / areaKm2).toLocaleString() : '—'}
                 </div>
               </div>
-              <div className="rounded-lg bg-black/30 p-3">
-                <div className="text-[11px] text-gray-400">{t('population')}</div>
-                <div className="text-lg font-semibold">{population != null ? population.toLocaleString() : '—'}</div>
+              <div className="rounded-lg bg-black/30 p-2 sm:p-3">
+                <div className="text-[10px] sm:text-[11px] text-gray-400">{t('population')}</div>
+                <div className="text-sm sm:text-lg font-semibold">{population != null ? population.toLocaleString() : '—'}</div>
               </div>
-              <div className="rounded-lg bg-black/30 p-3">
-                <div className="text-[11px] text-gray-400">{t('circle-area')}</div>
-                <div className="text-lg font-semibold">{Math.round(Math.PI * impactRadiusKm * impactRadiusKm).toLocaleString()} km²</div>
+              <div className="rounded-lg bg-black/30 p-2 sm:p-3">
+                <div className="text-[10px] sm:text-[11px] text-gray-400">{t('circle-area')}</div>
+                <div className="text-sm sm:text-lg font-semibold">{Math.round(Math.PI * impactRadiusKm * impactRadiusKm).toLocaleString()} km²</div>
               </div>
-              <div className={`rounded-lg p-3 ${outcome === 'bad' ? 'bg-red-500/20' : outcome === 'good' ? 'bg-emerald-500/20' : 'bg-cyan-500/20'} col-span-2`}>
-                <div className="text-[11px] text-gray-100">{t('estimated-affected')}</div>
-                <div className="text-2xl font-bold">
+              <div className={`rounded-lg p-2 sm:p-3 ${outcome === 'bad' ? 'bg-red-500/20' : outcome === 'good' ? 'bg-emerald-500/20' : 'bg-cyan-500/20'} col-span-2`}>
+                <div className="text-[10px] sm:text-[11px] text-gray-100">{t('estimated-affected')}</div>
+                <div className="text-xl sm:text-2xl font-bold">
                   {estimatedAffected != null ? estimatedAffected.toLocaleString() : '—'}
                 </div>
                 <div className="text-xs mt-1">
@@ -164,15 +164,15 @@ export default function Carita({ goodThreshold = 100000, excellentThreshold = 10
               </div>
             </div>
 
-            <div className="mt-3 flex gap-2">
-              <span className="text-[11px] text-gray-400">{t('tip')}</span>
-              <span className="text-[11px] text-gray-200">{t('tip-message')}</span>
+            <div className="mt-2 sm:mt-3 flex gap-2">
+              <span className="text-[10px] sm:text-[11px] text-gray-400">{t('tip')}</span>
+              <span className="text-[10px] sm:text-[11px] text-gray-200">{t('tip-message')}</span>
             </div>
           </>
         )}
 
         {!country && (
-          <div className="mt-3 text-sm text-gray-400">
+          <div className="mt-2 sm:mt-3 text-xs sm:text-sm text-gray-400">
             {t('no-country-data')}
           </div>
         )}
@@ -182,7 +182,7 @@ export default function Carita({ goodThreshold = 100000, excellentThreshold = 10
       <SadFace show={outcome === 'bad' && isSliderSimulation} />
 
       {outcome === 'bad' && isSliderSimulation && (
-        <div className="fixed inset-x-0 top-4 z-[12040] mx-auto w-max rounded-full bg-red-600 text-white text-sm px-4 py-2 shadow-lg">
+        <div className="fixed inset-x-2 sm:inset-x-0 top-4 z-[12040] mx-auto w-max max-w-[90vw] sm:max-w-none rounded-full bg-red-600 text-white text-xs sm:text-sm px-3 sm:px-4 py-2 shadow-lg">
           {t('many-lives-risk')}
         </div>
       )}

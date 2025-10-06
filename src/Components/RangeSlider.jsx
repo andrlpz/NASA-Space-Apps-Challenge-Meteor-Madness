@@ -15,7 +15,7 @@ const RangeSlider = ({ min, max, step, value, onChange }) => {
 
     return (
         <div className="w-full flex flex-col items-center">
-            <div className="flex flex-row justify-between w-full mb-2">
+            <div className="flex flex-row justify-between w-full mb-1 sm:mb-2">
                 <span className="text-xs text-gray-400">{min}</span>
                 <span className="text-xs text-gray-400">{max}</span>
             </div>
@@ -27,18 +27,20 @@ const RangeSlider = ({ min, max, step, value, onChange }) => {
                 value={sliderValue}
                 onChange={handleSliderInput}
                 className="
-                    w-full h-2
+                    w-full h-1.5 sm:h-2
                     bg-gray-700
                     rounded-lg
                     appearance-none
                     accent-blue-400
                     transition
+                    cursor-pointer
+                    touch-pan-x
                 "
                 style={{
                     boxShadow: "0 0 0 2px #1f2937",
                 }}
             />
-            <div className="mt-2 text-sm text-blue-300 font-semibold">
+            <div className="mt-1 sm:mt-2 text-xs sm:text-sm text-blue-300 font-semibold">
                 {sliderValue}
             </div>
         </div>

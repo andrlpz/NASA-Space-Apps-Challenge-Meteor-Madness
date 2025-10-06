@@ -48,13 +48,13 @@ export default function AsteroidList({ asteroids, onSelect }) {
   }, [asteroids, filter]);
 
   return (
-    <div className="flex flex-col h-96">
-      <div className="flex space-x-2 mb-2">
-        <label>{t('sortby')}:</label>
+    <div className="flex flex-col h-64 sm:h-80 lg:h-96">
+      <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2 mb-2">
+        <label className="text-xs sm:text-sm font-medium">{t('sortby')}:</label>
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="bg-gray-700 text-white rounded p-1"
+          className="bg-gray-700 text-white rounded px-2 py-1 text-xs sm:text-sm w-full sm:w-auto"
         >
           <option value="none">{t('none')}</option>
           <option value="size">{t('size')}</option>
@@ -63,11 +63,11 @@ export default function AsteroidList({ asteroids, onSelect }) {
         </select>
       </div>
 
-      <p className="text-sm font-semibold mb-2">
+      <p className="text-xs sm:text-sm font-semibold mb-2 truncate">
         {t('current')} {selectedAsteroid ? formatName(selectedAsteroid.name) : ''}
       </p>
 
-      <div className="flex-1 overflow-y-auto mt-2 space-y-2 scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600 hover:scrollbar-thumb-gray-500">
+      <div className="flex-1 overflow-y-auto mt-1 sm:mt-2 space-y-1 sm:space-y-2 scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600 hover:scrollbar-thumb-gray-500">
         {sortedAsteroids.map((a) => {
           const diameter = a.estimated_diameter.meters.estimated_diameter_max.toFixed(0);
           const velocity = parseFloat(a.close_approach_data[0].relative_velocity.kilometers_per_second).toFixed(1);
@@ -80,10 +80,10 @@ export default function AsteroidList({ asteroids, onSelect }) {
               aria-pressed={isSelected}
               title={formatName(a.name)}
               onClick={() => handleSelect(a)}
-              className={`w-full p-3 ${isSelected ? selectedStyle : normalStyle} hover:bg-gray-500 rounded-lg text-left`}
+              className={`w-full p-2 sm:p-3 ${isSelected ? selectedStyle : normalStyle} hover:bg-gray-500 rounded-lg text-left transition-colors duration-200`}
             >
-              <p className="font-semibold">{formatName(a.name)}</p>
-              <p className="text-sm text-gray-400">
+              <p className="font-semibold text-xs sm:text-sm truncate">{formatName(a.name)}</p>
+              <p className="text-xs text-gray-400">
                 {t('size')}: {diameter} m | {t('velocity')}: {velocity} km/s
               </p>
               {a.is_potentially_hazardous_asteroid && (
@@ -95,7 +95,7 @@ export default function AsteroidList({ asteroids, onSelect }) {
       </div>
 
       {selectedAsteroid && (
-        <p className="text-xs text-green-600 mt-2">{t('click_stimulate')}</p>
+        <p className="text-xs text-green-600 mt-1 sm:mt-2">{t('click_stimulate')}</p>
       )}
     </div>
   );

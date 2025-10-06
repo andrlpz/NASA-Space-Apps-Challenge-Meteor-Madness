@@ -6,10 +6,10 @@ import InfoButton from './info';
 export default function ImpactSidebar({ impact, resetImpact }) {
   if (!impact) {
     return (
-      <div className="flex-grow flex items-center justify-center p-4">
-        <div className="text-center p-4 border-2 border-dashed border-gray-600 rounded-lg">
-          <p className="text-gray-300 font-medium">Click on the map to simulate an impact.</p>
-          <p className="text-sm text-gray-500 mt-2">
+      <div className="flex-grow flex items-center justify-center p-2 sm:p-4">
+        <div className="text-center p-3 sm:p-4 border-2 border-dashed border-gray-600 rounded-lg">
+          <p className="text-gray-300 font-medium text-sm sm:text-base">Click on the map to simulate an impact.</p>
+          <p className="text-xs sm:text-sm text-gray-500 mt-2">
             The sidebar will populate with real data from a selected Near-Earth Object.
           </p>
         </div>
@@ -25,19 +25,19 @@ export default function ImpactSidebar({ impact, resetImpact }) {
   const isCustomSimulation = source.name === 'Custom Asteroid Simulation';
 
   return (
-    <div className="flex-grow overflow-y-auto pr-2 space-y-6 scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600 hover:scrollbar-thumb-gray-500">
+    <div className="flex-grow overflow-y-auto pr-1 sm:pr-2 space-y-3 sm:space-y-4 lg:space-y-6 scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600 hover:scrollbar-thumb-gray-500">
       {/* Header Card */}
-      <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-gray-600 shadow-2xl">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-white flex items-center">
-            <div className="w-3 h-3 bg-red-500 rounded-full mr-3 animate-pulse"></div>
+      <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 border border-gray-600 shadow-2xl">
+        <div className="flex items-center justify-between mb-2 sm:mb-3 lg:mb-4">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white flex items-center">
+            <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full mr-2 sm:mr-3 animate-pulse"></div>
             {t('impactAnalysis')}
           </h2>
-          <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center border-2 border-red-500">
-            <AlertTriangle className="w-6 h-6 text-red-400" />
+          <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-red-500/20 rounded-full flex items-center justify-center border-2 border-red-500">
+            <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-red-400" />
           </div>
         </div>
-        <p className="text-gray-300 text-sm">{t('detailedSimulationResults')}</p>
+        <p className="text-gray-300 text-xs sm:text-sm">{t('detailedSimulationResults')}</p>
       </div>
 
       {/* Asteroid Information */}
@@ -422,13 +422,13 @@ export default function ImpactSidebar({ impact, resetImpact }) {
       </InfoSection>
 
       {/* Reset Button */}
-      <div className="flex justify-center pt-4">
+      <div className="flex justify-center pt-2 sm:pt-3 lg:pt-4">
         <button 
           onClick={resetImpact}
-          className="group relative px-8 py-3 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white font-bold rounded-full border-2 border-gray-500 hover:border-gray-400 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+          className="group relative px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 lg:py-3 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white font-bold rounded-full border-2 border-gray-500 hover:border-gray-400 transition-all duration-300 transform hover:scale-105 hover:shadow-xl text-sm sm:text-base"
         >
           <span className="flex items-center">
-            <div className="w-2 h-2 bg-red-400 rounded-full mr-3 group-hover:animate-ping"></div>
+            <div className="w-2 h-2 bg-red-400 rounded-full mr-2 sm:mr-3 group-hover:animate-ping"></div>
             {t('reset-simulation')}
           </span>
         </button>
@@ -438,50 +438,50 @@ export default function ImpactSidebar({ impact, resetImpact }) {
 }
 
 const InfoSection = ({ title, icon, children, infoTerm, bgColor, borderColor, iconBg, iconBorder }) => (
-  <div className={`bg-gradient-to-br ${bgColor} backdrop-blur-sm rounded-2xl p-6 border-2 ${borderColor} shadow-xl hover:shadow-2xl transition-all duration-300 group hover:scale-[1.02]`}>
-    <div className="flex items-center mb-4">
-      <div className={`w-12 h-12 ${iconBg} rounded-full flex items-center justify-center border-2 ${iconBorder} mr-4 group-hover:scale-110 transition-transform duration-300`}>
-        {React.cloneElement(icon, { className: "text-current" })}
+  <div className={`bg-gradient-to-br ${bgColor} backdrop-blur-sm rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 border-2 ${borderColor} shadow-xl hover:shadow-2xl transition-all duration-300 group hover:scale-[1.02]`}>
+    <div className="flex items-center mb-2 sm:mb-3 lg:mb-4">
+      <div className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 ${iconBg} rounded-full flex items-center justify-center border-2 ${iconBorder} mr-3 sm:mr-4 group-hover:scale-110 transition-transform duration-300`}>
+        {React.cloneElement(icon, { className: "text-current w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" })}
       </div>
-      <div>
-        <h3 className="text-xl font-bold text-white flex items-center">
-          {title}
+      <div className="flex-1 min-w-0">
+        <h3 className="text-sm sm:text-lg lg:text-xl font-bold text-white flex items-center">
+          <span className="truncate">{title}</span>
           {infoTerm && <InfoButton term={infoTerm} />}
         </h3>
-        <div className="w-16 h-1 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mt-1"></div>
+        <div className="w-12 sm:w-14 lg:w-16 h-0.5 sm:h-1 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mt-1"></div>
       </div>
     </div>
-    <div className="space-y-3 pl-2">
+    <div className="space-y-2 sm:space-y-3 pl-1 sm:pl-2">
       {children}
     </div>
   </div>
 );
 
 const StatItem = ({ label, value, valueColor = 'text-white', icon = null, infoTerm }) => (
-  <div className="flex justify-between items-center p-3 bg-gray-800/30 rounded-xl border border-gray-600/50 hover:bg-gray-700/30 transition-all duration-200 group">
-    <div className="flex items-center">
-      {icon && <span className="mr-3 flex-shrink-0">{icon}</span>}
-      <p className="text-gray-300 font-medium flex items-center">
+  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 sm:p-3 bg-gray-800/30 rounded-lg sm:rounded-xl border border-gray-600/50 hover:bg-gray-700/30 transition-all duration-200 group">
+    <div className="flex items-center mb-1 sm:mb-0">
+      {icon && <span className="mr-2 sm:mr-3 flex-shrink-0">{icon}</span>}
+      <p className="text-gray-300 font-medium flex items-center text-xs sm:text-sm">
         {label}:
         {infoTerm && <InfoButton term={infoTerm} />}
       </p>
     </div>
-    <p className={`font-bold text-right ${valueColor} group-hover:scale-105 transition-transform duration-200`}>
+    <p className={`font-bold text-left sm:text-right ${valueColor} group-hover:scale-105 transition-transform duration-200 text-xs sm:text-sm break-words`}>
       {value}
     </p>
   </div>
 );
 
 const StatItemWide = ({ label, value, valueColor = 'text-white', icon = null, infoTerm }) => (
-  <div className="p-4 bg-gray-800/30 rounded-xl border border-gray-600/50 hover:bg-gray-700/30 transition-all duration-200 group">
-    <div className="flex items-center mb-3">
-      {icon && <span className="mr-3 flex-shrink-0">{icon}</span>}
-      <p className="text-gray-300 font-medium flex items-center">
+  <div className="p-3 sm:p-4 bg-gray-800/30 rounded-lg sm:rounded-xl border border-gray-600/50 hover:bg-gray-700/30 transition-all duration-200 group">
+    <div className="flex items-center mb-2 sm:mb-3">
+      {icon && <span className="mr-2 sm:mr-3 flex-shrink-0">{icon}</span>}
+      <p className="text-gray-300 font-medium flex items-center text-xs sm:text-sm">
         {label}:
         {infoTerm && <InfoButton term={infoTerm} />}
       </p>
     </div>
-    <div className={`${valueColor} font-medium leading-relaxed group-hover:scale-[1.02] transition-transform duration-200 pl-1`}>
+    <div className={`${valueColor} font-medium leading-relaxed group-hover:scale-[1.02] transition-transform duration-200 pl-0 sm:pl-1 text-xs sm:text-sm break-words`}>
       {value}
     </div>
   </div>

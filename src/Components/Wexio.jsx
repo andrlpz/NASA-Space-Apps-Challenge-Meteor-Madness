@@ -233,11 +233,11 @@ const Wexio = () => {
               consequences: {
                 impactEnergy: `${energyMegatons} Megatons TNT`,
                 seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
-                airBlast: t('significant-overpressure'),
+                airBlast: 'Significant overpressure event expected.',
               },
               mitigation: {
                 threatLevel: foundAsteroid.is_potentially_hazardous_asteroid ? 'MONITORING REQUIRED' : 'LOW',
-                recommendedAction: t('further-observation'),
+                recommendedAction: 'Further observation to refine orbital parameters.',
               },
             },
           }));
@@ -261,25 +261,25 @@ const Wexio = () => {
           radius: visualRadius,
           details: {
             source: {
-              name: t('custom-asteroid-simulation'),
+              name: 'Custom Asteroid Simulation',
               diameter: `${customDiameter.toFixed(2)} meters`,
               velocity: `${customVelocity.toFixed(2)} km/s`,
               isPotentiallyHazardous: customDiameter > 140,
-              closeApproachDate: t('custom-simulation'),
-              missDistance: t('impact-simulation'),
+              closeApproachDate: 'Custom Simulation',
+              missDistance: 'Impact Simulation',
               absoluteMagnitude: 'N/A',
               jplUrl: 'N/A',
             },
             consequences: {
               impactEnergy: `${energyMegatons} Megatons TNT`,
               seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
-              airBlast: t('significant-overpressure'),
+              airBlast: 'Significant overpressure event expected.',
               craterDiameter: `${craterDiameter} meters`,
               devastationRadius: `${devastationRadius} km`,
             },
             mitigation: {
               threatLevel: customDiameter > 1000 ? 'EXTREME' : customDiameter > 500 ? 'HIGH' : 'MODERATE',
-              recommendedAction: t('custom-simulation-adjust'),
+              recommendedAction: 'Custom simulation - Adjust sliders to test different scenarios.',
               evacuationRadius: `${evacuationRadius} km`,
             },
           },
@@ -464,12 +464,12 @@ const Wexio = () => {
             ...(surfaceInfo.countryInfo && { countryInfo: surfaceInfo.countryInfo })
           },
           source: {
-            name: t('custom-asteroid-simulation'),
+            name: 'Custom Asteroid Simulation',
             diameter: `${diameter.toFixed(2)} meters`,
             velocity: `${velocity.toFixed(2)} km/s`,
             isPotentiallyHazardous: diameter > 140,
-            closeApproachDate: t('custom-simulation'),
-            missDistance: t('impact-simulation'),
+            closeApproachDate: 'Custom Simulation',
+            missDistance: 'Impact Simulation',
             absoluteMagnitude: 'N/A',
             jplUrl: 'N/A',
           },
@@ -477,7 +477,7 @@ const Wexio = () => {
             impactEnergy: `${energyMegatons} Megatons TNT`,
             seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
             primaryEffect: surfaceEffects.primaryEffect,
-            airBlast: t('significant-overpressure'),
+            airBlast: 'Significant overpressure event expected.',
             craterInfo: `${surfaceEffects.craterDiameter?.toFixed(0) || craterDiameter} metros - ${surfaceEffects.craterType}`,
             devastationRadius: `${surfaceEffects.devastationRadius?.toFixed(0) || devastationRadius} km`,
             specialEffects: surfaceEffects.specialEffects,
@@ -495,8 +495,8 @@ const Wexio = () => {
           mitigation: {
             threatLevel: diameter > 1000 ? 'EXTREME' : diameter > 500 ? 'HIGH' : 'MODERATE',
             recommendedAction: surfaceInfo.type === 'water' 
-              ? t('tsunami-warning-coastal')
-              : t('ground-impact-evacuation'),
+              ? 'Tsunami warning systems activated. Coastal evacuation recommended.'
+              : 'Ground-based impact. Evacuation of impact zone required.',
             evacuationRadius: `${surfaceEffects.evacuationRadius?.toFixed(0) || evacuationRadius} km`,
           },
         },
@@ -543,7 +543,7 @@ const Wexio = () => {
             impactEnergy: `${energyMegatons} Megatons TNT`,
             seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
             primaryEffect: surfaceEffects.primaryEffect,
-            airBlast: t('significant-overpressure'),
+            airBlast: 'Significant overpressure event expected.',
             craterInfo: `${surfaceEffects.craterDiameter?.toFixed(0) || 'N/A'} metros - ${surfaceEffects.craterType}`,
             devastationRadius: `${surfaceEffects.devastationRadius?.toFixed(0) || 'N/A'} km`,
             specialEffects: surfaceEffects.specialEffects,
@@ -561,8 +561,8 @@ const Wexio = () => {
           mitigation: {
             threatLevel: selectedAsteroid.is_potentially_hazardous_asteroid ? 'MONITORING REQUIRED' : 'LOW',
             recommendedAction: surfaceInfo.type === 'water' 
-              ? t('tsunami-monitoring')
-              : t('continuous-orbital-tracking'),
+              ? 'Tsunami monitoring and coastal area surveillance required.'
+              : 'Continuous orbital tracking and impact zone preparation needed.',
             evacuationRadius: `${surfaceEffects.evacuationRadius?.toFixed(0) || 'N/A'} km`,
           },
         },
@@ -587,9 +587,9 @@ const Wexio = () => {
           ...(surfaceInfo.countryInfo && { countryInfo: surfaceInfo.countryInfo })
         },
         source: {
-          name: t('click-simulation'),
-          diameter: t('unknown'),
-          velocity: t('unknown'),
+          name: 'Click simulation',
+          diameter: 'Unknown',
+          velocity: 'Unknown',
           isPotentiallyHazardous: false,
           closeApproachDate: 'N/A',
           missDistance: 'N/A',
@@ -597,18 +597,14 @@ const Wexio = () => {
           jplUrl: 'N/A',
         },
         consequences: {
-          impactEnergy: t('select-asteroid-sliders'),
+          impactEnergy: 'Select an asteroid or use sliders for simulation',
           seismicEffect: 'N/A',
           airBlast: 'N/A',
-          primaryEffect: surfaceInfo.type === 'water' ? t('possible-tsunami') : t('terrestrial-impact'),
+          primaryEffect: surfaceInfo.type === 'water' ? 'Possible tsunami' : 'Terrestrial impact',
         },
         mitigation: {
           threatLevel: 'UNKNOWN',
-          recommendedAction: t('surface-detected', {
-            description: surfaceInfo.description,
-            location: surfaceInfo.location,
-            source: surfaceInfo.source
-          }),
+          recommendedAction: `Surface detected: ${surfaceInfo.description} in ${surfaceInfo.location}. Source: ${surfaceInfo.source}. Please select an asteroid from the list or use sliders to customize parameters.`,
         },
       },
     }));
@@ -626,7 +622,7 @@ const Wexio = () => {
 
 
   return (
-    <div className="relative flex h-screen w-full bg-gray-900 text-white font-sans">
+    <div className="relative flex flex-col sm:flex-row h-screen w-full bg-gray-900 text-white font-sans overflow-hidden">
       {/* Welcome Overlay */}
       <WelcomeOverlay 
         isVisible={showWelcome}
@@ -634,16 +630,21 @@ const Wexio = () => {
       />
       
       {/* Main Content - Darkened when welcome is showing */}
-      <div className={`flex h-screen w-full transition-all duration-300 ${showWelcome ? 'brightness-50' : 'brightness-100'}`}>
+      <div className={`flex flex-col sm:flex-row h-full w-full transition-all duration-300 ${showWelcome ? 'brightness-50' : 'brightness-100'}`}>
         {/* Configuration Panel - Fixed positioning outside main layout */}
         <Configuration 
           onShare={handleShare}
           shareSuccess={shareSuccess}
           impactEvent={impactEvent}
         />
-      <aside className={`${isSidebarCollapsed ? 'w-16' : 'w-full max-w-sm'} p-6 bg-gray-800 shadow-2xl flex flex-col transition-all duration-300 ease-in-out relative z-20`}>
-        {/* Sidebar Header: Logo + Collapse Button in one row */}
-        <div className="flex items-center justify-between mb-6 relative">
+      <aside className={`${
+        isSidebarCollapsed 
+          ? 'w-16 sm:w-16' 
+          : 'w-full h-[35%] sm:w-[35%] sm:h-full sm:min-w-[280px] sm:max-w-[400px]'
+      } 
+      p-3 sm:p-4 lg:p-6 bg-gray-800 shadow-2xl flex flex-col transition-all duration-300 ease-in-out overflow-hidden`}>
+        {/* Sidebar Header: Logo + Collapse Button in one row - Fixed at top */}
+        <div className="flex items-center justify-between mb-4 lg:mb-6 relative flex-shrink-0">
           <button
             onClick={() => {
               const baseUrl = window.location.origin + window.location.pathname;
@@ -655,13 +656,13 @@ const Wexio = () => {
             <img 
               src={LogoImage} 
               alt="Meteor Madness Logo" 
-              className={`object-contain ${isSidebarCollapsed ? 'w-8 h-8 mx-auto' : 'w-8 h-8 mr-3 group-hover:opacity-80 transition-opacity'}`} 
+              className={`object-contain ${isSidebarCollapsed ? 'w-6 h-6 lg:w-8 lg:h-8 mx-auto' : 'w-6 h-6 lg:w-8 lg:h-8 mr-2 lg:mr-3 group-hover:opacity-80 transition-opacity'}`} 
             />
             {/* Only show title/project name if sidebar is open */}
             {!isSidebarCollapsed && (
               <div className="text-left">
-                <h1 className="text-2xl font-bold text-white group-hover:text-gray-200 transition-colors cursor-pointer">{t('page_title')}</h1>
-                <p className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors cursor-pointer">{t('project_name')}</p>
+                <h1 className="text-lg lg:text-2xl font-bold text-white group-hover:text-gray-200 transition-colors cursor-pointer">{t('page_title')}</h1>
+                <p className="text-xs lg:text-sm text-gray-400 group-hover:text-gray-300 transition-colors cursor-pointer">{t('project_name')}</p>
               </div>
             )}
           </button>
@@ -672,14 +673,14 @@ const Wexio = () => {
             style={{ zIndex: 3 }}
           >
             {isSidebarCollapsed ? 
-              <ChevronRight className="w-4 h-4 text-gray-300" /> : 
-              <ChevronLeft className="w-4 h-4 text-gray-300" />
+              <ChevronRight className="w-3 h-3 lg:w-4 lg:h-4 text-gray-300" /> : 
+              <ChevronLeft className="w-3 h-3 lg:w-4 lg:h-4 text-gray-300" />
             }
           </button>
         </div>
 
-        {/* Sidebar Content - Hidden when collapsed */}
-        <div className={`${isSidebarCollapsed ? 'hidden' : 'block'} transition-all duration-300 ease-in-out flex flex-col flex-grow overflow-hidden`}>
+        {/* Sidebar Content - Hidden when collapsed - Scrollable area */}
+        <div className={`${isSidebarCollapsed ? 'hidden' : 'block'} transition-all duration-300 ease-in-out flex flex-col flex-grow overflow-y-auto scrollable-content scrollbar-thin scrollbar-track-gray-700 scrollbar-thumb-gray-500 hover:scrollbar-thumb-gray-400`}>
           <div className="flex items-center mb-6">
             <button
               onClick={() => {
@@ -692,9 +693,9 @@ const Wexio = () => {
             </button>
           </div>
           
-          <div className='flex items-center flex-row space-x-4 mb-4 gap-15 justify-center'>
-            <button className='bg-gray-700 text-white p-1 rounded p-3 hover:underline' onClick={appearSliders}>{t('sliders-button')}</button>
-            <button className='bg-gray-700 text-white p-1 rounded p-3 hover:underline' onClick={appearAsteroids}>{t('asteroids-button')}</button>
+          <div className='flex items-center flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 lg:space-x-4 mb-4 justify-center'>
+            <button className='w-full sm:w-auto bg-gray-700 text-white px-3 py-2 lg:px-4 lg:py-3 rounded text-sm lg:text-base hover:underline hover:bg-gray-600 transition-colors' onClick={appearSliders}>{t('sliders-button')}</button>
+            <button className='w-full sm:w-auto bg-gray-700 text-white px-3 py-2 lg:px-4 lg:py-3 rounded text-sm lg:text-base hover:underline hover:bg-gray-600 transition-colors' onClick={appearAsteroids}>{t('asteroids-button')}</button>
           </div>
 
           {showSlidersState && (
@@ -752,7 +753,9 @@ const Wexio = () => {
         )}
       </aside>
 
-      <main className={`flex-1 h-full relative ${isSidebarCollapsed ? 'w-full' : ''}`}>
+      <main className={`${
+        isSidebarCollapsed ? 'w-full h-full' : 'w-full h-[65%] sm:flex-1 sm:h-full'
+      } relative transition-all duration-300`}>
         {is3DMap
           ? <GlobePage impact={impactEvent} onMapClick={handleMapClick} />
           : <InteractiveMap impact={impactEvent} onMapClick={handleMapClick} />
@@ -761,7 +764,7 @@ const Wexio = () => {
       
       {/* Auto-switch notification */}
       {showModeChangeNotification && (
-        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-[300] bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
+        <div className="fixed top-16 lg:top-20 left-1/2 transform -translate-x-1/2 z-[300] bg-blue-600 text-white px-3 lg:px-4 py-2 rounded-lg shadow-lg max-w-xs lg:max-w-none text-sm lg:text-base">
           <div className="flex items-center gap-2">
             <span>Switched to {is3DMap ? '3D Globe' : '2D Map'}</span>
             <button 

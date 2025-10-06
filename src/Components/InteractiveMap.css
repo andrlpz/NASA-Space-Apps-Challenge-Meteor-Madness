@@ -1,16 +1,26 @@
 .map-toggle-btn {
   position: absolute;
-  top: 10px;
+  top: 8px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 500;
   border: none;
-  padding: 8px 16px;
-  border-radius: 20px;
+  padding: 6px 12px;
+  border-radius: 16px;
   font-weight: bold;
+  font-size: 12px;
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0,0,0,0.3);
   transition: background-color 0.3s, color 0.3s;
+}
+
+@media (min-width: 640px) {
+  .map-toggle-btn {
+    top: 10px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+  }
 }
 
 .map-toggle-btn.dark {
