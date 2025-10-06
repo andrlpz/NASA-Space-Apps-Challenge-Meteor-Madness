@@ -9,6 +9,7 @@
   "velocity": "Velocity",
   "hazardous": "Hazardous",
   "click_stimulate": "Click anywhere on the map to simulate impact",
+  "select_asteroid_first": "Select an asteroid",
   "selected-asteroid": "Selected Asteroid Data",
   "name": "Name",
   "est_diameter": "Est. Diameter",

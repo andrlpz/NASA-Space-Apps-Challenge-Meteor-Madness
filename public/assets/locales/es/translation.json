@@ -9,6 +9,7 @@
   "velocity": "Velocidad",
   "hazardous": "Peligroso",
   "click_stimulate": "Dale click en cualquier parte del mapa para simular el impacto",
+  "select_asteroid_first": "Selecciona un asteroide",
   "selected-asteroid": "Datos del Asteroide Seleccionado",
   "name": "Nombre",
   "est_diameter": "Diametro Estimado",

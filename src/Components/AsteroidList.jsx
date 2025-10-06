@@ -48,7 +48,7 @@ export default function AsteroidList({ asteroids, onSelect }) {
   }, [asteroids, filter]);
 
   return (
-    <div className="flex flex-col h-64 sm:h-80 lg:h-96">
+    <div className="flex flex-col h-60 sm:h-68 lg:h-76 max-h-full">
       <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2 mb-2">
         <label className="text-xs sm:text-sm font-medium">{t('sortby')}:</label>
         <select
@@ -93,10 +93,6 @@ export default function AsteroidList({ asteroids, onSelect }) {
           );
         })}
       </div>
-
-      {selectedAsteroid && (
-        <p className="text-xs text-green-600 mt-1 sm:mt-2">{t('click_stimulate')}</p>
-      )}
     </div>
   );
 }

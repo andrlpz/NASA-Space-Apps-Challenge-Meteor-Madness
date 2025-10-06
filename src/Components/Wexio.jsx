@@ -643,58 +643,76 @@ const Wexio = () => {
           </button>
         </div>
 
-        <div className={`${isSidebarCollapsed ? 'hidden' : 'block'} transition-all duration-300 ease-in-out flex flex-col flex-grow overflow-y-auto scrollable-content scrollbar-thin scrollbar-track-gray-700 scrollbar-thumb-gray-500 hover:scrollbar-thumb-gray-400`}>
-          <div className="flex items-center mb-6">
-            <button
-              onClick={() => {
-                const baseUrl = window.location.origin + window.location.pathname;
-                window.location.href = baseUrl;
-              }}
-              className="flex items-center hover:scale-105 transition-transform duration-200 focus:outline-none group"
-            >
-            </button>
+        <div className={`${isSidebarCollapsed ? 'hidden' : 'flex'} transition-all duration-300 ease-in-out flex-col h-full`}>
+          {/* Main content area - scrollable with limited height */}
+          <div className="flex-1 overflow-y-auto min-h-0">
+            <div className="flex items-center mb-6">
+              <button
+                onClick={() => {
+                  const baseUrl = window.location.origin + window.location.pathname;
+                  window.location.href = baseUrl;
+                }}
+                className="flex items-center hover:scale-105 transition-transform duration-200 focus:outline-none group"
+              >
+              </button>
+            </div>
+            
+            <div className='flex items-center flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 lg:space-x-4 mb-4 justify-center'>
+              <button className='w-full sm:w-auto bg-gray-700 text-white px-3 py-2 lg:px-4 lg:py-3 rounded text-sm lg:text-base hover:underline hover:bg-gray-600 transition-colors' onClick={appearSliders}>{t('sliders-button')}</button>
+              <button className='w-full sm:w-auto bg-gray-700 text-white px-3 py-2 lg:px-4 lg:py-3 rounded text-sm lg:text-base hover:underline hover:bg-gray-600 transition-colors' onClick={appearAsteroids}>{t('asteroids-button')}</button>
+            </div>
+
+            {showSlidersState && (
+              <div className="mb-4">
+                <Sliders
+                  diameter={diameter}
+                  setDiameter={(value) => dispatch(setDiameter(value))}
+                  velocity={velocity}
+                  setVelocity={(value) => dispatch(setVelocity(value))}
+                />
+              </div>
+            )}
+
+            {isLoading && (
+              <div className="flex items-center justify-center py-8">
+                <Loader className="animate-spin" />
+                <p className="ml-2">{t('fetching')}</p>
+              </div>
+            )}
+            {error && (
+              <div className="flex items-center justify-center text-red-400 py-8">
+                <p>Error: {error}</p>
+              </div>
+            )}
+
+            {!isLoading && !error && (
+              <>
+                {showAsteroidListState && (
+                  <div className="flex flex-col min-h-0 mb-4">
+                    <p className="text-sm mb-2 flex-shrink-0">{t('select')}</p>
+                    <div className="flex-1 min-h-0">
+                      <AsteroidList asteroids={asteroids} onSelect={(asteroid) => dispatch(setSelectedAsteroid(asteroid))} />
+                    </div>
+                  </div>
+                )}
+                {impactEvent && (
+                  <div className="flex-shrink-0 mb-4">
+                    <ImpactSidebar impact={impactEvent} resetImpact={handleResetImpact} />
+                  </div>
+                )}
+              </>
+            )}
           </div>
           
-          <div className='flex items-center flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 lg:space-x-4 mb-4 justify-center'>
-            <button className='w-full sm:w-auto bg-gray-700 text-white px-3 py-2 lg:px-4 lg:py-3 rounded text-sm lg:text-base hover:underline hover:bg-gray-600 transition-colors' onClick={appearSliders}>{t('sliders-button')}</button>
-            <button className='w-full sm:w-auto bg-gray-700 text-white px-3 py-2 lg:px-4 lg:py-3 rounded text-sm lg:text-base hover:underline hover:bg-gray-600 transition-colors' onClick={appearAsteroids}>{t('asteroids-button')}</button>
-          </div>
-
-          {showSlidersState && (
-            <div className="mb-4">
-              <Sliders
-                diameter={diameter}
-                setDiameter={(value) => dispatch(setDiameter(value))}
-                velocity={velocity}
-                setVelocity={(value) => dispatch(setVelocity(value))}
-              />
-            </div>
-          )}
-
-          {isLoading && (
-            <div className="flex-grow flex items-center justify-center">
-              <Loader className="animate-spin" />
-              <p className="ml-2">{t('fetching')}</p>
-            </div>
-          )}
-          {error && (
-            <div className="flex-grow flex items-center justify-center text-red-400">
-              <p>Error: {error}</p>
-            </div>
-          )}
-
-          {!isLoading && !error && (
-            <>
-              {showAsteroidListState && (
-                <div>
-                  <p className="text-sm mb-2">{t('select')}</p>
-                  <AsteroidList asteroids={asteroids} onSelect={(asteroid) => dispatch(setSelectedAsteroid(asteroid))} />
-                </div>
+          {/* Instructions text - only visible when in asteroids section */}
+          {showAsteroidListState && (
+            <div className="flex-shrink-0 pt-3 border-t border-gray-700 bg-gray-800">
+              {selectedAsteroid ? (
+                <p className="text-xs text-green-600 text-center pb-2">{t('click_stimulate')}</p>
+              ) : (
+                <p className="text-xs text-green-600 text-center pb-2">{t('select_asteroid_first')}</p>
               )}
-              {impactEvent && (
-                <ImpactSidebar impact={impactEvent} resetImpact={handleResetImpact} />
-              )}
-            </>
+            </div>
           )}
         </div>
 
