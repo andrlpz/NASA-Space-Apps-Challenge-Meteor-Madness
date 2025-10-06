@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import { useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import COUNTRIES_DATA from '../assets/countries.json'
 
 function Confetti({ show }) {
@@ -52,6 +53,7 @@ function SadFace({ show }) {
 
 export default function Carita({ goodThreshold = 100000, excellentThreshold = 10000 }) {
   // Always call hooks in the same order:
+  const { t } = useTranslation()
   const impact = useSelector(s => s.impact.impactEvent)
   const sliderDiameterMeters = useSelector(s => s.impact.diameter)
   const sliderVelocityKms = useSelector(s => s.impact.velocity)
@@ -122,56 +124,56 @@ export default function Carita({ goodThreshold = 100000, excellentThreshold = 10
     <>
       <div className="fixed bottom-4 right-4 z-[12050] max-w-sm w-[92vw] sm:w-[28rem] rounded-xl border border-white/10 bg-gray-900/90 backdrop-blur px-4 py-3 text-white shadow-2xl">
         <div className="flex items-center justify-between">
-          <div className="font-semibold text-sm">Impact Snapshot</div>
-          <div className="text-xs text-gray-400">{impactRadiusKm} km radius</div>
+          <div className="font-semibold text-sm">{t('impact-snapshot')}</div>
+          <div className="text-xs text-gray-400">{impactRadiusKm} {t('km-radius')}</div>
         </div>
-        <div className="mt-2 text-xs text-gray-300">Lat {center.lat.toFixed(3)}°, Lng {center.lng.toFixed(3)}°</div>
-        <div className="mt-1 text-[11px] text-gray-400">Velocity {velocityKms.toFixed(1)} km/s • Diameter {(diameterKm).toFixed(2)} km</div>
+        <div className="mt-2 text-xs text-gray-300">{t('lat')} {center.lat.toFixed(3)}°, {t('lng')} {center.lng.toFixed(3)}°</div>
+        <div className="mt-1 text-[11px] text-gray-400">{t('velocity')} {velocityKms.toFixed(1)} km/s • {t('diameter')} {(diameterKm).toFixed(2)} km</div>
 
         {country && (
           <>
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div className="rounded-lg bg-black/30 p-3">
-                <div className="text-[11px] text-gray-400">Country</div>
+                <div className="text-[11px] text-gray-400">{t('country')}</div>
                 <div className="text-sm font-semibold">{countryName || '—'}</div>
               </div>
               <div className="rounded-lg bg-black/30 p-3">
-                <div className="text-[11px] text-gray-400">People/km²</div>
+                <div className="text-[11px] text-gray-400">{t('people-per-km2')}</div>
                 <div className="text-lg font-semibold">
                   {population && areaKm2 ? Math.round(population / areaKm2).toLocaleString() : '—'}
                 </div>
               </div>
               <div className="rounded-lg bg-black/30 p-3">
-                <div className="text-[11px] text-gray-400">Population</div>
+                <div className="text-[11px] text-gray-400">{t('population')}</div>
                 <div className="text-lg font-semibold">{population != null ? population.toLocaleString() : '—'}</div>
               </div>
               <div className="rounded-lg bg-black/30 p-3">
-                <div className="text-[11px] text-gray-400">Circle area</div>
+                <div className="text-[11px] text-gray-400">{t('circle-area')}</div>
                 <div className="text-lg font-semibold">{Math.round(Math.PI * impactRadiusKm * impactRadiusKm).toLocaleString()} km²</div>
               </div>
               <div className={`rounded-lg p-3 ${outcome === 'bad' ? 'bg-red-500/20' : outcome === 'good' ? 'bg-emerald-500/20' : 'bg-cyan-500/20'} col-span-2`}>
-                <div className="text-[11px] text-gray-100">Estimated affected</div>
+                <div className="text-[11px] text-gray-100">{t('estimated-affected')}</div>
                 <div className="text-2xl font-bold">
                   {estimatedAffected != null ? estimatedAffected.toLocaleString() : '—'}
                 </div>
                 <div className="text-xs mt-1">
-                  {outcome === 'excellent' && '🎉 Excellent! Minimal casualties. Great job!'}
-                  {outcome === 'good' && 'Good outcome. You reduced the impact significantly.'}
-                  {outcome === 'bad' && '😢 High impact. Many lives at risk. Reduce velocity or size!'}
+                  {outcome === 'excellent' && t('excellent-outcome')}
+                  {outcome === 'good' && t('good-outcome')}
+                  {outcome === 'bad' && t('bad-outcome')}
                 </div>
               </div>
             </div>
 
             <div className="mt-3 flex gap-2">
-              <span className="text-[11px] text-gray-400">Tip:</span>
-              <span className="text-[11px] text-gray-200">Lower velocity or diameter to shrink the impact radius.</span>
+              <span className="text-[11px] text-gray-400">{t('tip')}</span>
+              <span className="text-[11px] text-gray-200">{t('tip-message')}</span>
             </div>
           </>
         )}
 
         {!country && (
           <div className="mt-3 text-sm text-gray-400">
-            No country data available for this location
+            {t('no-country-data')}
           </div>
         )}
       </div>
@@ -181,7 +183,7 @@ export default function Carita({ goodThreshold = 100000, excellentThreshold = 10
 
       {outcome === 'bad' && isSliderSimulation && (
         <div className="fixed inset-x-0 top-4 z-[12040] mx-auto w-max rounded-full bg-red-600 text-white text-sm px-4 py-2 shadow-lg">
-          😢 Many lives at risk! Try lowering velocity or size to save more people
+          {t('many-lives-risk')}
         </div>
       )}
     </>

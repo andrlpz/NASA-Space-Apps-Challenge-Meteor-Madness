@@ -66,5 +66,19 @@
   "impactAnalysis": "Análisis de Impacto",
   "detailedSimulationResults": "Resultados detallados de la simulación de impacto",
   "asteroids-button": "Asteroides",
-  "sliders-button": "Deslizantes"
+  "sliders-button": "Deslizantes",
+  "impact-snapshot": "Resumen del Impacto",
+  "km-radius": "km de radio",
+  "country": "País",
+  "people-per-km2": "Personas/km²",
+  "population": "Población",
+  "circle-area": "Área del círculo",
+  "estimated-affected": "Afectados estimados",
+  "excellent-outcome": "🎉 ¡Excelente! Bajas mínimas. ¡Buen trabajo!",
+  "good-outcome": "Buen resultado. Redujiste el impacto significativamente.",
+  "bad-outcome": "😢 Alto impacto. Muchas vidas en riesgo. ¡Reduce la velocidad o el tamaño!",
+  "tip": "Consejo:",
+  "tip-message": "Reduce la velocidad o el diámetro para disminuir el radio de impacto.",
+  "no-country-data": "No hay datos del país disponibles para esta ubicación",
+  "many-lives-risk": "😢 ¡Muchas vidas en riesgo! Intenta reducir la velocidad o el tamaño para salvar más personas"
 }
