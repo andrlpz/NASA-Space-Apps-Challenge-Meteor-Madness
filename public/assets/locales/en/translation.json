@@ -243,5 +243,52 @@
   "Africa (Johannesburg)": "Africa (Johannesburg)",
   "Asia (Tokyo)": "Asia (Tokyo)",
   "Australia (Sydney)": "Australia (Sydney)",
-  "Seismic effects up to {{range}} km": "Seismic effects up to {{range}} km"
+  "Seismic effects up to {{range}} km": "Seismic effects up to {{range}} km",
+  "specialEffects": {
+    "Generation of underwater seismic waves": "Generation of underwater seismic waves",
+    "Massive water vaporization": "Massive water vaporization",
+    "Acid rain from contaminated vapor": "Acid rain from contaminated vapor",
+    "Disruption of ocean currents": "Disruption of ocean currents",
+    "Global climate effects from water vapor": "Global climate effects from water vapor",
+    "Impact crater formation": "Impact crater formation",
+    "Rock material ejection": "Rock material ejection",
+    "Massive forest fires": "Massive forest fires",
+    "Atmospheric dust contamination": "Atmospheric dust contamination",
+    "Regional impact winter": "Regional impact winter",
+    "Potential mass extinction": "Potential mass extinction"
+  },
+  "consequencesValues": {
+    "airBlastText": "Significant overpressure event expected.",
+    "megatonsTNT": "Megatons TNT",
+    "magnitudeRichter": "Magnitude {{magnitude}} Richter",
+    "craterInfoTemplate": "{{diameter}} meters - {{type}}",
+    "devastationRadiusTemplate": "{{radius}} km",
+    "evacuationRadiusTemplate": "{{radius}} km",
+    "tsunamiHeightTemplate": "{{height}} meters",
+    "tsunamiRangeTemplate": "{{range}} km from impact point",
+    "fireballRadiusTemplate": "{{radius}} km radius",
+    "seismicRangeTemplate": "Seismic effects up to {{range}} km"
+  },
+  "mitigationValues": {
+    "recommendedActions": {
+      "furtherObservation": "Further observation to refine orbital parameters.",
+      "customSimulation": "Custom simulation - Adjust sliders to test different scenarios.",
+      "tsunamiWarning": "Tsunami warning systems activated. Coastal evacuation recommended.",
+      "groundImpact": "Ground-based impact. Evacuation of impact zone required.",
+      "tsunamiMonitoring": "Tsunami monitoring and coastal area surveillance required.",
+      "orbitalTracking": "Continuous orbital tracking and impact zone preparation needed.",
+      "surfaceDetected": "Surface detected: {{description}} in {{location}}. Source: {{source}}. Please select an asteroid from the list or use sliders to customize parameters."
+    }
+  },
+  "defaultValues": {
+    "selectAsteroid": "Select an asteroid or use sliders for simulation",
+    "notAvailable": "N/A",
+    "possibleTsunami": "Possible tsunami",
+    "terrestrialImpact": "Terrestrial impact",
+    "unknownThreat": "UNKNOWN",
+    "customSimulation": "Custom Asteroid Simulation",
+    "impactSimulation": "Impact Simulation",
+    "clickSimulation": "Click simulation",
+    "unknown": "Unknown"
+  }
 }

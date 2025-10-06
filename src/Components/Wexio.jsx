@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   setImpactEvent,
   resetImpact,
@@ -33,7 +34,6 @@ import {
 } from '../lib/urlUtils';
 
 import cookies from 'js-cookie'
-import { useTranslation } from 'react-i18next'
 import i18next from 'i18next'
 import GlobePage from './GlobeComponent';
 import { useMeteor } from './MeteorProvider';
@@ -106,6 +106,75 @@ const Wexio = () => {
   const currentLanguageCode = cookies.get('i18next') || 'en'
   const currentLanguage = languages.find((l) => l.code === currentLanguageCode)
   const { t } = useTranslation()
+
+  // Function to translate dynamic surface effects
+  const translateSurfaceEffects = (surfaceEffects) => {
+    if (!surfaceEffects) return surfaceEffects;
+    
+    const translatedEffects = { ...surfaceEffects };
+    
+    // Translate primary effect
+    if (surfaceEffects.primaryEffect) {
+      if (surfaceEffects.primaryEffect === 'Tsunami Generation') {
+        translatedEffects.primaryEffect = t('Tsunami Generation');
+      } else if (surfaceEffects.primaryEffect === 'Ground Impact') {
+        translatedEffects.primaryEffect = t('Ground Impact');
+      }
+    }
+    
+    // Translate tsunami height if present
+    if (surfaceEffects.tsunamiHeight) {
+      const heightMatch = surfaceEffects.tsunamiHeight.match(/^(\d+\.?\d*)/);
+      if (heightMatch) {
+        translatedEffects.tsunamiHeight = t('consequencesValues.tsunamiHeightTemplate', { 
+          height: heightMatch[1] 
+        });
+      }
+    }
+    
+    // Translate tsunami range if present
+    if (surfaceEffects.tsunamiRange) {
+      const rangeMatch = surfaceEffects.tsunamiRange.match(/^(\d+)/);
+      if (rangeMatch) {
+        translatedEffects.tsunamiRange = t('consequencesValues.tsunamiRangeTemplate', { 
+          range: rangeMatch[1] 
+        });
+      }
+    }
+    
+    // Translate fireball radius if present
+    if (surfaceEffects.fireballRadius) {
+      const radiusMatch = surfaceEffects.fireballRadius.match(/^(\d+\.?\d*)/);
+      if (radiusMatch) {
+        translatedEffects.fireballRadius = t('consequencesValues.fireballRadiusTemplate', { 
+          radius: radiusMatch[1] 
+        });
+      }
+    }
+    
+    // Translate seismic range if present
+    if (surfaceEffects.seismicRange) {
+      const seismicMatch = surfaceEffects.seismicRange.match(/(\d+)/);
+      if (seismicMatch) {
+        translatedEffects.seismicRange = t('consequencesValues.seismicRangeTemplate', { 
+          range: seismicMatch[1] 
+        });
+      }
+    }
+    
+    // Translate ground effect if present
+    if (surfaceEffects.groundEffect) {
+      if (surfaceEffects.groundEffect.includes('TOTAL DESTRUCTION')) {
+        translatedEffects.groundEffect = t('TOTAL DESTRUCTION within 100 km radius');
+      } else if (surfaceEffects.groundEffect.includes('Massive local destruction')) {
+        translatedEffects.groundEffect = t('Massive local destruction');
+      } else if (surfaceEffects.groundEffect.includes('Severe damage')) {
+        translatedEffects.groundEffect = t('Severe damage in immediate area');
+      }
+    }
+    
+    return translatedEffects;
+  };
 
   function handleResetImpact() {
     dispatch(resetImpact());
@@ -220,13 +289,13 @@ const Wexio = () => {
                 jplUrl: foundAsteroid.nasa_jpl_url,
               },
               consequences: {
-                impactEnergy: `${energyMegatons} Megatons TNT`,
-                seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
-                airBlast: 'Significant overpressure event expected.',
+                impactEnergy: `${energyMegatons} ${t('consequencesValues.megatonsTNT')}`,
+                seismicEffect: t('consequencesValues.magnitudeRichter', { magnitude: seismicMagnitude }),
+                airBlast: t('consequencesValues.airBlastText'),
               },
               mitigation: {
                 threatLevel: foundAsteroid.is_potentially_hazardous_asteroid ? 'MONITORING REQUIRED' : 'LOW',
-                recommendedAction: 'Further observation to refine orbital parameters.',
+                recommendedAction: t('mitigationValues.recommendedActions.furtherObservation'),
               },
             },
           }));
@@ -248,26 +317,26 @@ const Wexio = () => {
           radius: visualRadius,
           details: {
             source: {
-              name: 'Custom Asteroid Simulation',
+              name: t('defaultValues.customSimulation'),
               diameter: `${customDiameter.toFixed(2)} meters`,
               velocity: `${customVelocity.toFixed(2)} km/s`,
               isPotentiallyHazardous: customDiameter > 140,
-              closeApproachDate: 'Custom Simulation',
-              missDistance: 'Impact Simulation',
-              absoluteMagnitude: 'N/A',
-              jplUrl: 'N/A',
+              closeApproachDate: t('defaultValues.customSimulation'),
+              missDistance: t('defaultValues.impactSimulation'),
+              absoluteMagnitude: t('defaultValues.notAvailable'),
+              jplUrl: t('defaultValues.notAvailable'),
             },
             consequences: {
-              impactEnergy: `${energyMegatons} Megatons TNT`,
-              seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
-              airBlast: 'Significant overpressure event expected.',
+              impactEnergy: `${energyMegatons} ${t('consequencesValues.megatonsTNT')}`,
+              seismicEffect: t('consequencesValues.magnitudeRichter', { magnitude: seismicMagnitude }),
+              airBlast: t('consequencesValues.airBlastText'),
               craterDiameter: `${craterDiameter} meters`,
-              devastationRadius: `${devastationRadius} km`,
+              devastationRadius: t('consequencesValues.devastationRadiusTemplate', { radius: devastationRadius }),
             },
             mitigation: {
               threatLevel: customDiameter > 1000 ? 'EXTREME' : customDiameter > 500 ? 'HIGH' : 'MODERATE',
-              recommendedAction: 'Custom simulation - Adjust sliders to test different scenarios.',
-              evacuationRadius: `${evacuationRadius} km`,
+              recommendedAction: t('mitigationValues.recommendedActions.customSimulation'),
+              evacuationRadius: t('consequencesValues.evacuationRadiusTemplate', { radius: evacuationRadius }),
             },
           },
         }));
@@ -423,6 +492,7 @@ const Wexio = () => {
         calculateImpact(diameter, velocity);
 
       const surfaceEffects = calculateSurfaceSpecificEffects(surfaceInfo, diameter, velocity, parseFloat(energyMegatons));
+      const translatedSurfaceEffects = translateSurfaceEffects(surfaceEffects);
       const visualRadius = calculateVisualRadius(diameter, velocity);
 
       dispatch(setImpactEvent({
@@ -438,40 +508,47 @@ const Wexio = () => {
             ...(surfaceInfo.countryInfo && { countryInfo: surfaceInfo.countryInfo })
           },
           source: {
-            name: 'Custom Asteroid Simulation',
+            name: t('defaultValues.customSimulation'),
             diameter: `${diameter.toFixed(2)} meters`,
             velocity: `${velocity.toFixed(2)} km/s`,
             isPotentiallyHazardous: diameter > 140,
-            closeApproachDate: 'Custom Simulation',
-            missDistance: 'Impact Simulation',
-            absoluteMagnitude: 'N/A',
-            jplUrl: 'N/A',
+            closeApproachDate: t('defaultValues.customSimulation'),
+            missDistance: t('defaultValues.impactSimulation'),
+            absoluteMagnitude: t('defaultValues.notAvailable'),
+            jplUrl: t('defaultValues.notAvailable'),
           },
           consequences: {
-            impactEnergy: `${energyMegatons} Megatons TNT`,
-            seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
-            primaryEffect: surfaceEffects.primaryEffect,
-            airBlast: 'Significant overpressure event expected.',
-            craterInfo: `${surfaceEffects.craterDiameter?.toFixed(0) || craterDiameter} metros - ${surfaceEffects.craterType}`,
-            devastationRadius: `${surfaceEffects.devastationRadius?.toFixed(0) || devastationRadius} km`,
+            impactEnergy: `${energyMegatons} ${t('consequencesValues.megatonsTNT')}`,
+            seismicEffect: t('consequencesValues.magnitudeRichter', { magnitude: seismicMagnitude }),
+            primaryEffect: translatedSurfaceEffects.primaryEffect,
+            airBlast: t('consequencesValues.airBlastText'),
+            craterInfo: t('consequencesValues.craterInfoTemplate', { 
+              diameter: surfaceEffects.craterDiameter?.toFixed(0) || craterDiameter,
+              type: surfaceEffects.craterType 
+            }),
+            devastationRadius: t('consequencesValues.devastationRadiusTemplate', { 
+              radius: surfaceEffects.devastationRadius?.toFixed(0) || devastationRadius 
+            }),
             specialEffects: surfaceEffects.specialEffects,
             ...(surfaceInfo.type === 'water' && {
-              tsunamiHeight: surfaceEffects.tsunamiHeight,
-              tsunamiRange: surfaceEffects.tsunamiRange,
+              tsunamiHeight: translatedSurfaceEffects.tsunamiHeight,
+              tsunamiRange: translatedSurfaceEffects.tsunamiRange,
               coastalImpact: surfaceEffects.coastalImpact,
             }),
             ...(surfaceInfo.type === 'land' && {
-              fireballRadius: surfaceEffects.fireballRadius,
-              seismicRange: surfaceEffects.seismicRange,
-              groundEffect: surfaceEffects.groundEffect,
+              fireballRadius: translatedSurfaceEffects.fireballRadius,
+              seismicRange: translatedSurfaceEffects.seismicRange,
+              groundEffect: translatedSurfaceEffects.groundEffect,
             }),
           },
           mitigation: {
             threatLevel: diameter > 1000 ? 'EXTREME' : diameter > 500 ? 'HIGH' : 'MODERATE',
             recommendedAction: surfaceInfo.type === 'water' 
-              ? 'Tsunami warning systems activated. Coastal evacuation recommended.'
-              : 'Ground-based impact. Evacuation of impact zone required.',
-            evacuationRadius: `${surfaceEffects.evacuationRadius?.toFixed(0) || evacuationRadius} km`,
+              ? t('mitigationValues.recommendedActions.tsunamiWarning')
+              : t('mitigationValues.recommendedActions.groundImpact'),
+            evacuationRadius: t('consequencesValues.evacuationRadiusTemplate', { 
+              radius: surfaceEffects.evacuationRadius?.toFixed(0) || evacuationRadius 
+            }),
           },
         },
       }));
@@ -487,6 +564,7 @@ const Wexio = () => {
       const { energyMegatons, seismicMagnitude } = calculateImpact(diameterMeters, velocityKms);
 
       const surfaceEffects = calculateSurfaceSpecificEffects(surfaceInfo, diameterMeters, velocityKms, parseFloat(energyMegatons));
+      const translatedSurfaceEffects = translateSurfaceEffects(surfaceEffects);
       const visualRadius = calculateVisualRadius(diameterMeters, velocityKms);
 
       dispatch(setImpactEvent({
@@ -509,33 +587,40 @@ const Wexio = () => {
             closeApproachDate: selectedAsteroid.close_approach_data[0].close_approach_date_full,
             missDistance: `${parseFloat(selectedAsteroid.close_approach_data[0].miss_distance.kilometers).toLocaleString()} km`,
             absoluteMagnitude: selectedAsteroid.absolute_magnitude_h,
-            jplUrl: 'N/A',
+            jplUrl: t('defaultValues.notAvailable'),
           },
           consequences: {
-            impactEnergy: `${energyMegatons} Megatons TNT`,
-            seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
-            primaryEffect: surfaceEffects.primaryEffect,
-            airBlast: 'Significant overpressure event expected.',
-            craterInfo: `${surfaceEffects.craterDiameter?.toFixed(0) || 'N/A'} metros - ${surfaceEffects.craterType}`,
-            devastationRadius: `${surfaceEffects.devastationRadius?.toFixed(0) || 'N/A'} km`,
+            impactEnergy: `${energyMegatons} ${t('consequencesValues.megatonsTNT')}`,
+            seismicEffect: t('consequencesValues.magnitudeRichter', { magnitude: seismicMagnitude }),
+            primaryEffect: translatedSurfaceEffects.primaryEffect,
+            airBlast: t('consequencesValues.airBlastText'),
+            craterInfo: t('consequencesValues.craterInfoTemplate', { 
+              diameter: surfaceEffects.craterDiameter?.toFixed(0) || t('defaultValues.notAvailable'),
+              type: surfaceEffects.craterType 
+            }),
+            devastationRadius: t('consequencesValues.devastationRadiusTemplate', { 
+              radius: surfaceEffects.devastationRadius?.toFixed(0) || t('defaultValues.notAvailable') 
+            }),
             specialEffects: surfaceEffects.specialEffects,
             ...(surfaceInfo.type === 'water' && {
-              tsunamiHeight: surfaceEffects.tsunamiHeight,
-              tsunamiRange: surfaceEffects.tsunamiRange,
+              tsunamiHeight: translatedSurfaceEffects.tsunamiHeight,
+              tsunamiRange: translatedSurfaceEffects.tsunamiRange,
               coastalImpact: surfaceEffects.coastalImpact,
             }),
             ...(surfaceInfo.type === 'land' && {
-              fireballRadius: surfaceEffects.fireballRadius,
-              seismicRange: surfaceEffects.seismicRange,
-              groundEffect: surfaceEffects.groundEffect,
+              fireballRadius: translatedSurfaceEffects.fireballRadius,
+              seismicRange: translatedSurfaceEffects.seismicRange,
+              groundEffect: translatedSurfaceEffects.groundEffect,
             }),
           },
           mitigation: {
             threatLevel: selectedAsteroid.is_potentially_hazardous_asteroid ? 'MONITORING REQUIRED' : 'LOW',
             recommendedAction: surfaceInfo.type === 'water' 
-              ? 'Tsunami monitoring and coastal area surveillance required.'
-              : 'Continuous orbital tracking and impact zone preparation needed.',
-            evacuationRadius: `${surfaceEffects.evacuationRadius?.toFixed(0) || 'N/A'} km`,
+              ? t('mitigationValues.recommendedActions.tsunamiMonitoring')
+              : t('mitigationValues.recommendedActions.orbitalTracking'),
+            evacuationRadius: t('consequencesValues.evacuationRadiusTemplate', { 
+              radius: surfaceEffects.evacuationRadius?.toFixed(0) || t('defaultValues.notAvailable') 
+            }),
           },
         },
       }));
@@ -557,24 +642,28 @@ const Wexio = () => {
           ...(surfaceInfo.countryInfo && { countryInfo: surfaceInfo.countryInfo })
         },
         source: {
-          name: 'Click simulation',
-          diameter: 'Unknown',
-          velocity: 'Unknown',
+          name: t('defaultValues.clickSimulation'),
+          diameter: t('defaultValues.unknown'),
+          velocity: t('defaultValues.unknown'),
           isPotentiallyHazardous: false,
-          closeApproachDate: 'N/A',
-          missDistance: 'N/A',
-          absoluteMagnitude: 'N/A',
-          jplUrl: 'N/A',
+          closeApproachDate: t('defaultValues.notAvailable'),
+          missDistance: t('defaultValues.notAvailable'),
+          absoluteMagnitude: t('defaultValues.notAvailable'),
+          jplUrl: t('defaultValues.notAvailable'),
         },
         consequences: {
-          impactEnergy: 'Select an asteroid or use sliders for simulation',
-          seismicEffect: 'N/A',
-          airBlast: 'N/A',
-          primaryEffect: surfaceInfo.type === 'water' ? 'Possible tsunami' : 'Terrestrial impact',
+          impactEnergy: t('defaultValues.selectAsteroid'),
+          seismicEffect: t('defaultValues.notAvailable'),
+          airBlast: t('defaultValues.notAvailable'),
+          primaryEffect: surfaceInfo.type === 'water' ? t('defaultValues.possibleTsunami') : t('defaultValues.terrestrialImpact'),
         },
         mitigation: {
-          threatLevel: 'UNKNOWN',
-          recommendedAction: `Surface detected: ${surfaceInfo.description} in ${surfaceInfo.location}. Source: ${surfaceInfo.source}. Please select an asteroid from the list or use sliders to customize parameters.`,
+          threatLevel: t('defaultValues.unknownThreat'),
+          recommendedAction: t('mitigationValues.recommendedActions.surfaceDetected', {
+            description: surfaceInfo.description,
+            location: surfaceInfo.location,
+            source: surfaceInfo.source
+          }),
         },
       },
     }));

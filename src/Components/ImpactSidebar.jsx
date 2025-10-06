@@ -362,7 +362,7 @@ export default function ImpactSidebar({ impact, resetImpact }) {
               {consequences.specialEffects.map((effect, index) => (
                 <li key={index} className="flex items-center">
                   <div className="w-1 h-1 bg-cyan-400 rounded-full mr-2 animate-pulse"></div>
-                  <span className="text-cyan-200">{effect}</span>
+                  <span className="text-cyan-200">{t(`specialEffects.${effect}`, effect)}</span>
                 </li>
               ))}
             </ul>
