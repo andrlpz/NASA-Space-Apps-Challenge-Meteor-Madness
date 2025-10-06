@@ -21,13 +21,11 @@ const WelcomeOverlay = ({ onStart, isVisible }) => {
         transform: isVisible ? 'translateY(0)' : 'translateY(-100%)'
       }}
     >
-      {/* Darkened background */}
       <div 
         className="absolute inset-0 bg-black"
         style={{ opacity: 0.7 }}
       />
       
-      {/* Background image with opacity */}
       <div 
         className="absolute inset-0"
         style={{
@@ -39,7 +37,6 @@ const WelcomeOverlay = ({ onStart, isVisible }) => {
         }}
       />
       
-      {/* GitHub Logo - Upper Left */}
       <div className="absolute top-3 left-3 sm:top-6 sm:left-6 z-20 flex space-x-2 sm:space-x-4">
         <a
           href="https://github.com/andrlpz/NASA-Space-Apps-Challenge-Meteor-Madness"
@@ -59,7 +56,6 @@ const WelcomeOverlay = ({ onStart, isVisible }) => {
           </svg>
         </a>
         
-        {/* NASA Logo - Next to GitHub */}
         <a
           href="https://www.spaceappschallenge.org/2025/challenges/meteor-madness/"
           target="_blank"
@@ -75,7 +71,6 @@ const WelcomeOverlay = ({ onStart, isVisible }) => {
         </a>
       </div>
 
-      {/* Content */}
       <div className="relative z-10 text-center text-white px-4 sm:px-8">
         <h1 
           className="welcome-title mb-6 sm:mb-8"

@@ -4,7 +4,6 @@ import { Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import cookies from 'js-cookie';
 
-// Add custom styles for animations and scrollbars
 const tooltipStyles = `
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-100%) scale(0.95); }
@@ -76,7 +75,6 @@ const tooltipStyles = `
   }
 `;
 
-// Inject styles if not already present
 if (typeof document !== 'undefined' && !document.getElementById('tooltip-styles')) {
   const styleSheet = document.createElement('style');
   styleSheet.id = 'tooltip-styles';
@@ -84,7 +82,6 @@ if (typeof document !== 'undefined' && !document.getElementById('tooltip-styles'
   document.head.appendChild(styleSheet);
 }
 
-// Definitions for all terms that appear in the ImpactSidebar
 const definitions = {
   en: {
     "name": "The designation given to the asteroid by the International Astronomical Union (IAU). Usually includes a year of discovery and a unique identifier.",
@@ -211,33 +208,27 @@ const definitions = {
   }
 };
 
-// Tooltip component that shows definition - Fixed positioning relative to viewport
 const DefinitionTooltip = ({ term, language, buttonRef }) => {
   const definition = definitions[language]?.[term] || definitions.en[term] || "Definition not available.";
   
-  // Calculate fixed position based on button's viewport position
   const [position, setPosition] = useState({ top: 0, left: 0 });
   
   useEffect(() => {
     if (buttonRef?.current) {
       const updatePosition = () => {
         const rect = buttonRef.current.getBoundingClientRect();
-        const tooltipWidth = 320; // w-80 = 320px
-        const tooltipHeight = 120; // approximate height
+        const tooltipWidth = 320; 
+        const tooltipHeight = 120; 
         
-        // Position tooltip above the button, centered horizontally
         let left = rect.left + rect.width / 2 - tooltipWidth / 2;
-        let top = rect.top - tooltipHeight - 10; // 10px gap
+        let top = rect.top - tooltipHeight - 10; 
         
-        // Keep tooltip within viewport bounds
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
         
-        // Adjust horizontal position if needed
         if (left < 10) left = 10;
         if (left + tooltipWidth > viewportWidth - 10) left = viewportWidth - tooltipWidth - 10;
         
-        // If tooltip would go above viewport, position it below the button
         if (top < 10) {
           top = rect.bottom + 10;
         }
@@ -275,7 +266,6 @@ const DefinitionTooltip = ({ term, language, buttonRef }) => {
         {definition}
       </p>
       
-      {/* Arrow pointing to the button */}
       <div 
         className="absolute w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-cyan-400/50"
         style={{ 
@@ -289,16 +279,13 @@ const DefinitionTooltip = ({ term, language, buttonRef }) => {
   );
 };
 
-// Info button component
 const InfoButton = ({ term, className = "" }) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const buttonRef = useRef(null);
   const { i18n } = useTranslation();
   
-  // Get current language from cookies and i18n with fallback
   const currentLanguageCode = cookies.get('i18next') || i18n.language || 'en';
   
-  // Normalize language code to match our definitions structure
   let currentLanguage = 'en'; // default
   if (currentLanguageCode.startsWith('es') || currentLanguageCode === 'es') {
     currentLanguage = 'es';
@@ -306,7 +293,6 @@ const InfoButton = ({ term, className = "" }) => {
     currentLanguage = 'fr';
   }
   
-  // Check if definition exists for this term
   const hasDefinition = definitions[currentLanguage]?.[term] || definitions.en[term];
   
   if (!hasDefinition) {
@@ -328,7 +314,6 @@ const InfoButton = ({ term, className = "" }) => {
     setShowTooltip(!showTooltip);
   };
 
-  // Close tooltip when clicking outside or pressing Escape
   useEffect(() => {
     const handleOutsideClick = (e) => {
       if (buttonRef.current && !buttonRef.current.contains(e.target)) {
@@ -379,12 +364,10 @@ const InfoButton = ({ term, className = "" }) => {
   );
 };
 
-// Hook to add info buttons to elements
 export const useInfoButton = () => {
   return { InfoButton };
 };
 
-// HOC to wrap components with info functionality
 export const withInfoButton = (WrappedComponent) => {
   return (props) => {
     return <WrappedComponent {...props} InfoButton={InfoButton} />;

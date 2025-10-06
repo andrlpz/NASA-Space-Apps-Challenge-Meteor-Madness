@@ -70,7 +70,7 @@ function Earth({ onHover, onPick }){
 function CameraController() {
   const dispatch = useDispatch()
   const lastDistance = useRef(null)
-  const changeThreshold = 0.05 // Minimum change to update zoom level (more sensitive)
+  const changeThreshold = 0.05 
 
   useFrame(({ camera }) => {
     const currentDistance = camera.position.length()
@@ -80,13 +80,12 @@ function CameraController() {
       if (distanceChange > changeThreshold) {
         const minDistance = 2.0
         const maxDistance = 8.0
-        const minZoom = 2    // match zoomThresholdFor3D
-        const maxZoom = 3.5  // match zoomThresholdFor2D
+        const minZoom = 2   
+        const maxZoom = 3.5 
 
         const clampedDistance = Math.max(minDistance, Math.min(maxDistance, currentDistance))
         const zoomLevel = minZoom + ((maxDistance - clampedDistance) / (maxDistance - minDistance)) * (maxZoom - minZoom)
 
-      //console.log('Distance:', currentDistance, 'Clamped:', clampedDistance, 'ZoomLevel:', zoomLevel)
       dispatch(updateZoomLevel(Math.round(zoomLevel * 20) / 20))
       lastDistance.current = currentDistance
     }
@@ -103,7 +102,6 @@ export default function Globe3D({ impact, onMapClick }){
   const [picked,setPicked]=useState(null)
   const [isLightMode, setIsLightMode] = useState(false)
   
-  // Track theme changes more reliably
   useEffect(() => {
     const checkTheme = () => {
       const lightMode = document.documentElement.classList.contains('light')
@@ -111,10 +109,8 @@ export default function Globe3D({ impact, onMapClick }){
       setIsLightMode(lightMode)
     }
     
-    // Initial check
     checkTheme()
     
-    // Multiple listeners for theme changes
     const observer = new MutationObserver(() => {
       setTimeout(checkTheme, 10)
     })
@@ -124,11 +120,9 @@ export default function Globe3D({ impact, onMapClick }){
       attributeFilter: ['class'] 
     })
     
-    // Also listen for custom events
     const handleCustomTheme = () => setTimeout(checkTheme, 10)
     window.addEventListener('themeChanged', handleCustomTheme)
     
-    // Periodic check as fallback
     const interval = setInterval(checkTheme, 1000)
     
     return () => {
@@ -138,7 +132,6 @@ export default function Globe3D({ impact, onMapClick }){
     }
   }, [])
   
-  // Calculate background color
   const backgroundColor = isLightMode ? '#f1f5f9' : '#0B1220'
   
   useEffect(()=>{ if(!impact) setPicked(null) },[impact])

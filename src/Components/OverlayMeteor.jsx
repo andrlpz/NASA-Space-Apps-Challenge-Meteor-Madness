@@ -15,7 +15,6 @@ function useViewportSize() {
   return s
 }
 
-// real orthographic camera that maps world units to pixels
 function ResponsiveOrthoCamera() {
   const { size } = useThree()
   const cam = useRef()
@@ -84,28 +83,24 @@ function OverlayMeteorInner({ targetPx, duration, from, sizeScale, onComplete, c
 
   
   const shrinkStart = useRef(null)
-  const shrinkDuration = 1000 // 1 second shrink duration
+  const shrinkDuration = 1000 
 
   useFrame((_,delta)=>{
     if(done) {
-      // Handle shrinking animation over 1 second
+      
       console.log("Shrinking animation started")
       if(shrinkStart.current && group.current) {
         const shrinkElapsed = performance.now() - shrinkStart.current
         const shrinkProgress = Math.min(shrinkElapsed / shrinkDuration, 1)
         const shrinkT = easeOutCubic(shrinkProgress)
         
-        // Get the current scale when done was set (sizeScale * 10)
         const startShrinkScale = sizeScale * 10
-        // Shrink from current scale down to scale of 1
         const currentScale = startShrinkScale - (startShrinkScale - 1) * shrinkT
         group.current.scale.setScalar(currentScale)
         
-        // Continue rotation during shrink
         group.current.rotation.x += delta*1.6
         group.current.rotation.y += delta*1.2
         
-        // Call onComplete only after shrinking is finished
         if (shrinkProgress >= 1 && onComplete) {
           onComplete()
         }
@@ -132,7 +127,6 @@ function OverlayMeteorInner({ targetPx, duration, from, sizeScale, onComplete, c
       if (!done) {
         setDone(true)
         shrinkStart.current = performance.now()
-        // onComplete will be called after shrinking animation finishes
       }
     }
   })

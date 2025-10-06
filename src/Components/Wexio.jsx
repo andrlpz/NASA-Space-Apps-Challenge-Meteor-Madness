@@ -111,7 +111,6 @@ const Wexio = () => {
     dispatch(resetImpact());
   }
 
-  // Handle sharing current state
   const handleShare = async () => {
     const success = await copyShareableURL({
       impactEvent,
@@ -127,29 +126,25 @@ const Wexio = () => {
     }
   };
 
-  // Mouse tracking for meteor effects
   useEffect(() => {
     const onMove = (e) => setMouse({ x: e.clientX, y: e.clientY })
     window.addEventListener('mousemove', onMove, { passive: true })
     return () => window.removeEventListener('mousemove', onMove)
   }, []);
 
-  // Calculate impact function (moved here for reusability)
   const calculateImpact = (diameterMeters, velocityKms) => {
     const radius = diameterMeters / 2;
-    const volume = (4 / 3) * Math.PI * Math.pow(radius, 3); // m³
-    const density = 3000; // kg/m³ typical rock
-    const mass = density * volume; // kg
-    const kineticEnergyJoules = 0.5 * mass * Math.pow(velocityKms * 1000, 2); // J
-    const energyMegatons = kineticEnergyJoules / 4.184e15; // MT TNT
+    const volume = (4 / 3) * Math.PI * Math.pow(radius, 3); 
+    const density = 3000; 
+    const mass = density * volume; 
+    const kineticEnergyJoules = 0.5 * mass * Math.pow(velocityKms * 1000, 2); 
+    const energyMegatons = kineticEnergyJoules / 4.184e15; 
 
-    // Realistic seismic magnitude
     const seismicMagnitude = Math.min((2 / 3) * Math.log10(kineticEnergyJoules) - 3.2, 10).toFixed(1);
 
-    // Crater and devastation radius approximations
-    const craterDiameter = Math.min(diameterMeters * 20, 20000); // max 20 km
-    const devastationRadius = Math.min(energyMegatons * 10, 500); // max 500 km
-    const evacuationRadius = Math.min(energyMegatons * 5, 200); // max 200 km
+    const craterDiameter = Math.min(diameterMeters * 20, 20000); 
+    const devastationRadius = Math.min(energyMegatons * 10, 500); 
+    const evacuationRadius = Math.min(energyMegatons * 5, 200); 
 
     return {
       energyMegatons: energyMegatons.toFixed(2),
@@ -160,27 +155,22 @@ const Wexio = () => {
     };
   };
 
-  // Calculate visual radius for map display based on asteroid size and impact effects
   const calculateVisualRadius = (diameterMeters, velocityKms) => {
     const { devastationRadius } = calculateImpact(diameterMeters, velocityKms);
-    const devastationRadiusMeters = parseFloat(devastationRadius) * 1000; // Convert km to meters
+    const devastationRadiusMeters = parseFloat(devastationRadius) * 1000; 
     
-    // Use devastation radius as the visual representation, with reasonable min/max bounds
-    const minRadius = 5000; // 5km minimum for visibility
-    const maxRadius = 500000; // 500km maximum for practical display
+    const minRadius = 5000; 
+    const maxRadius = 500000;
     
     return Math.max(minRadius, Math.min(maxRadius, devastationRadiusMeters));
   };
 
-  // Function to restore impact from URL parameters
   const restoreImpactFromURL = useCallback((impactPosition, impactType, asteroidName, asteroidData, customDiameter, customVelocity) => {
     if (impactType === 'asteroid' && asteroidName) {
-      // Try to find the asteroid in the loaded list
       let foundAsteroid = asteroids.find(asteroid => 
         asteroid.name.replace(/[()]/g, '') === asteroidName
       );
       
-      // If not found in list, create from stored data
       if (!foundAsteroid && asteroidData) {
         foundAsteroid = {
           name: asteroidData.name,
@@ -207,9 +197,8 @@ const Wexio = () => {
       
       if (foundAsteroid) {
         dispatch(setSelectedAsteroid(foundAsteroid));
-        dispatch(hideAsteroidList()); // Ensure asteroid list stays hidden
+        dispatch(hideAsteroidList()); 
         
-        // Create asteroid impact event only if we have a position
         if (impactPosition) {
           const diameterMeters = foundAsteroid.estimated_diameter.meters.estimated_diameter_max;
           const velocityKms = parseFloat(foundAsteroid.close_approach_data[0].relative_velocity.kilometers_per_second);
@@ -244,13 +233,11 @@ const Wexio = () => {
         }
       }
     } else if (impactType === 'custom' && customDiameter && customVelocity) {
-      // Set custom values
       dispatch(setDiameter(customDiameter));
       dispatch(setVelocity(customVelocity));
       dispatch(showSliders());
-      dispatch(hideAsteroidList()); // Ensure asteroid list stays hidden
+      dispatch(hideAsteroidList()); 
       
-      // Create custom impact event only if we have a position
       if (impactPosition) {
         const { energyMegatons, seismicMagnitude, craterDiameter, devastationRadius, evacuationRadius } =
           calculateImpact(customDiameter, customVelocity);
@@ -325,7 +312,6 @@ const Wexio = () => {
     document.title = t('app_title')
   }, [currentLanguage, t])
 
-  // Auto-hide notification after 3 seconds
   useEffect(() => {
     if (showModeChangeNotification) {
       const timer = setTimeout(() => {
@@ -335,7 +321,6 @@ const Wexio = () => {
     }
   }, [showModeChangeNotification, dispatch])
 
-  // Load state from URL on mount
   useEffect(() => {
     const params = getCurrentURLParams();
     const urlState = decodeURLToState(params);
@@ -347,13 +332,11 @@ const Wexio = () => {
     }
   }, [dispatch]);
 
-  // Restore impact from URL after asteroids are loaded
   useEffect(() => {
     if (pendingURLState && asteroids.length > 0 && !isLoading) {
       console.log('Restoring impact from URL:', pendingURLState);
       const { impactPosition, impactType, asteroidName, asteroidData, customDiameter, customVelocity } = pendingURLState;
       
-      // Restore configuration even without position, or with position
       if (impactPosition || impactType) {
         restoreImpactFromURL(impactPosition, impactType, asteroidName, asteroidData, customDiameter, customVelocity);
       }
@@ -362,7 +345,6 @@ const Wexio = () => {
     }
   }, [pendingURLState, asteroids, isLoading, restoreImpactFromURL]);
 
-  // Update URL when state changes
   useEffect(() => {
     if (!isLoading && !pendingURLState) {
       updateURL({
@@ -378,13 +360,11 @@ const Wexio = () => {
   const handleMapClick = async (latlng, clickEvent) => {
     console.log('Map clicked at:', latlng, 'with event:', clickEvent);
     
-    // Prevent impact simulation if no asteroid is selected and sliders are not active
     if (!showSlidersState && !selectedAsteroid) {
       console.log('Impact simulation blocked: No asteroid selected and sliders are not active');
       return;
     }
     
-    // Calculate impact function (moved here for reusability)
     const calculateImpact = (diameterMeters, velocityKms) => {
       const radius = diameterMeters / 2;
       const volume = (4 / 3) * Math.PI * Math.pow(radius, 3);
@@ -405,34 +385,29 @@ const Wexio = () => {
       };
     };
 
-    // Get click coordinates for meteor animation
     const clickX = clickEvent?.clientX || clickEvent?.nativeEvent?.clientX || window.innerWidth / 2;
     const clickY = clickEvent?.clientY || clickEvent?.nativeEvent?.clientY || window.innerHeight / 2;
     
     console.log('Click coordinates for meteor animation:', { clickX, clickY, clickEvent });
 
-    // Fire meteor animation immediately for better UX
     if (meteor && typeof meteor.fireAt === 'function') {
       const meteorDirection = showSlidersState ? 'top' : selectedAsteroid ? 'right' : 'left';
       const meteorScale = showSlidersState ? 0.9 : selectedAsteroid ? 1.0 : 0.9;
       meteor.fireAt(clickX, clickY, { from: meteorDirection, scale: meteorScale, duration: 1200 });
     }
 
-    // Detect surface type using surface detection API (async, non-blocking)
     let surfaceInfo;
     try {
       surfaceInfo = await detectSurfaceType(latlng.lat, latlng.lng);
       
-      // Extract and save country information if land is detected
       if (surfaceInfo.type === 'land' && surfaceInfo.countryInfo) {
         dispatch(setCountry(surfaceInfo.countryInfo));
         console.log('Country detected and saved:', surfaceInfo.countryInfo);
       } else {
-        dispatch(setCountry(null)); // Reset country if not land or no country info
+        dispatch(setCountry(null)); 
       }
     } catch (error) {
       console.error('Surface detection failed:', error);
-      // Fallback surface info
       surfaceInfo = {
         type: 'unknown',
         description: 'Surface detection unavailable',
@@ -440,14 +415,13 @@ const Wexio = () => {
         confidence: 'low',
         source: 'fallback'
       };
-      dispatch(setCountry(null)); // Reset country on error
+      dispatch(setCountry(null));
     }
     
     if (showSlidersState) {
       const { energyMegatons, seismicMagnitude, craterDiameter, devastationRadius, evacuationRadius } =
         calculateImpact(diameter, velocity);
 
-      // Calculate surface-specific effects
       const surfaceEffects = calculateSurfaceSpecificEffects(surfaceInfo, diameter, velocity, parseFloat(energyMegatons));
       const visualRadius = calculateVisualRadius(diameter, velocity);
 
@@ -502,7 +476,6 @@ const Wexio = () => {
         },
       }));
       
-      // Hide sliders after simulation
       dispatch(hideSliders());
       return;
     
@@ -513,7 +486,6 @@ const Wexio = () => {
       const velocityKms = parseFloat(selectedAsteroid.close_approach_data[0].relative_velocity.kilometers_per_second);
       const { energyMegatons, seismicMagnitude } = calculateImpact(diameterMeters, velocityKms);
 
-      // Calculate surface-specific effects
       const surfaceEffects = calculateSurfaceSpecificEffects(surfaceInfo, diameterMeters, velocityKms, parseFloat(energyMegatons));
       const visualRadius = calculateVisualRadius(diameterMeters, velocityKms);
 
@@ -568,12 +540,10 @@ const Wexio = () => {
         },
       }));
       
-      // Hide asteroid list after simulation
       dispatch(hideAsteroidList());
       return;
     }
 
-    // Default case - no sliders or asteroid selected
     dispatch(setImpactEvent({
       position: latlng,
       radius: 30000,
@@ -609,7 +579,6 @@ const Wexio = () => {
       },
     }));
 
-    // Update URL with current state
     updateURL({
       impactType: showSlidersState ? 'custom' : selectedAsteroid ? 'asteroid' : 'basic',
       position: latlng,
@@ -623,15 +592,12 @@ const Wexio = () => {
 
   return (
     <div className="relative flex flex-col sm:flex-row h-screen w-full bg-gray-900 text-white font-sans overflow-hidden">
-      {/* Welcome Overlay */}
       <WelcomeOverlay 
         isVisible={showWelcome}
         onStart={handleWelcomeStart}
       />
       
-      {/* Main Content - Darkened when welcome is showing */}
       <div className={`flex flex-col sm:flex-row h-full w-full transition-all duration-300 ${showWelcome ? 'brightness-50' : 'brightness-100'}`}>
-        {/* Configuration Panel - Fixed positioning outside main layout */}
         <Configuration 
           onShare={handleShare}
           shareSuccess={shareSuccess}
@@ -643,7 +609,6 @@ const Wexio = () => {
           : 'w-full h-[35%] sm:w-[35%] sm:h-full sm:min-w-[280px] sm:max-w-[400px]'
       } 
       p-3 sm:p-4 lg:p-6 bg-gray-800 shadow-2xl flex flex-col transition-all duration-300 ease-in-out overflow-hidden`}>
-        {/* Sidebar Header: Logo + Collapse Button in one row - Fixed at top */}
         <div className="flex items-center justify-between mb-4 lg:mb-6 relative flex-shrink-0">
           <button
             onClick={() => {
@@ -658,7 +623,6 @@ const Wexio = () => {
               alt="Meteor Madness Logo" 
               className={`object-contain ${isSidebarCollapsed ? 'w-6 h-6 lg:w-8 lg:h-8 mx-auto' : 'w-6 h-6 lg:w-8 lg:h-8 mr-2 lg:mr-3 group-hover:opacity-80 transition-opacity'}`} 
             />
-            {/* Only show title/project name if sidebar is open */}
             {!isSidebarCollapsed && (
               <div className="text-left">
                 <h1 className="text-lg lg:text-2xl font-bold text-white group-hover:text-gray-200 transition-colors cursor-pointer">{t('page_title')}</h1>
@@ -679,13 +643,11 @@ const Wexio = () => {
           </button>
         </div>
 
-        {/* Sidebar Content - Hidden when collapsed - Scrollable area */}
         <div className={`${isSidebarCollapsed ? 'hidden' : 'block'} transition-all duration-300 ease-in-out flex flex-col flex-grow overflow-y-auto scrollable-content scrollbar-thin scrollbar-track-gray-700 scrollbar-thumb-gray-500 hover:scrollbar-thumb-gray-400`}>
           <div className="flex items-center mb-6">
             <button
               onClick={() => {
                 const baseUrl = window.location.origin + window.location.pathname;
-                // Reload the page without parameters
                 window.location.href = baseUrl;
               }}
               className="flex items-center hover:scale-105 transition-transform duration-200 focus:outline-none group"
@@ -736,7 +698,6 @@ const Wexio = () => {
           )}
         </div>
 
-        {/* Collapsed State - Show only essential icons */}
         {isSidebarCollapsed && (
           <div className="flex flex-col items-center space-y-4 mt-4">
             <div className="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center">
@@ -762,7 +723,6 @@ const Wexio = () => {
         }
       </main>
       
-      {/* Auto-switch notification */}
       {showModeChangeNotification && (
         <div className="fixed top-16 lg:top-20 left-1/2 transform -translate-x-1/2 z-[300] bg-blue-600 text-white px-3 lg:px-4 py-2 rounded-lg shadow-lg max-w-xs lg:max-w-none text-sm lg:text-base">
           <div className="flex items-center gap-2">

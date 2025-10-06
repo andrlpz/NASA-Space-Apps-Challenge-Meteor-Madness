@@ -21,12 +21,10 @@ export default function ImpactSidebar({ impact, resetImpact }) {
   const { details, position } = impact;
   const { source, consequences, mitigation } = details;
   
-  // Check if it's a custom simulation
   const isCustomSimulation = source.name === 'Custom Asteroid Simulation';
 
   return (
     <div className="flex-grow overflow-y-auto pr-1 sm:pr-2 space-y-3 sm:space-y-4 lg:space-y-6 scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600 hover:scrollbar-thumb-gray-500">
-      {/* Header Card */}
       <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 border border-gray-600 shadow-2xl">
         <div className="flex items-center justify-between mb-2 sm:mb-3 lg:mb-4">
           <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white flex items-center">
@@ -40,7 +38,6 @@ export default function ImpactSidebar({ impact, resetImpact }) {
         <p className="text-gray-300 text-xs sm:text-sm">{t('detailedSimulationResults')}</p>
       </div>
 
-      {/* Asteroid Information */}
       <InfoSection 
         title={t('selected-asteroid')} 
         icon={<Telescope className="w-6 h-6" />} 
@@ -122,7 +119,6 @@ export default function ImpactSidebar({ impact, resetImpact }) {
         )}
       </InfoSection>
 
-      {/* Surface Analysis Section */}
       {details.surface && (
         <InfoSection 
           title={t('surface-analysis')} 
@@ -173,7 +169,6 @@ export default function ImpactSidebar({ impact, resetImpact }) {
             infoTerm="data-source"
           />
           
-          {/* Country information if available */}
           {details.surface.countryInfo && details.surface.countryInfo.country && (
             <>
               <StatItem 
@@ -233,7 +228,6 @@ export default function ImpactSidebar({ impact, resetImpact }) {
         </InfoSection>
       )}
 
-      {/* Impact Consequences */}
       <InfoSection 
         title={t('consequences')} 
         icon={<Zap className="w-6 h-6" />}
@@ -272,7 +266,6 @@ export default function ImpactSidebar({ impact, resetImpact }) {
           infoTerm="air-blast" 
         />
         
-        {/* Primary Effect */}
         {consequences.primaryEffect && (
           <StatItem 
             label={t('primary-effect')} 
@@ -286,7 +279,6 @@ export default function ImpactSidebar({ impact, resetImpact }) {
           />
         )}
 
-        {/* Water-specific effects */}
         {consequences.tsunamiHeight && (
           <>
             <StatItem 
@@ -313,7 +305,6 @@ export default function ImpactSidebar({ impact, resetImpact }) {
           </>
         )}
 
-        {/* Land-specific effects */}
         {consequences.fireballRadius && (
           <>
             <StatItem 
@@ -340,7 +331,6 @@ export default function ImpactSidebar({ impact, resetImpact }) {
           </>
         )}
 
-        {/* Crater information */}
         {consequences.craterInfo && (
           <StatItem 
             label={t('crater-info')} 
@@ -361,7 +351,6 @@ export default function ImpactSidebar({ impact, resetImpact }) {
           />
         )}
 
-        {/* Special effects */}
         {consequences.specialEffects && consequences.specialEffects.length > 0 && (
           <div className="mt-4 p-3 bg-gray-700/50 rounded-lg border border-gray-600">
             <p className="text-gray-300 text-sm font-semibold mb-2 flex items-center">
@@ -381,7 +370,6 @@ export default function ImpactSidebar({ impact, resetImpact }) {
         )}
       </InfoSection>
 
-      {/* Mitigation Report */}
       <InfoSection 
         title={t('mitigation-report')} 
         icon={<ShieldCheck className="w-6 h-6" />}
@@ -409,7 +397,6 @@ export default function ImpactSidebar({ impact, resetImpact }) {
           infoTerm="recommended-action" 
         />
         
-        {/* Evacuation Radius */}
         {mitigation.evacuationRadius && mitigation.evacuationRadius !== 'N/A km' && (
           <StatItem 
             label={t('evacuation-radius')} 
@@ -421,7 +408,6 @@ export default function ImpactSidebar({ impact, resetImpact }) {
         )}
       </InfoSection>
 
-      {/* Reset Button */}
       <div className="flex justify-center pt-2 sm:pt-3 lg:pt-4">
         <button 
           onClick={resetImpact}

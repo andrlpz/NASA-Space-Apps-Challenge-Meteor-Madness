@@ -1,28 +1,19 @@
 ﻿/**
- * Surface Detection and Effects Calculation Library
- * Detects surface type (water/land) and calculates impact-specific effects
- */
-
-/**
- * Detects the surface type at given coordinates using OpenStreetMap Nominatim API
  * @param {number} lat - Latitude
  * @param {number} lng - Longitude
  * @returns {Object} Surface information object
  */
 export async function detectSurfaceType(lat, lng) {
-  // ✅ Validate coordinates
   if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
     throw new Error("Invalid coordinates provided");
   }
 
-  // 🔑 Replace this with your actual Geoapify key
   const GEOAPIFY_API_KEY = "3af853c388e54db88930158cdcdfbc25";
 
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout
+    const timeoutId = setTimeout(() => controller.abort(), 3000); 
 
-    // 🌍 Use Geoapify Reverse Geocoding API
     const response = await fetch(
       `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&apiKey=${GEOAPIFY_API_KEY}`,
       { signal: controller.signal }
@@ -38,20 +29,17 @@ export async function detectSurfaceType(lat, lng) {
       if (feature) {
         const props = feature.properties;
 
-        // Default assumptions
         let surfaceType = "water";
         let confidence = "medium";
         let description = "Open Water";
         let locationName =
           props.formatted || `${lat.toFixed(3)}°, ${lng.toFixed(3)}°`;
 
-        // 🌎 Check if we have address or place info — indicates land
         if (props.country) {
           surfaceType = "land";
           description = "Land Area";
           confidence = "high";
 
-          // Special check for water-related features
           const waterIndicators = [
             "bay",
             "sea",
@@ -75,7 +63,6 @@ export async function detectSurfaceType(lat, lng) {
           }
         }
 
-        // 🌍 Extract human-readable location
         const locationParts = [];
         if (props.city || props.town || props.village)
           locationParts.push(props.city || props.town || props.village);
@@ -92,15 +79,14 @@ export async function detectSurfaceType(lat, lng) {
           location: locationName,
           confidence,
           source: "Geoapify",
-          countryInfo: props.country_code || null, // Use 2-letter country code instead of name
-          countryName: props.country || null, // Keep country name for display purposes
+          countryInfo: props.country_code || null, 
+          countryName: props.country || null, 
           apiData: {
             fullResponse: data,
             coordinates: { lat, lng },
           },
         };
       } else {
-        // 🌊 No features returned — likely open ocean
         return {
           type: "water",
           description: "Open Ocean",
@@ -123,7 +109,6 @@ export async function detectSurfaceType(lat, lng) {
     console.warn("Geoapify API error:", error.message);
   }
 
-  // 🆘 Fallback
   return {
     type: "water",
     description: "Unknown Surface (API Error)",
@@ -149,18 +134,17 @@ export async function detectSurfaceType(lat, lng) {
 export function calculateSurfaceSpecificEffects(surfaceInfo, diameterMeters, velocityKms, energyMegatons) {
   const baseEffects = {
     primaryEffect: surfaceInfo.type === 'water' ? 'Tsunami Generation' : 'Ground Impact',
-    craterDiameter: diameterMeters * 15, // Approximate crater diameter
+    craterDiameter: diameterMeters * 15, 
     craterType: surfaceInfo.type === 'water' ? 'Underwater crater' : 'Surface crater',
-    devastationRadius: energyMegatons * 8, // km
-    evacuationRadius: energyMegatons * 5, // km
+    devastationRadius: energyMegatons * 8, 
+    evacuationRadius: energyMegatons * 5, 
     specialEffects: []
   };
 
   if (surfaceInfo.type === 'water') {
-    // Water impact effects
-    const tsunamiHeightMeters = Math.min(energyMegatons * 2, 100); // Max 100m tsunami
-    const tsunamiRangeKm = Math.min(energyMegatons * 50, 2000); // Max 2000km range
-    
+    const tsunamiHeightMeters = Math.min(energyMegatons * 2, 100); 
+    const tsunamiRangeKm = Math.min(energyMegatons * 50, 2000); 
+
     return {
       ...baseEffects,
       tsunamiHeight: `${tsunamiHeightMeters.toFixed(1)} meters`,
@@ -175,7 +159,6 @@ export function calculateSurfaceSpecificEffects(surfaceInfo, diameterMeters, vel
       ]
     };
   } else {
-    // Land impact effects
     const fireballRadiusKm = Math.sqrt(energyMegatons) * 2;
     const seismicRangeKm = energyMegatons * 20;
     
@@ -224,18 +207,15 @@ export async function testAPIEndpoint(lat = 40.7128, lng = -74.0060) {
 }
 
 /**
- * Test function to verify surface detection accuracy
  * @param {Array} testCases - Array of {lat, lng, expectedType, name} objects
  */
 export function testSurfaceDetection(testCases = null) {
   const defaultTestCases = [
-    // Water test cases
     { lat: 0, lng: -140, expectedType: 'water', name: 'Pacific Ocean' },
     { lat: 30, lng: -40, expectedType: 'water', name: 'Atlantic Ocean' },
     { lat: -20, lng: 70, expectedType: 'water', name: 'Indian Ocean' },
     { lat: 40, lng: 15, expectedType: 'water', name: 'Mediterranean Sea' },
     
-    // Land test cases  
     { lat: 40, lng: -100, expectedType: 'land', name: 'North America (Kansas)' },
     { lat: 52, lng: 13, expectedType: 'land', name: 'Europe (Berlin)' },
     { lat: -26, lng: 28, expectedType: 'land', name: 'Africa (Johannesburg)' },

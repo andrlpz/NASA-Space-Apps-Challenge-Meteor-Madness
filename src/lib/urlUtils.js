@@ -1,9 +1,5 @@
-/**
- * Utility functions for encoding/decoding application state in URL parameters
- */
 
 /**
- * Encodes application state into URL parameters
  * @param {Object} state - The application state to encode
  * @returns {URLSearchParams} - URL parameters object
  */
@@ -11,24 +7,19 @@ export function encodeStateToURL(state) {
   const params = new URLSearchParams();
 
   if (state.impactEvent) {
-    // Encode impact position
     params.set('lat', state.impactEvent.position.lat.toString());
     params.set('lng', state.impactEvent.position.lng.toString());
     
-    // Encode impact type and source data
     const source = state.impactEvent.details.source;
     
     if (source.name === 'Custom Asteroid Simulation') {
-      // Custom simulation - encode slider values
       params.set('type', 'custom');
       params.set('diameter', state.diameter.toString());
       params.set('velocity', state.velocity.toString());
     } else if (source.name !== 'Click simulation') {
-      // Real asteroid - encode asteroid identifier
       params.set('type', 'asteroid');
       params.set('asteroid', encodeURIComponent(source.name));
       
-      // Store additional asteroid data for fallback
       if (state.selectedAsteroid) {
         const asteroidData = {
           name: state.selectedAsteroid.name,
@@ -42,14 +33,12 @@ export function encodeStateToURL(state) {
     }
   }
 
-  // Encode map mode
   params.set('map3d', state.is3DMap.toString());
 
   return params;
 }
 
 /**
- * Decodes URL parameters back to application state
  * @param {URLSearchParams} params - URL parameters to decode
  * @returns {Object} - Decoded state object
  */
@@ -58,7 +47,6 @@ export function decodeURLToState(params) {
 
   console.log('Decoding URL params:', Array.from(params.entries()));
 
-  // Decode impact position
   const lat = params.get('lat');
   const lng = params.get('lng');
   
@@ -70,12 +58,10 @@ export function decodeURLToState(params) {
     console.log('Found impact position:', state.impactPosition);
   }
 
-  // Decode impact type and configuration
   const type = params.get('type');
   console.log('Impact type from URL:', type);
   
   if (type === 'custom') {
-    // Custom simulation
     const diameter = params.get('diameter');
     const velocity = params.get('velocity');
     
@@ -86,7 +72,6 @@ export function decodeURLToState(params) {
       console.log('Found custom parameters:', { diameter: state.customDiameter, velocity: state.customVelocity });
     }
   } else if (type === 'asteroid') {
-    // Real asteroid
     const asteroidName = params.get('asteroid');
     const asteroidDataEncoded = params.get('asteroidData');
     
@@ -95,7 +80,6 @@ export function decodeURLToState(params) {
       state.asteroidName = decodeURIComponent(asteroidName);
       console.log('Found asteroid name:', state.asteroidName);
       
-      // Try to decode full asteroid data if available
       if (asteroidDataEncoded) {
         try {
           state.asteroidData = JSON.parse(atob(asteroidDataEncoded));
@@ -107,7 +91,6 @@ export function decodeURLToState(params) {
     }
   }
 
-  // Decode map mode
   const map3d = params.get('map3d');
   if (map3d !== null) {
     state.is3DMap = map3d === 'true';
@@ -119,19 +102,16 @@ export function decodeURLToState(params) {
 }
 
 /**
- * Updates the browser URL without causing a page reload
  * @param {Object} state - The application state to encode in URL
  */
 export function updateURL(state) {
   const params = encodeStateToURL(state);
   const newURL = `${window.location.pathname}?${params.toString()}`;
   
-  // Use replaceState to update URL without adding to history stack
   window.history.replaceState(null, '', newURL);
 }
 
 /**
- * Gets the current URL parameters
  * @returns {URLSearchParams} - Current URL parameters
  */
 export function getCurrentURLParams() {
@@ -139,7 +119,6 @@ export function getCurrentURLParams() {
 }
 
 /**
- * Creates a shareable URL for the current state
  * @param {Object} state - The application state to encode
  * @returns {string} - Complete shareable URL
  */
@@ -149,7 +128,6 @@ export function createShareableURL(state) {
 }
 
 /**
- * Copies the current shareable URL to clipboard
  * @param {Object} state - The application state to encode
  * @returns {Promise<boolean>} - Success status
  */

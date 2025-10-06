@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 export default function AsteroidList({ asteroids, onSelect }) {
   const { t } = useTranslation();
   const [selectedAsteroid, setSelectedAsteroid] = useState(null);
-  const [filter, setFilter] = useState("none"); // 'size', 'velocity', 'hazardous'
+  const [filter, setFilter] = useState("none");
 
   const selectedStyle = "bg-gray-600";
   const normalStyle = "bg-gray-700";

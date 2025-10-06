@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Circle, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import './InteractiveMap.css'; // for button styling
+import './InteractiveMap.css'; 
 
 import cookies from 'js-cookie';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,6 @@ function MapEventsHandler({ onMapClick, onZoomAction }) {
   const map = useMapEvents({
     click(e) {
       console.log('Map click event:', e);
-      // Pass both latlng and the original event with screen coordinates
       onMapClick(e.latlng, e.originalEvent);
     },
     zoomend() {
@@ -26,11 +25,10 @@ function MapEventsHandler({ onMapClick, onZoomAction }) {
 }
 
 export default function InteractiveMap({ impact, onMapClick }) {
-  const [layer, setLayer] = useState(localStorage.getItem('mapLayer') || 'dark'); // get from localStorage
-  const { t } = useTranslation(); // ✅ moved inside component
+  const [layer, setLayer] = useState(localStorage.getItem('mapLayer') || 'dark'); 
+  const { t } = useTranslation(); 
   const dispatch = useDispatch();
 
-  // Listen for map layer changes from configuration panel
   useEffect(() => {
     const handleMapLayerChange = (event) => {
       setLayer(event.detail);
@@ -71,7 +69,6 @@ export default function InteractiveMap({ impact, onMapClick }) {
 
   return (
     <div style={{ height: '100%', width: '100%', position: 'relative' }}>
-      {/* Toggle Button */}
       <button className={`map-toggle-btn ${layer}`} onClick={toggleLayer}>
         {layer === 'dark' ? t('satellitemode') : t('darkmode')}
       </button>
