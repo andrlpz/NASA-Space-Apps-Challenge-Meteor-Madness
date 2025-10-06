@@ -1,6 +1,6 @@
-# 🌍 Meteor Madness - Asteroid Impact Simulator
+# 🌍 Asteroid Impact Explorer: Interactive Simulator
 
-![Meteor Madness](https://img.shields.io/badge/NASA%20Space%20Apps-Challenge%202024-blue)
+![Meteor Madness](https://www.spaceappschallenge.org/2025/challenges/meteor-madness/)
 ![React](https://img.shields.io/badge/React-19.1.1-61dafb)
 ![Vite](https://img.shields.io/badge/Vite-5.2-646cff)
 ![License](https://img.shields.io/badge/License-MIT-green)
@@ -163,7 +163,7 @@ npm run preview
 #### **Custom Asteroid Parameters**
 ```javascript
 // Access parameter sliders
-1. Toggle "Adjust Parameters" in the sidebar
+1. Toggle "Sliders" in the sidebar
 2. Modify diameter (meters) and velocity (km/s)
 3. Click on map to simulate with custom values
 ```
@@ -180,159 +180,71 @@ Switch between English, Spanish, and French using the language selector in the t
 ## 📁 Project Structure
 
 ```
-├── public/
-│   ├── assets/
-│   │   └── locales/           # Translation files
-│   │       ├── en/
-│   │       ├── es/
-│   │       └── fr/
-│   └── vite.svg
-├── src/
-│   ├── Components/            # React components
-│   │   ├── AsteroidList.jsx   # NEO browser and selector
-│   │   ├── Asteroids.jsx     # Asteroid data management
-│   │   ├── Globe3D.jsx       # 3D Earth visualization
-│   │   ├── GlobeComponent.jsx # Globe wrapper component
-│   │   ├── ImpactSidebar.jsx  # Impact results display
-│   │   ├── InteractiveMap.jsx # 2D Leaflet map
-│   │   ├── MeteorProvider.jsx # Meteor animation context
-│   │   ├── OverlayMeteor.jsx  # Meteor overlay effects
-│   │   ├── RangeSlider.jsx    # Parameter adjustment sliders
-│   │   ├── Sliders.jsx        # Slider container
-│   │   ├── WelcomeOverlay.jsx # Welcome screen component
-│   │   ├── Wexio.jsx          # Main application component
-│   │   └── configuration.jsx  # App configuration
-│   ├── assets/                # Static assets
-│   │   ├── earth/            # Earth textures for 3D globe
-│   │   ├── asteroid.glb      # 3D asteroid model
-│   │   ├── BackgroundStart.jpg
-│   │   ├── FutureZ.ttf       # Custom font
-│   │   └── nasalogo.png
-│   ├── lib/                   # Utility libraries
-│   │   ├── surfaceDetection.js # Land/water detection logic
-│   │   ├── urlUtils.js        # URL parameter management
-│   │   └── utils.js           # General utilities
-│   ├── store/                 # Redux state management
-│   │   ├── impactSlice.js     # Impact simulation state
-│   │   └── store.js           # Redux store configuration
-│   ├── App.jsx                # Root application component
-│   ├── index.css              # Global styles
-│   └── main.jsx               # Application entry point
+├── .gitignore                 # Git ignore patterns
 ├── eslint.config.js           # ESLint configuration
 ├── index.html                 # HTML template
 ├── package.json               # Dependencies and scripts
+├── package-lock.json          # Dependency lock file
+├── README.md                  # Project documentation
 ├── requirements.txt           # Python dependencies (unused)
 ├── vite.config.js             # Vite configuration
-└── README.md                  # Project documentation
-```
-
-## 🔌 API Integration
-
-### NASA NEO API
-The application integrates with NASA's Near-Earth Object Web Service through a custom API endpoint:
-
-```javascript
-// API Configuration
-const API_URL = 'https://api.pafodev.com/nasaapi/neo2';
-const API_KEY = process.env.VITE_NASA_API_KEY;
-
-// Example API Response
-{
-  "near_earth_objects": {
-    "2024-10-05": [
-      {
-        "id": "2000433",
-        "name": "433 Eros",
-        "nasa_jpl_url": "https://ssd.jpl.nasa.gov/...",
-        "estimated_diameter": {
-          "meters": {
-            "estimated_diameter_min": 16730,
-            "estimated_diameter_max": 37400
-          }
-        },
-        "close_approach_data": [...],
-        "is_potentially_hazardous_asteroid": false
-      }
-    ]
-  }
-}
-```
-
-### Geoapify Reverse Geocoding
-For surface detection and country identification:
-
-```javascript
-// Surface Detection API
-const response = await fetch(
-  `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&format=json&apiKey=${API_KEY}`
-);
-
-// Returns country code and surface type
-{
-  "results": [{
-    "country_code": "US",
-    "country": "United States",
-    "surface_type": "land"
-  }]
-}
-```
-
-## ⚙️ Configuration
-
-### Environment Variables
-
-Create a `.env` file in the root directory:
-
-```bash
-# NASA API Key (required)
-VITE_NASA_API_KEY=your_nasa_api_key_here
-
-# Geoapify API Key (required for surface detection)
-VITE_GEOAPIFY_API_KEY=your_geoapify_api_key_here
-
-# Optional: Custom API endpoints
-VITE_NEO_API_URL=https://api.pafodev.com/nasaapi/neo2
-```
-
-### Vite Configuration
-
-Key configurations in `vite.config.js`:
-
-```javascript
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
-
-export default defineConfig({
-  plugins: [react()],
-  build: {
-    rollupOptions: {
-      output: {
-        assetFileNames: 'assets/[name].[hash][extname]'
-      }
-    }
-  },
-  assetsInclude: ['**/*.glb'] // Include 3D models
-})
-```
-
-### Redux Store Structure
-
-```javascript
-// Global Application State
-{
-  impact: {
-    country: null,              // 2-letter country code
-    impactEvent: null,          // Current simulation data
-    showSliders: false,         // Parameter adjustment UI
-    showAsteroidList: true,     // Asteroid browser visibility
-    diameter: 550,              // Asteroid diameter (m)
-    velocity: 42,               // Impact velocity (km/s)
-    selectedAsteroid: null,     // Currently selected NEO
-    is3DMap: true,              // 3D vs 2D map mode
-    currentZoomLevel: 2,        // Map zoom level
-    // ... additional state properties
-  }
-}
+├── public/
+│   ├── logo.png              # Public logo asset
+│   ├── vite.svg              # Vite default icon
+│   └── assets/
+│       └── locales/          # Translation files
+│           ├── en/
+│           │   └── translation.json
+│           ├── es/
+│           │   └── translation.json
+│           └── fr/
+│               └── translation.json
+├── src/
+│   ├── App.jsx               # Root application component
+│   ├── index.css             # Global styles
+│   ├── main.jsx              # Application entry point
+│   ├── Components/           # React components
+│   │   ├── AsteroidList.jsx  # NEO browser and selector
+│   │   ├── Asteroids.jsx    # Asteroid data management
+│   │   ├── Carita.jsx       # Data Prediction component
+│   │   ├── Globe3D.jsx      # 3D Earth visualization
+│   │   ├── GlobeComponent.jsx # Globe wrapper component
+│   │   ├── ImpactSidebar.jsx # Impact results display
+│   │   ├── InteractiveMap.jsx # 2D Leaflet map
+│   │   ├── InteractiveMap.css # Map-specific styles
+│   │   ├── MeteorProvider.jsx # Meteor animation context
+│   │   ├── OverlayMeteor.jsx # Meteor overlay effects
+│   │   ├── RangeSlider.jsx   # Parameter adjustment sliders
+│   │   ├── Sliders.jsx       # Slider container
+│   │   ├── WelcomeOverlay.jsx # Welcome screen component
+│   │   ├── Wexio.jsx         # Main application component
+│   │   ├── configuration.jsx # App configuration
+│   │   └── info.jsx          # Information modal component
+│   ├── assets/               # Static assets
+│   │   ├── asteroid.glb      # 3D asteroid model
+│   │   ├── BackgroundStart.jpg # Welcome background image
+│   │   ├── countries.json    # Country data
+│   │   ├── FutureZ.ttf       # Custom font
+│   │   ├── logo.png          # Application logo
+│   │   ├── nasalogo.png      # NASA logo
+│   │   ├── react.svg         # React icon
+│   │   ├── data/
+│   │   │   └── countries.geojson # Geographic country data
+│   │   └── earth/            # Earth textures for 3D globe
+│   │       ├── earth_clouds.jpg
+│   │       ├── earth_day.jpg
+│   │       ├── earth_night.jpg
+│   │       ├── earth_normal.png
+│   │       ├── earth_normal.tif
+│   │       ├── earth_specular.png
+│   │       └── earth_specular.tif
+│   ├── lib/                  # Utility libraries
+│   │   ├── surfaceDetection.js # Land/water detection logic
+│   │   ├── urlUtils.js       # URL parameter management
+│   │   └── utils.js          # General utilities
+│   └── store/                # Redux state management
+│       ├── impactSlice.js    # Impact simulation state
+│       └── store.js          # Redux store configuration
 ```
 
 ## 🤝 Contributing
@@ -385,21 +297,21 @@ Found a bug or have a feature request? Please create an issue with:
 
 ## 🌌 NASA Space Apps Challenge
 
-This project was developed for the **NASA Space Apps Challenge 2024**, an international hackathon focused on solving challenges related to space exploration and Earth science.
+This project was developed for the **NASA Space Apps Challenge 2025**, responding to the critical threat posed by newly identified near-Earth asteroid "Impactor-2025" and the need for public understanding and decision-making tools.
 
-### Challenge: Orrery Web App
+### Challenge: Asteroid Impact Visualization & Simulation
 
-**Objective**: Create an interactive web application that allows users to explore and visualize near-Earth objects (NEOs) and their potential impact scenarios.
+**Objective**: Develop an interactive visualization and simulation tool using real NASA and USGS data to help users model asteroid impact scenarios, predict consequences, and evaluate potential mitigation strategies for threats like "Impactor-2025."
 
 ### Our Solution
 
 Meteor Madness addresses the challenge by providing:
 
-1. **Educational Value**: Interactive learning about asteroid threats and planetary defense
-2. **Real Data Integration**: Live NASA NEO database connectivity
-3. **Scientific Accuracy**: Physics-based impact modeling and consequence prediction
-4. **Public Engagement**: Gamified experience that makes space science accessible
-5. **Awareness Building**: Promotes understanding of planetary defense importance
+1. **Integrated Data Visualization**: Seamlessly combines NASA asteroid datasets with USGS geological information
+2. **Real-time Impact Modeling**: Interactive simulation tool for asteroid impact scenario planning
+3. **Consequence Prediction Engine**: Physics-based modeling of impact effects using real geological data
+4. **Decision Support System**: Enables public and decision makers to evaluate mitigation strategies
+5. **Risk Communication Platform**: Makes complex asteroid threat data accessible for effective decision making
 
 ### Awards and Recognition
 
@@ -409,16 +321,28 @@ Meteor Madness addresses the challenge by providing:
 
 ### Development Team
 
-- **[Andrlpz](https://github.com/andrlpz)** - Lead Developer & Project Architect
-  - Full-stack development
-  - NASA API integration
-  - 3D visualization implementation
+- **[pafolol](https://github.com/pafolol)** - 🎯 Team Representative 
+  - Frontend magic and user experience architect
+  - Meteor trajectory calculator and impact predictor
+  - Diplomatic liaison between humans and machines
+  - Professional bug squasher and feature conjurer
+- **[Andrlpz](https://github.com/andrlpz)** - 🚀 Team Member 
+  - Full-stack sorcery and digital alchemy
+  - NASA API whisperer and data enchanter
+  - Master of 3D universes and virtual worlds
+  - Coffee-to-code conversion specialist
+- **[leosangue](https://github.com/leosangue)** - 🌍 Team Member 
+  - Backend infrastructure and server orchestrator
+  - Geospatial data scientist and country code detective
+  - Speed demon and efficiency enthusiast
+  - Keeper of the sacred Redux state management
 
-### Contributors
-
-We thank all contributors who have helped improve Meteor Madness:
-
-- **Community Contributors**: [View all contributors](https://github.com/andrlpz/NASA-Space-Apps-Challenge-Meteor-Madness/contributors)
+- **[Emidolo](https://github.com/Emidolo)** - 🎨 Team Member
+  - UI/UX designer and pixel perfectionist
+  - Three.js and WebGL sculptor
+  - Master of smooth transitions and eye candy
+  - Champion of responsive design across all devices
+  
 
 ### Special Thanks
 
@@ -426,32 +350,13 @@ We thank all contributors who have helped improve Meteor Madness:
 - **Open Source Community** - For the amazing tools and libraries that made this project possible
 - **NASA Space Apps Challenge Organizers** - For creating this incredible opportunity to contribute to space science
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-```
-MIT License
-
-Copyright (c) 2024 Andrlpz and Contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-```
 
 ## 🔗 Links & Resources
 
 ### Project Links
 - **GitHub Repository**: [NASA-Space-Apps-Challenge-Meteor-Madness](https://github.com/andrlpz/NASA-Space-Apps-Challenge-Meteor-Madness)
 - **Live Demo**: [Meteor Madness Simulator](#) *(Update with deployment URL)*
-- **NASA Space Apps**: [Challenge Details](https://www.spaceappschallenge.org/)
+- **NASA Space Apps**: [Challenge Details](https://www.spaceappschallenge.org/2025/challenges/meteor-madness/)
 
 ### NASA Resources
 - **NASA NEO Program**: [Near-Earth Object Program](https://cneos.jpl.nasa.gov/)
@@ -465,6 +370,6 @@ copies or substantial portions of the Software.
 
 ---
 
-**Made with 🚀 for the NASA Space Apps Challenge 2024**
+**Made with 🚀 for the NASA Space Apps Challenge 2025**
 
 *Protecting Earth through education, simulation, and awareness*
