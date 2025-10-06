@@ -11,7 +11,7 @@ Meteor Madness allows users to explore near-Earth objects (NEOs) and simulate po
 
 ## 🚀 Live Demo
 
-[🌍 **Try Meteor Madness Now**](meteormadness.pafodev.com) _(Replace with actual deployment URL)_
+[🌍 **Try Meteor Madness Now**](meteormadness.pafodev.com) 
 
 ## 📋 Table of Contents
 
