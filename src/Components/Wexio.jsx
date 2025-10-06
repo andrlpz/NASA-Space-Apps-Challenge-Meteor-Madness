@@ -233,11 +233,11 @@ const Wexio = () => {
               consequences: {
                 impactEnergy: `${energyMegatons} Megatons TNT`,
                 seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
-                airBlast: 'Significant overpressure event expected.',
+                airBlast: t('significant-overpressure'),
               },
               mitigation: {
                 threatLevel: foundAsteroid.is_potentially_hazardous_asteroid ? 'MONITORING REQUIRED' : 'LOW',
-                recommendedAction: 'Further observation to refine orbital parameters.',
+                recommendedAction: t('further-observation'),
               },
             },
           }));
@@ -261,25 +261,25 @@ const Wexio = () => {
           radius: visualRadius,
           details: {
             source: {
-              name: 'Custom Asteroid Simulation',
+              name: t('custom-asteroid-simulation'),
               diameter: `${customDiameter.toFixed(2)} meters`,
               velocity: `${customVelocity.toFixed(2)} km/s`,
               isPotentiallyHazardous: customDiameter > 140,
-              closeApproachDate: 'Custom Simulation',
-              missDistance: 'Impact Simulation',
+              closeApproachDate: t('custom-simulation'),
+              missDistance: t('impact-simulation'),
               absoluteMagnitude: 'N/A',
               jplUrl: 'N/A',
             },
             consequences: {
               impactEnergy: `${energyMegatons} Megatons TNT`,
               seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
-              airBlast: 'Significant overpressure event expected.',
+              airBlast: t('significant-overpressure'),
               craterDiameter: `${craterDiameter} meters`,
               devastationRadius: `${devastationRadius} km`,
             },
             mitigation: {
               threatLevel: customDiameter > 1000 ? 'EXTREME' : customDiameter > 500 ? 'HIGH' : 'MODERATE',
-              recommendedAction: 'Custom simulation - Adjust sliders to test different scenarios.',
+              recommendedAction: t('custom-simulation-adjust'),
               evacuationRadius: `${evacuationRadius} km`,
             },
           },
@@ -464,12 +464,12 @@ const Wexio = () => {
             ...(surfaceInfo.countryInfo && { countryInfo: surfaceInfo.countryInfo })
           },
           source: {
-            name: 'Custom Asteroid Simulation',
+            name: t('custom-asteroid-simulation'),
             diameter: `${diameter.toFixed(2)} meters`,
             velocity: `${velocity.toFixed(2)} km/s`,
             isPotentiallyHazardous: diameter > 140,
-            closeApproachDate: 'Custom Simulation',
-            missDistance: 'Impact Simulation',
+            closeApproachDate: t('custom-simulation'),
+            missDistance: t('impact-simulation'),
             absoluteMagnitude: 'N/A',
             jplUrl: 'N/A',
           },
@@ -477,7 +477,7 @@ const Wexio = () => {
             impactEnergy: `${energyMegatons} Megatons TNT`,
             seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
             primaryEffect: surfaceEffects.primaryEffect,
-            airBlast: 'Significant overpressure event expected.',
+            airBlast: t('significant-overpressure'),
             craterInfo: `${surfaceEffects.craterDiameter?.toFixed(0) || craterDiameter} metros - ${surfaceEffects.craterType}`,
             devastationRadius: `${surfaceEffects.devastationRadius?.toFixed(0) || devastationRadius} km`,
             specialEffects: surfaceEffects.specialEffects,
@@ -495,8 +495,8 @@ const Wexio = () => {
           mitigation: {
             threatLevel: diameter > 1000 ? 'EXTREME' : diameter > 500 ? 'HIGH' : 'MODERATE',
             recommendedAction: surfaceInfo.type === 'water' 
-              ? 'Tsunami warning systems activated. Coastal evacuation recommended.'
-              : 'Ground-based impact. Evacuation of impact zone required.',
+              ? t('tsunami-warning-coastal')
+              : t('ground-impact-evacuation'),
             evacuationRadius: `${surfaceEffects.evacuationRadius?.toFixed(0) || evacuationRadius} km`,
           },
         },
@@ -543,7 +543,7 @@ const Wexio = () => {
             impactEnergy: `${energyMegatons} Megatons TNT`,
             seismicEffect: `Magnitude ${seismicMagnitude} Richter`,
             primaryEffect: surfaceEffects.primaryEffect,
-            airBlast: 'Significant overpressure event expected.',
+            airBlast: t('significant-overpressure'),
             craterInfo: `${surfaceEffects.craterDiameter?.toFixed(0) || 'N/A'} metros - ${surfaceEffects.craterType}`,
             devastationRadius: `${surfaceEffects.devastationRadius?.toFixed(0) || 'N/A'} km`,
             specialEffects: surfaceEffects.specialEffects,
@@ -561,8 +561,8 @@ const Wexio = () => {
           mitigation: {
             threatLevel: selectedAsteroid.is_potentially_hazardous_asteroid ? 'MONITORING REQUIRED' : 'LOW',
             recommendedAction: surfaceInfo.type === 'water' 
-              ? 'Tsunami monitoring and coastal area surveillance required.'
-              : 'Continuous orbital tracking and impact zone preparation needed.',
+              ? t('tsunami-monitoring')
+              : t('continuous-orbital-tracking'),
             evacuationRadius: `${surfaceEffects.evacuationRadius?.toFixed(0) || 'N/A'} km`,
           },
         },
@@ -587,9 +587,9 @@ const Wexio = () => {
           ...(surfaceInfo.countryInfo && { countryInfo: surfaceInfo.countryInfo })
         },
         source: {
-          name: 'Click simulation',
-          diameter: 'Unknown',
-          velocity: 'Unknown',
+          name: t('click-simulation'),
+          diameter: t('unknown'),
+          velocity: t('unknown'),
           isPotentiallyHazardous: false,
           closeApproachDate: 'N/A',
           missDistance: 'N/A',
@@ -597,14 +597,18 @@ const Wexio = () => {
           jplUrl: 'N/A',
         },
         consequences: {
-          impactEnergy: 'Select an asteroid or use sliders for simulation',
+          impactEnergy: t('select-asteroid-sliders'),
           seismicEffect: 'N/A',
           airBlast: 'N/A',
-          primaryEffect: surfaceInfo.type === 'water' ? 'Possible tsunami' : 'Terrestrial impact',
+          primaryEffect: surfaceInfo.type === 'water' ? t('possible-tsunami') : t('terrestrial-impact'),
         },
         mitigation: {
           threatLevel: 'UNKNOWN',
-          recommendedAction: `Surface detected: ${surfaceInfo.description} in ${surfaceInfo.location}. Source: ${surfaceInfo.source}. Please select an asteroid from the list or use sliders to customize parameters.`,
+          recommendedAction: t('surface-detected', {
+            description: surfaceInfo.description,
+            location: surfaceInfo.location,
+            source: surfaceInfo.source
+          }),
         },
       },
     }));

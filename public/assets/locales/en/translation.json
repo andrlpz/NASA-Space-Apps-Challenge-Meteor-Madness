@@ -188,19 +188,5 @@
   "global-impact": "Global Impact",
   "detailed-analysis": "Detailed Analysis",
   "asteroids-button": "Asteroids",
-  "sliders-button": "Sliders",
-  "impact-snapshot": "Impact Snapshot",
-  "km-radius": "km radius",
-  "country": "Country",
-  "people-per-km2": "People/km²",
-  "population": "Population",
-  "circle-area": "Circle area",
-  "estimated-affected": "Estimated affected",
-  "excellent-outcome": "🎉 Excellent! Minimal casualties. Great job!",
-  "good-outcome": "Good outcome. You reduced the impact significantly.",
-  "bad-outcome": "😢 High impact. Many lives at risk. Reduce velocity or size!",
-  "tip": "Tip:",
-  "tip-message": "Lower velocity or diameter to shrink the impact radius.",
-  "no-country-data": "No country data available for this location",
-  "many-lives-risk": "😢 Many lives at risk! Try lowering velocity or size to save more people"
+  "sliders-button": "Sliders"
 }

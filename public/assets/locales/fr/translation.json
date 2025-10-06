@@ -66,19 +66,5 @@
   "impactAnalysis": "Analyse d'Impact",
   "detailedSimulationResults": "Résultats détaillés de la simulation d'impact",
   "asteroids-button": "Astéroïdes",
-  "sliders-button": "Curseurs",
-  "impact-snapshot": "Aperçu de l'Impact",
-  "km-radius": "km de rayon",
-  "country": "Pays",
-  "people-per-km2": "Personnes/km²",
-  "population": "Population",
-  "circle-area": "Superficie du cercle",
-  "estimated-affected": "Personnes affectées estimées",
-  "excellent-outcome": "🎉 Excellent ! Victimes minimales. Bon travail !",
-  "good-outcome": "Bon résultat. Vous avez considérablement réduit l'impact.",
-  "bad-outcome": "😢 Impact élevé. Beaucoup de vies en danger. Réduisez la vitesse ou la taille !",
-  "tip": "Conseil :",
-  "tip-message": "Réduisez la vitesse ou le diamètre pour diminuer le rayon d'impact.",
-  "no-country-data": "Aucune donnée de pays disponible pour cet emplacement",
-  "many-lives-risk": "😢 Beaucoup de vies en danger ! Essayez de réduire la vitesse ou la taille pour sauver plus de personnes"
+  "sliders-button": "Curseurs"
 }
