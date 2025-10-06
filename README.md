@@ -11,7 +11,7 @@ Meteor Madness allows users to explore near-Earth objects (NEOs) and simulate po
 
 ## 🚀 Live Demo
 
-[🌍 **Try Meteor Madness Now**](https://your-demo-link.com) _(Replace with actual deployment URL)_
+[🌍 **Try Meteor Madness Now**](meteormadness.pafodev.com) _(Replace with actual deployment URL)_
 
 ## 📋 Table of Contents
 
@@ -355,7 +355,7 @@ Meteor Madness addresses the challenge by providing:
 
 ### Project Links
 - **GitHub Repository**: [NASA-Space-Apps-Challenge-Meteor-Madness](https://github.com/andrlpz/NASA-Space-Apps-Challenge-Meteor-Madness)
-- **Live Demo**: [Meteor Madness Simulator](#) *(Update with deployment URL)*
+- **Live Demo**: [Meteor Madness Simulator](meteormadness.pafodev.com/?)
 - **NASA Space Apps**: [Challenge Details](https://www.spaceappschallenge.org/2025/challenges/meteor-madness/)
 
 ### NASA Resources
