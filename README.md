@@ -368,7 +368,13 @@ Meteor Madness addresses the challenge by providing:
 - **Three.js Documentation**: [Threejs.org](https://threejs.org/)
 - **Vite Documentation**: [Vitejs.dev](https://vitejs.dev/)
 
+
+### EXTRA RESOURCES
+- **2D EARTH TEXTURES**: [SolarSystemScope](https://www.solarsystemscope.com)
+
 ---
+
+
 
 **Made with 🚀 for the NASA Space Apps Challenge 2025**
 
